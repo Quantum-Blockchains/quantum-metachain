@@ -1,0 +1,5 @@
+[workspace]
+members = [
+	"crates/communication/quantum-p2p",
+	"crates/communication/quantum-qkd"
+]
