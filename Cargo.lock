@@ -3,6 +3,10 @@
 version = 3
 
 [[package]]
+name = "quantum-metachain"
+version = "0.1.0"
+
+[[package]]
 name = "quantum-p2p"
 version = "0.1.0"
 
