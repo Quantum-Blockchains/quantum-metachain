@@ -1,4 +1,4 @@
-name: Rust CI - checks
+name: Check
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - '**'
 
 jobs:
-  goci:
+  check:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout
