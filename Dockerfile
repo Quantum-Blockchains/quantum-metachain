@@ -3,7 +3,6 @@ FROM rust:1.60 as builder
 WORKDIR /rust
 
 COPY crates crates
-COPY src src
 COPY Cargo.lock .
 COPY Cargo.toml .
 

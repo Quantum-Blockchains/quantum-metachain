@@ -3,6 +3,10 @@ name = "quantum-metachain"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+path = "crates/quantum-metachain/main.rs"
+name = "quantum-metachain"
+
 [workspace]
 members = [
 	"crates/communication/quantum-p2p",
