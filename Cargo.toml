@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [[bin]]
-path = "crates/quantum-metachain/main.rs"
+path = "crates/quantum-metachain/src/main.rs"
 name = "quantum-metachain"
 
 [workspace]

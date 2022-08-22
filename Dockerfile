@@ -1,6 +1,6 @@
 FROM rust:1.60 as builder
 
-WORKDIR /rust
+WORKDIR /app
 
 COPY crates crates
 COPY Cargo.lock .
@@ -10,6 +10,6 @@ RUN cargo build --target-dir target
 
 FROM ubuntu
 
-COPY --from=builder /rust/target /target
+COPY --from=builder /app/target /target
 
 ENTRYPOINT ["/target/debug/quantum-metachain"]
