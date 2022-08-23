@@ -10,7 +10,7 @@ async fn main() -> std::io::Result<()> {
 
     let p2p_service = DevP2PService::new(p2p_config);
     match p2p_service.start().await {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(err) => panic!("Cannot start p2p service: {:?}", err),
     };
     Ok(())

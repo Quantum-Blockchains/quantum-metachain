@@ -45,7 +45,6 @@ impl P2PService for DevP2PService {
                 SwarmEvent::Behaviour(MdnsEvent::Discovered(peers)) => {
                     for (peer, addr) in peers {
                         println!("discovered {} {}", peer, addr);
-                        // TODO JEQB-81 count all peers
                     }
                 }
                 SwarmEvent::Behaviour(MdnsEvent::Expired(expired)) => {
