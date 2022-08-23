@@ -1,7 +1,7 @@
 use async_trait::async_trait;
-use std::error::Error;
 
 use crate::config::P2PConfiguration;
+use crate::error::StartP2PServiceError;
 use libp2p::futures::StreamExt;
 use libp2p::identity::Keypair;
 use libp2p::mdns::{Mdns, MdnsConfig, MdnsEvent};
@@ -10,7 +10,7 @@ use libp2p::{PeerId, Swarm};
 
 #[async_trait]
 pub trait P2PService {
-    async fn start(self) -> Result<(), Box<dyn Error>>;
+    async fn start(self) -> Result<(), StartP2PServiceError>;
 }
 
 pub struct DevP2PService {
@@ -28,7 +28,7 @@ impl DevP2PService {
 #[async_trait]
 impl P2PService for DevP2PService {
     // TODO JEQB-80 provide error as enum with use of thiserror lib and replace `Box<dyn Error>`
-    async fn start(self) -> Result<(), Box<dyn Error>> {
+    async fn start(self) -> Result<(), StartP2PServiceError> {
         let transport = libp2p::development_transport(self.id_keys.clone()).await?;
         let behaviour = Mdns::new(MdnsConfig::default()).await?;
         let peer_id = PeerId::from(self.id_keys.public());
