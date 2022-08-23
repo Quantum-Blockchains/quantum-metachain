@@ -1,4 +1,4 @@
-use config_file::{FromConfigFile, ConfigFileError};
+use config_file::{ConfigFileError, FromConfigFile};
 use serde::Deserialize;
 
 /// P2P service configuration
