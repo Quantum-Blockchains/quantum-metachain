@@ -3,23 +3,21 @@ use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum StartP2PServiceError {
-
     #[error("Transport construct error")]
-    TransportConstructError{
+    TransportConstructError {
         #[from]
-        source: std::io::Error
+        source: std::io::Error,
     },
 
     #[error("Parsing address error")]
     ParsingAddressError {
         #[from]
-        source: libp2p::multiaddr::Error
+        source: libp2p::multiaddr::Error,
     },
 
     #[error("Address listening error")]
     AddressListeningError {
         #[from]
-        source: TransportError<std::io::Error>
-    }
-
+        source: TransportError<std::io::Error>,
+    },
 }
