@@ -1,5 +1,4 @@
 use qmc_p2p::config;
-use qmc_p2p::config::P2PConfiguration;
 use qmc_p2p::service::{DevP2PService, P2PService};
 
 #[tokio::main]
