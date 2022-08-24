@@ -420,6 +420,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "config-file"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df51e72c150781d2c7d4cbcb0b803277caaa80476786994a62961a8f1010dafb"
+dependencies = [
+ "serde",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
 name = "core-foundation"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2204,7 +2215,9 @@ name = "qmc-p2p"
 version = "0.1.0"
 dependencies = [
  "async-trait",
+ "config-file",
  "libp2p",
+ "serde",
 ]
 
 [[package]]
