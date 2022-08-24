@@ -7,6 +7,7 @@ use libp2p::identity::Keypair;
 use libp2p::mdns::{Mdns, MdnsConfig, MdnsEvent};
 use libp2p::swarm::SwarmEvent;
 use libp2p::{PeerId, Swarm};
+use log::info;
 
 #[async_trait]
 pub trait P2PService {
@@ -39,17 +40,16 @@ impl P2PService for DevP2PService {
         loop {
             match swarm.select_next_some().await {
                 SwarmEvent::NewListenAddr { address, .. } => {
-                    // TODO JEQP-78 implement logging instead of printlns
-                    println!("Listening on local address {:?}", address)
+                    info!("Listening on local address {:?}", address)
                 }
                 SwarmEvent::Behaviour(MdnsEvent::Discovered(peers)) => {
                     for (peer, addr) in peers {
-                        println!("discovered {} {}", peer, addr);
+                        info!("discovered {} {}", peer, addr);
                     }
                 }
                 SwarmEvent::Behaviour(MdnsEvent::Expired(expired)) => {
                     for (peer, addr) in expired {
-                        println!("expired {} {}", peer, addr);
+                        info!("expired {} {}", peer, addr);
                     }
                 }
                 // TODO JEQB-81 log when a peer leaves the network
