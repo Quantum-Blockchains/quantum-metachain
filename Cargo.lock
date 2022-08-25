@@ -2218,6 +2218,7 @@ dependencies = [
  "config-file",
  "libp2p",
  "serde",
+ "thiserror",
 ]
 
 [[package]]
