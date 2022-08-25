@@ -2,7 +2,6 @@ use chrono::Local;
 use env_logger::fmt::Color;
 use env_logger::{Builder, WriteStyle};
 use log::{Level, LevelFilter};
-use qmc_p2p::config::P2PConfiguration;
 use qmc_p2p::config;
 use qmc_p2p::service::{DevP2PService, P2PService};
 use std::env;
@@ -37,9 +36,6 @@ async fn main() -> std::io::Result<()> {
 
     builder.init();
 
-    let p2p_config = P2PConfiguration {
-        // TODO JEQB-79 read listen address from config
-        listen_address: "/ip4/0.0.0.0/tcp/0".to_string(),
     let p2p_config = match config::new("./config/p2p/config.toml") {
         Ok(c) => c,
         Err(err) => panic!("Couldn't load config file: {:?}", err),
