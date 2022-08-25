@@ -35,12 +35,7 @@ impl P2PService for DevP2PService {
         let mut swarm = Swarm::new(transport, behaviour, peer_id);
         swarm.listen_on(match self.config.listen_address.parse() {
             Ok(m) => m,
-            Err(err) => {
-                return Err(P2PError::ParsingAddressError {
-                    source: err,
-                    addr: self.config.listen_address,
-                })
-            }
+            Err(_err) => return Err(P2PError::ParsingAddressError(self.config.listen_address)),
         })?;
         loop {
             match swarm.select_next_some().await {
