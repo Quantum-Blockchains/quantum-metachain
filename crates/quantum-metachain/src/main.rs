@@ -1,41 +1,10 @@
-use chrono::Local;
-use env_logger::fmt::Color;
-use env_logger::{Builder, WriteStyle};
-use log::{Level, LevelFilter};
 use qmc_p2p::config;
 use qmc_p2p::service::{DevP2PService, P2PService};
-use std::env;
-use std::io::Write;
+mod logger;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let mut builder = Builder::from_default_env();
-    builder
-        .format(|buf, record| {
-            let mut level_style = buf.style();
-            match record.level() {
-                Level::Error => level_style.set_color(Color::Red),
-                Level::Warn => level_style.set_color(Color::Yellow),
-                Level::Info => level_style.set_color(Color::Green),
-                Level::Debug => level_style.set_color(Color::Blue),
-                Level::Trace => level_style.set_color(Color::Magenta),
-            };
-            writeln!(
-                buf,
-                "{} [{}] - {}",
-                Local::now().format("%Y-%m-%dT%H:%M:%S"),
-                level_style.value(record.level()),
-                record.args()
-            )
-        })
-        .write_style(WriteStyle::Always);
-
-    if env::var("RUST_LOG").is_err() {
-        builder.filter(None, LevelFilter::Info);
-    }
-
-    builder.init();
-
+    logger::init();
     let p2p_config = match config::new("./config/p2p/config.toml") {
         Ok(c) => c,
         Err(err) => panic!("Couldn't load config file: {:?}", err),
