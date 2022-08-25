@@ -1,8 +1,10 @@
 use qmc_p2p::config;
 use qmc_p2p::service::{DevP2PService, P2PService};
+mod logger;
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
+    logger::init();
     let p2p_config = match config::new("./config/p2p/config.toml") {
         Ok(c) => c,
         Err(err) => panic!("Couldn't load config file: {:?}", err),

@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 qmc-p2p = { version = "0.1.0", path = "../communication/p2p" }
 tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
+env_logger = "0.9.0"
+log = "0.4.17"
+chrono = "0.4.22"
