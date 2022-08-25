@@ -9,5 +9,6 @@ edition = "2021"
 libp2p = { version = "0.44.0" }
 async-trait = "0.1.57"
 log = "0.4.17"
+thiserror = "1.0.32"
 config-file = { version = "0.2.3" }
 serde = { version = "1.0.144" }
