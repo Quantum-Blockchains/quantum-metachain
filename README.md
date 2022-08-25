@@ -9,6 +9,14 @@ to `config.toml` in corresponding folder and fill them with correct data.
 ```
 cargo run
 ```
+By default, logger outputs error, warn and info level logs to the console. To output debug level logs:
+```
+RUST_LOG=debug cargo run
+```
+To output trace level logs:
+```
+RUST_LOG=debug cargo run
+```
 ## Docker
 ```
 docker build -t quantum-metachain .
