@@ -7,6 +7,7 @@ use serde::Deserialize;
 pub struct P2PConfiguration {
     /// IP address to listen for incoming connections.
     pub listen_address: String,
+    pub rpc_server_address: String
 }
 
 /// Loads p2p config from a file.

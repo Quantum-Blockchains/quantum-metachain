@@ -2,11 +2,14 @@ use async_trait::async_trait;
 
 use crate::config::P2PConfiguration;
 use crate::error::P2PError;
+use crate::rpc_server::{DevRpcServer, RpcServer};
+
 use libp2p::futures::StreamExt;
 use libp2p::identity::Keypair;
 use libp2p::mdns::{Mdns, MdnsConfig, MdnsEvent};
 use libp2p::swarm::SwarmEvent;
 use libp2p::{PeerId, Swarm};
+
 use log::info;
 
 /// P2P service
@@ -22,12 +25,13 @@ pub trait P2PService {
 pub struct DevP2PService {
     config: P2PConfiguration,
     id_keys: Keypair,
+    rpc_server: DevRpcServer,
 }
 
 impl DevP2PService {
-    pub fn new(config: P2PConfiguration) -> DevP2PService {
+    pub fn new(config: P2PConfiguration, rpc_server: DevRpcServer) -> DevP2PService {
         let id_keys = Keypair::generate_ed25519();
-        DevP2PService { config, id_keys }
+        DevP2PService { config, id_keys, rpc_server }
     }
 }
 
@@ -37,6 +41,11 @@ impl P2PService for DevP2PService {
         let transport = libp2p::development_transport(self.id_keys.clone()).await?;
         let behaviour = Mdns::new(MdnsConfig::default()).await?;
         let peer_id = PeerId::from(self.id_keys.public());
+
+        let _ = match self.rpc_server.start().await {
+            Ok(_) => {},
+            Err(err) => return Err(err),
+        };
 
         let mut swarm = Swarm::new(transport, behaviour, peer_id);
         swarm.listen_on(match self.config.listen_address.parse() {

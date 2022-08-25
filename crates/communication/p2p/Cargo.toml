@@ -12,3 +12,5 @@ log = "0.4.17"
 thiserror = "1.0.32"
 config-file = { version = "0.2.3" }
 serde = { version = "1.0.144" }
+jsonrpc-http-server = "18.0.0"
+jsonrpc-core-client = "18.0.0"

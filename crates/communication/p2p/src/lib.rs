@@ -5,3 +5,5 @@
 pub mod config;
 pub mod error;
 pub mod service;
+pub mod rpc_server;
+pub mod rpc_client;
