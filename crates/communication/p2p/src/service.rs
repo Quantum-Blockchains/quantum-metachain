@@ -2,7 +2,8 @@ use async_trait::async_trait;
 
 use crate::config::P2PConfiguration;
 use crate::error::P2PError;
-use crate::rpc_server::{DevRpcServer, RpcServer};
+use crate::rpc_server::DevRpcServer;
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 
 use libp2p::futures::StreamExt;
 use libp2p::identity::Keypair;
@@ -42,10 +43,10 @@ impl P2PService for DevP2PService {
         let behaviour = Mdns::new(MdnsConfig::default()).await?;
         let peer_id = PeerId::from(self.id_keys.public());
 
-        let _ = match self.rpc_server.start().await {
-            Ok(_) => {},
-            Err(err) => return Err(err),
-        };
+        let str_addr = self.config.rpc_server_address.as_str();
+        let server = self.rpc_server.rpc_server.start_http(
+            &str_addr.parse().unwrap()).unwrap();
+        info!("RPC server listening at address {}", self.config.rpc_server_address);
 
         let mut swarm = Swarm::new(transport, behaviour, peer_id);
         swarm.listen_on(match self.config.listen_address.parse() {

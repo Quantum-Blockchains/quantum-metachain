@@ -13,8 +13,9 @@ async fn main() -> std::io::Result<()> {
     };
 
     info!(
-        "Found config file:\n- listen_address: {}\n--------",
-        p2p_config.listen_address
+        "Found config file:\n- listen_address: {}\n- rpc_server_address: {}\n--------",
+        p2p_config.listen_address,
+        p2p_config.rpc_server_address
     );
 
     let rpc_server = DevRpcServer::new();
