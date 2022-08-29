@@ -21,16 +21,16 @@ impl DevRpcServer {
 }
 
 fn attach_handlers(handler: &mut IoHandler, swarm: &mut Swarm<Mdns>) {
-    handler.add_method("say_hello", |_params: Params| async {
-        Ok(Value::String(String::from("hello!")))
-    });
-
     handler.add_method("say_hello_to_peers", |_params: Params| async {
         // creates errors, remove contents of this method to fix compilation errors
         let peers = swarm.listeners();
         for peer in peers {
-            info!("Asd  ");
+            // ping all of our peers here, something like swarm.dial(peer.parse())?
         }
         Ok(Value::String(String::from("Said hello to many peers!")))
+    });
+
+    handler.add_method("say_hello", |_params: Params| async {
+        Ok(Value::String(String::from("hello!")))
     });
 }
