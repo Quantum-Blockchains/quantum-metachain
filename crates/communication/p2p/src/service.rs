@@ -25,14 +25,13 @@ pub trait P2PService {
 /// For development purposes only
 pub struct DevP2PService {
     config: P2PConfiguration,
-    id_keys: Keypair,
-    rpc_server: DevRpcServer,
+    id_keys: Keypair
 }
 
 impl DevP2PService {
-    pub fn new(config: P2PConfiguration, rpc_server: DevRpcServer) -> DevP2PService {
+    pub fn new(config: P2PConfiguration) -> DevP2PService {
         let id_keys = Keypair::generate_ed25519();
-        DevP2PService { config, id_keys, rpc_server }
+        DevP2PService { config, id_keys }
     }
 }
 
@@ -42,13 +41,15 @@ impl P2PService for DevP2PService {
         let transport = libp2p::development_transport(self.id_keys.clone()).await?;
         let behaviour = Mdns::new(MdnsConfig::default()).await?;
         let peer_id = PeerId::from(self.id_keys.public());
+        let mut swarm = Swarm::new(transport, behaviour, peer_id);
 
         let str_addr = self.config.rpc_server_address.as_str();
-        let server = self.rpc_server.rpc_server.start_http(
-            &str_addr.parse().unwrap()).unwrap();
+        let rpc_server = DevRpcServer::new(&mut swarm);
+
+        let _server = rpc_server.rpc_server.start_http(
+        &str_addr.parse().unwrap()).unwrap();
         info!("RPC server listening at address {}", self.config.rpc_server_address);
 
-        let mut swarm = Swarm::new(transport, behaviour, peer_id);
         swarm.listen_on(match self.config.listen_address.parse() {
             Ok(m) => m,
             Err(_err) => return Err(P2PError::ParsingAddressError(self.config.listen_address)),

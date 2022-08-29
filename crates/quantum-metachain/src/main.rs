@@ -18,9 +18,7 @@ async fn main() -> std::io::Result<()> {
         p2p_config.rpc_server_address
     );
 
-    let rpc_server = DevRpcServer::new();
-
-    let p2p_service = DevP2PService::new(p2p_config, rpc_server);
+    let p2p_service = DevP2PService::new(p2p_config);
     match p2p_service.start().await {
         Ok(_) => {}
         Err(err) => panic!("Cannot start p2p service: {:?}", err),
