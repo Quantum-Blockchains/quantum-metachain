@@ -1,9 +1,7 @@
-use async_trait::async_trait;
 use jsonrpc_http_server::jsonrpc_core::{IoHandler, Params, Value};
 use jsonrpc_http_server::ServerBuilder;
 use libp2p::mdns::Mdns;
 use libp2p::Swarm;
-use crate::error::P2PError;
 use log::info;
 
 pub struct DevRpcServer {
@@ -25,5 +23,14 @@ impl DevRpcServer {
 fn attach_handlers(handler: &mut IoHandler, swarm: &mut Swarm<Mdns>) {
     handler.add_method("say_hello", |_params: Params| async {
         Ok(Value::String(String::from("hello!")))
-    })
+    });
+
+    handler.add_method("say_hello_to_peers", |_params: Params| async {
+        // creates errors, remove contents of this method to fix compilation errors
+        let peers = swarm.listeners();
+        for peer in peers {
+            info!("Asd  ");
+        }
+        Ok(Value::String(String::from("Said hello to many peers!")))
+    });
 }
