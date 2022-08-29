@@ -9,11 +9,16 @@ use libp2p::swarm::SwarmEvent;
 use libp2p::{PeerId, Swarm};
 use log::info;
 
+/// P2P service
 #[async_trait]
 pub trait P2PService {
+    /// Starts p2p network
     async fn start(self) -> Result<(), P2PError>;
 }
 
+/// Dev p2p service
+///
+/// For development purposes only
 pub struct DevP2PService {
     config: P2PConfiguration,
     id_keys: Keypair,
@@ -53,7 +58,6 @@ impl P2PService for DevP2PService {
                         info!("expired {} {}", peer, addr);
                     }
                 }
-                // TODO JEQB-81 log when a peer leaves the network
                 _ => {}
             }
         }
