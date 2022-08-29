@@ -24,7 +24,7 @@ pub trait P2PService {
 /// For development purposes only
 pub struct DevP2PService {
     config: P2PConfiguration,
-    id_keys: Keypair
+    id_keys: Keypair,
 }
 
 impl DevP2PService {
@@ -49,9 +49,14 @@ impl P2PService for DevP2PService {
         })?;
 
         let rpc_server = DevRpcServer::new(&mut swarm);
-        let _server = rpc_server.rpc_server.start_http(
-            &str_addr.parse().unwrap()).unwrap();
-        info!("RPC server listening at address {}", self.config.rpc_server_address);
+        let _server = rpc_server
+            .rpc_server
+            .start_http(&str_addr.parse().unwrap())
+            .unwrap();
+        info!(
+            "RPC server listening at address {}",
+            self.config.rpc_server_address
+        );
 
         loop {
             match swarm.select_next_some().await {

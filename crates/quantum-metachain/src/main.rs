@@ -1,7 +1,7 @@
 use log::info;
 use qmc_p2p::config;
-use qmc_p2p::service::{DevP2PService, P2PService};
 use qmc_p2p::rpc_server::DevRpcServer;
+use qmc_p2p::service::{DevP2PService, P2PService};
 mod logger;
 
 #[tokio::main]
@@ -14,8 +14,7 @@ async fn main() -> std::io::Result<()> {
 
     info!(
         "Found config file:\n- listen_address: {}\n- rpc_server_address: {}\n--------",
-        p2p_config.listen_address,
-        p2p_config.rpc_server_address
+        p2p_config.listen_address, p2p_config.rpc_server_address
     );
 
     let p2p_service = DevP2PService::new(p2p_config);

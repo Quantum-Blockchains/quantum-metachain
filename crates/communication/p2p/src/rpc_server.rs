@@ -2,7 +2,6 @@ use jsonrpc_http_server::jsonrpc_core::{IoHandler, Params, Value};
 use jsonrpc_http_server::ServerBuilder;
 use libp2p::mdns::Mdns;
 use libp2p::Swarm;
-use log::info;
 
 pub struct DevRpcServer {
     pub rpc_server: ServerBuilder,
@@ -14,7 +13,7 @@ impl DevRpcServer {
 
         attach_handlers(&mut handler, swarm);
 
-        DevRpcServer{
+        DevRpcServer {
             rpc_server: ServerBuilder::new(handler).threads(3),
         }
     }
