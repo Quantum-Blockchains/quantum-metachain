@@ -1,4 +1,4 @@
 .idea/
 .vscode/
 target/
-config/p2p/config.toml
+config/**/*.toml
