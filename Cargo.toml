@@ -2,5 +2,6 @@
 members = [
 	"crates/communication/p2p",
 	"crates/communication/qkd",
+	"crates/communication/rpc",
 	"crates/quantum-metachain",
 ]

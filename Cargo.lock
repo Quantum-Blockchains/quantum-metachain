@@ -2550,6 +2550,21 @@ name = "qmc-qkd"
 version = "0.1.0"
 
 [[package]]
+name = "qmc-rpc"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "config-file",
+ "jsonrpc-core-client",
+ "jsonrpc-http-server",
+ "libp2p",
+ "log",
+ "qmc-p2p",
+ "serde",
+ "thiserror",
+]
+
+[[package]]
 name = "quantum-metachain"
 version = "0.1.0"
 dependencies = [
@@ -2557,6 +2572,7 @@ dependencies = [
  "env_logger",
  "log",
  "qmc-p2p",
+ "qmc-rpc",
  "tokio",
 ]
 
