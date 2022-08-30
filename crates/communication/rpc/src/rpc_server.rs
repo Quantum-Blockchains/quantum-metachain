@@ -1,18 +1,13 @@
-use std::fmt::Error;
 use jsonrpc_http_server::jsonrpc_core::{IoHandler, Params, Value};
 use jsonrpc_http_server::ServerBuilder;
-use libp2p::mdns::Mdns;
-use libp2p::Swarm;
 use crate::error::RPCError;
-use async_trait::async_trait;
 
 pub struct DevRpcServer {
     pub rpc_server: ServerBuilder,
 }
 
-#[async_trait]
 pub trait RpcServer {
-    async fn start(self) -> Result<(), RPCError>;
+    fn start(self) -> Result<(), RPCError>;
 }
 
 impl DevRpcServer {
@@ -24,16 +19,6 @@ impl DevRpcServer {
         DevRpcServer {
             rpc_server: ServerBuilder::new(handler).threads(3),
         }
-    }
-}
-
-#[async_trait]
-impl RpcServer for DevRpcServer {
-    async fn start(self) -> Result<(), RPCError> {
-        println!("Trying to start::::::::::::::::::");
-        let _result = self.rpc_server.start_http(&"127.0.0.1:3030".parse().unwrap());
-
-        Ok(())
     }
 }
 

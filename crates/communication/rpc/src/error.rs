@@ -1,4 +1,3 @@
-use libp2p::TransportError;
 use thiserror::Error;
 
 #[derive(Error, Debug)]

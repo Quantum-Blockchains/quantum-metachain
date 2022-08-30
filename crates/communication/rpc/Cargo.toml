@@ -14,4 +14,3 @@ config-file = { version = "0.2.3" }
 serde = { version = "1.0.144" }
 jsonrpc-http-server = "18.0.0"
 jsonrpc-core-client = "18.0.0"
-qmc-p2p = { version = "0.1.0", path = "../p2p" }

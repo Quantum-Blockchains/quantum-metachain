@@ -2559,7 +2559,6 @@ dependencies = [
  "jsonrpc-http-server",
  "libp2p",
  "log",
- "qmc-p2p",
  "serde",
  "thiserror",
 ]

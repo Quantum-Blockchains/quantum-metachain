@@ -18,11 +18,8 @@ async fn main() -> std::io::Result<()> {
     );
 
     let rpc_server = DevRpcServer::new();
-    match rpc_server.start().await {
-        Ok(_) => {}
-        Err(err) => panic!("Cannot start RPC server: {:?}", err)
-    }
-    info!("Started");
+    let _result = rpc_server.rpc_server.start_http(&"127.0.0.1:3030".parse().unwrap()).unwrap();
+    info!("RPC server starded, listening on: ");
 
     let p2p_service = DevP2PService::new(p2p_config);
     match p2p_service.start().await {
