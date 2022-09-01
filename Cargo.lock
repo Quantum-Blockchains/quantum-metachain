@@ -2567,11 +2567,16 @@ dependencies = [
 name = "quantum-metachain"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "chrono",
  "env_logger",
+ "jsonrpc-core-client",
+ "jsonrpc-http-server",
+ "libp2p",
  "log",
  "qmc-p2p",
  "qmc-rpc",
+ "thiserror",
  "tokio",
 ]
 

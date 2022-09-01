@@ -26,4 +26,7 @@ fn attach_handlers(handler: &mut IoHandler) {
     handler.add_method("say_hello", |_params: Params| async {
         Ok(Value::String(String::from("hello!")))
     });
+    handler.add_method("say_hello_to_peers", |_params: Params| async {
+        Ok(Value::String(String::from("hello!")))
+    });
 }
