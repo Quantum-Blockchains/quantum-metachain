@@ -1,6 +1,6 @@
+use crate::error::RPCError;
 use jsonrpc_http_server::jsonrpc_core::{IoHandler, Params, Value};
 use jsonrpc_http_server::ServerBuilder;
-use crate::error::RPCError;
 
 pub struct DevRpcServer {
     pub rpc_server: ServerBuilder,
@@ -8,6 +8,12 @@ pub struct DevRpcServer {
 
 pub trait RpcServer {
     fn start(self) -> Result<(), RPCError>;
+}
+
+impl Default for DevRpcServer {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl DevRpcServer {

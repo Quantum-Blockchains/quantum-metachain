@@ -1,4 +1,3 @@
-pub mod types;
-pub mod rpc_server;
-pub mod error;
 pub mod config;
+pub mod error;
+pub mod rpc_server;

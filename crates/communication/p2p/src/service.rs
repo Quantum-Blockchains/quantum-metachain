@@ -4,12 +4,9 @@ use crate::config::P2PConfiguration;
 use crate::error::P2PError;
 
 use libp2p::futures::StreamExt;
-use libp2p::identity::Keypair;
-use libp2p::mdns::{Mdns, MdnsConfig, MdnsEvent};
+use libp2p::mdns::{Mdns, MdnsEvent};
 use libp2p::swarm::SwarmEvent;
-use libp2p::{PeerId, Swarm};
-use libp2p::core::muxing::StreamMuxerBox;
-use libp2p::core::transport::Boxed;
+use libp2p::Swarm;
 
 use log::info;
 
@@ -25,24 +22,23 @@ pub trait P2PService {
 /// For development purposes only
 pub struct DevP2PService {
     config: P2PConfiguration,
-    id_keys: Keypair,
     swarm: Swarm<Mdns>,
 }
 
 impl DevP2PService {
-    pub fn new(config: P2PConfiguration, id_keys: Keypair, swarm: Swarm<Mdns>) -> DevP2PService {
-        DevP2PService { config, id_keys, swarm }
+    pub fn new(config: P2PConfiguration, swarm: Swarm<Mdns>) -> DevP2PService {
+        DevP2PService { config, swarm }
     }
 }
 
 #[async_trait]
 impl P2PService for DevP2PService {
     async fn start(mut self) -> Result<(), P2PError> {
-        self.swarm.listen_on(match self.config.listen_address.parse() {
-            Ok(m) => m,
-            Err(_err) => return Err(P2PError::ParsingAddressError(self.config.listen_address)),
-        })?;
-
+        self.swarm
+            .listen_on(match self.config.listen_address.parse() {
+                Ok(m) => m,
+                Err(_err) => return Err(P2PError::ParsingAddressError(self.config.listen_address)),
+            })?;
 
         loop {
             match self.swarm.select_next_some().await {
