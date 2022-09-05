@@ -1,15 +1,21 @@
-FROM rust:1.60 as builder
+FROM rustlang/rust:nightly as builder
+
+EXPOSE 30333 9933 9944
 
 WORKDIR /app
 
-COPY crates crates
+RUN apt-get update && apt-get -y install clang cmake protobuf-compiler
+RUN rustup target add wasm32-unknown-unknown
+
+COPY bin bin
 COPY Cargo.lock .
 COPY Cargo.toml .
 
-RUN cargo build --target-dir target
+RUN cargo build --release --target-dir target
 
 FROM ubuntu
 
-COPY --from=builder /app/target /target
+COPY --from=builder app/target/release/qmc-node /usr/local/bin
+RUN chmod +x /usr/local/bin/qmc-node
 
-ENTRYPOINT ["/target/debug/quantum-metachain"]
+ENTRYPOINT ["/usr/local/bin/qmc-node"]
