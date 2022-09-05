@@ -1,6 +1,6 @@
 [workspace]
 members = [
-	"crates/communication/p2p",
-	"crates/communication/qkd",
-	"crates/quantum-metachain",
+	"bin/node",
+	"bin/runtime"
 ]
+
