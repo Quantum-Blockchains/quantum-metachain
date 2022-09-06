@@ -85,6 +85,7 @@ pub mod opaque {
         }
     }
 }
+pub mod randomness;
 
 // To learn more about runtime versioning, see:
 // https://docs.substrate.io/main-docs/build/upgrade#runtime-versioning
@@ -269,6 +270,10 @@ impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
+}
+
+impl randomness::Config for Runtime {
+    type MyRandomness = (); //type that manages qRNG random generator?
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
