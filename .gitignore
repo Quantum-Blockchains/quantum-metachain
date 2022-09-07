@@ -2,3 +2,4 @@
 .vscode/
 target/
 config/p2p/config.toml
+.cargo/

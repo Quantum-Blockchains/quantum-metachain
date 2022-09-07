@@ -7,6 +7,7 @@
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 // A few exports that help ease life for downstream crates.
+pub mod pallet_randomness;
 pub use frame_support::{
     construct_runtime, parameter_types,
     traits::{
@@ -85,7 +86,6 @@ pub mod opaque {
         }
     }
 }
-pub mod randomness;
 
 // To learn more about runtime versioning, see:
 // https://docs.substrate.io/main-docs/build/upgrade#runtime-versioning
@@ -275,6 +275,7 @@ impl ocw_qkd::Config for Runtime {
 impl randomness::Config for Runtime {
     type MyRandomness = (); //type that manages qRNG random generator?
 }
+impl pallet_randomness::Config for Runtime {}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -285,7 +286,7 @@ construct_runtime!(
         UncheckedExtrinsic = UncheckedExtrinsic,
     {
         System: frame_system,
-        RandomnessCollectiveFlip: pallet_randomness_collective_flip,
+        // RandomnessCollectiveFlip: pallet_randomness_collective_flip,
         Timestamp: pallet_timestamp,
         Aura: pallet_aura,
         Grandpa: pallet_grandpa,
@@ -294,6 +295,7 @@ construct_runtime!(
         Sudo: pallet_sudo,
         // QMC pallets
         OcwQkd: ocw_qkd,
+        Random: pallet_randomness,
     }
 );
 
