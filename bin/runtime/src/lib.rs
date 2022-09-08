@@ -24,6 +24,7 @@ use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
 pub use pallet_timestamp::Call as TimestampCall;
+pub use ocw_qkd::Call as OcwQkdCall;
 use pallet_transaction_payment::CurrencyAdapter;
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
@@ -41,6 +42,9 @@ use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
+
+pub use ocw_qkd;
+
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -264,6 +268,11 @@ impl pallet_sudo::Config for Runtime {
     type Call = Call;
 }
 
+impl ocw_qkd::Config for Runtime {
+    type Event = Event;
+    type Call = Call;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
     pub struct Runtime
@@ -280,6 +289,8 @@ construct_runtime!(
         Balances: pallet_balances,
         TransactionPayment: pallet_transaction_payment,
         Sudo: pallet_sudo,
+        // QMC pallets
+        OcwQkd: ocw_qkd,
     }
 );
 
