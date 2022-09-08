@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use frame_system::{self as system};
+#[cfg(test)]
+mod tests;
 
 pub use pallet::*;
 
@@ -18,31 +19,33 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
-    #[pallet::generate_store(pub(super) trait Store)]
+    #[pallet::generate_store(pub (super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
-            log::info!("Hello World from offchain workers!");
-
-            let parent_hash = <system::Pallet<T>>::block_hash(block_number - 1u32.into());
             log::debug!(
-                "Current block: {:?} (parent hash: {:?})",
+                "Block number: {:?} - generating {:?} single-use keys",
                 block_number,
-                parent_hash
+                5
             );
+            Self::generate_keys().unwrap();
         }
     }
 
     #[pallet::call]
-    impl<T: Config> Pallet<T> {
-
-    }
+    impl<T: Config> Pallet<T> {}
 
     #[pallet::event]
     pub enum Event<T: Config> {
         Sth,
+    }
+}
+
+impl<T: Config> Pallet<T> {
+    fn generate_keys() -> Result<(), ()> {
+        Ok(())
     }
 }
