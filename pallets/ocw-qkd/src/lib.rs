@@ -29,9 +29,9 @@ pub mod pallet {
             log::debug!(
                 "Block number: {:?} - generating {:?} single-use keys",
                 block_number,
-                5
+                0
             );
-            Self::generate_keys().unwrap();
+            Self::generate_keys(0).unwrap();
         }
     }
 
@@ -42,10 +42,21 @@ pub mod pallet {
     pub enum Event<T: Config> {
         Sth,
     }
+
+    #[pallet::storage]
+    #[pallet::getter(fn key_by_hash)]
+    pub(super) type KeyByHash<T> = StorageMap<_, Blake2_128Concat, u32, u32, ValueQuery>;
 }
 
 impl<T: Config> Pallet<T> {
-    fn generate_keys() -> Result<(), ()> {
+    fn get_node_keys_len() -> usize {
+        <KeyByHash<T>>::iter_values().collect::<Vec<_>>().len()
+    }
+
+    fn generate_keys(amount: u32) -> Result<(), ()> {
+        for n in 0..amount {
+            <KeyByHash<T>>::insert(n, n);
+        }
         Ok(())
     }
 }

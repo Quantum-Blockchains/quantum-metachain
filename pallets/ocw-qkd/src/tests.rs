@@ -70,6 +70,10 @@ impl Config for Test {
 #[test]
 fn should_generate_required_num_of_keys() {
     sp_io::TestExternalities::default().execute_with(|| {
-        assert_ok!(OcwQkd::generate_keys());
+        let keys_len_before =  OcwQkd::get_node_keys_len();
+        assert_eq!(keys_len_before, 0);
+        assert_ok!(OcwQkd::generate_keys(5));
+        let keys_len_after =  OcwQkd::get_node_keys_len();
+        assert_eq!(keys_len_after, 5);
     });
 }
