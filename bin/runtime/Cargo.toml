@@ -50,6 +50,7 @@ hex-literal = { version = "0.3.4", optional = true }
 
 # local packages
 ocw-qkd = { path = "../../pallets/ocw-qkd", default-features = false }
+randomness-qrng = { path = "../../pallets/randomness_qrng", default-features = false }
 
 [build-dependencies]
 substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.28" }

@@ -1,3 +1,5 @@
+#![cfg_attr(not(feature = "std"), no_std)]
+
 use frame_support::decl_error;
 use frame_support::traits::Randomness;
 use sp_runtime::offchain;

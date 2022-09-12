@@ -7,7 +7,6 @@
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 // A few exports that help ease life for downstream crates.
-pub mod pallet_randomness;
 pub use frame_support::{
     construct_runtime, parameter_types,
     traits::{
@@ -21,6 +20,7 @@ pub use frame_support::{
 };
 pub use frame_system::Call as SystemCall;
 pub use ocw_qkd::{self, Call as OcwQkdCall};
+pub use randomness_qrng;
 pub use pallet_balances::Call as BalancesCall;
 use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
@@ -269,13 +269,10 @@ impl pallet_sudo::Config for Runtime {
 impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
-    type Randomness = RandomnessCollectiveFlip;
+    type Randomness = RandomnessQRNG;
 }
 
-impl randomness::Config for Runtime {
-    type MyRandomness = (); //type that manages qRNG random generator?
-}
-impl pallet_randomness::Config for Runtime {}
+impl randomness_qrng::Config for Runtime {}
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
@@ -295,7 +292,7 @@ construct_runtime!(
         Sudo: pallet_sudo,
         // QMC pallets
         OcwQkd: ocw_qkd,
-        Random: pallet_randomness,
+        RandomnessQRNG: randomness_qrng,
     }
 );
 
