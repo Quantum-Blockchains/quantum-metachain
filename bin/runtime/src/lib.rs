@@ -19,6 +19,7 @@ pub use frame_support::{
     StorageValue,
 };
 pub use frame_system::Call as SystemCall;
+pub use ocw_qkd::{self, Call as OcwQkdCall};
 pub use pallet_balances::Call as BalancesCall;
 use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
@@ -264,6 +265,12 @@ impl pallet_sudo::Config for Runtime {
     type Call = Call;
 }
 
+impl ocw_qkd::Config for Runtime {
+    type Event = Event;
+    type Call = Call;
+    type Randomness = RandomnessCollectiveFlip;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
     pub struct Runtime
@@ -280,6 +287,8 @@ construct_runtime!(
         Balances: pallet_balances,
         TransactionPayment: pallet_transaction_payment,
         Sudo: pallet_sudo,
+        // QMC pallets
+        OcwQkd: ocw_qkd,
     }
 );
 
