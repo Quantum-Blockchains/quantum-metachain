@@ -4,14 +4,13 @@
 mod tests;
 
 use frame_support::traits::Randomness;
-use sp_std::vec::Vec;
 pub use pallet::*;
+
 use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[frame_support::pallet]
 pub mod pallet {
-    use frame_support::pallet_prelude::*;
-    use frame_support::traits::Randomness;
+    use frame_support::{pallet_prelude::*, traits::Randomness};
     use frame_system::pallet_prelude::*;
 
     use super::*;
@@ -60,15 +59,15 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
-    fn get_node_keys_len() -> usize {
-        <KeyByHash<T>>::iter_values().collect::<Vec<_>>().len()
+    fn _get_node_keys_len() -> usize {
+        <KeyByHash<T>>::iter_values().count()
     }
 
     fn generate_keys(amount: u32) -> Result<(), Error<T>> {
         for n in 0..amount {
             let (seed, _) = T::Randomness::random_seed();
-            let key: [u8; 32] = <[u8; 32]>::try_from(seed.as_ref())
-                .map_err(|_| CannotGenerateKeyFromEntropy)?;
+            let key: [u8; 32] =
+                <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| CannotGenerateKeyFromEntropy)?;
             log::debug!("Random Key generated: {:?}", &key);
             <KeyByHash<T>>::insert(n, key);
         }
