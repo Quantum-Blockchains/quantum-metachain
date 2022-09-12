@@ -1,5 +1,5 @@
 use frame_support::{
-    assert_ok, parameter_types,
+    parameter_types,
     traits::{ConstU32, ConstU64},
 };
 use sp_core::{sr25519::Signature, H256};
@@ -7,6 +7,7 @@ use sp_runtime::{
     testing::Header,
     traits::{BlakeTwo256, IdentityLookup, Verify},
 };
+use frame_support_test::TestRandomness;
 
 use crate as ocw_qkd;
 use crate::*;
@@ -65,15 +66,18 @@ impl frame_system::offchain::SigningTypes for Test {
 impl Config for Test {
     type Event = Event;
     type Call = Call;
+    type Randomness = TestRandomness<Self>;
 }
 
 #[test]
 fn should_generate_required_num_of_keys() {
     sp_io::TestExternalities::default().execute_with(|| {
         let keys_len_before =  OcwQkd::get_node_keys_len();
-        assert_eq!(keys_len_before, 0);
-        assert_ok!(OcwQkd::generate_keys(5));
+
+        OcwQkd::generate_keys(5).unwrap();
+
         let keys_len_after =  OcwQkd::get_node_keys_len();
+        assert_eq!(keys_len_before, 0);
         assert_eq!(keys_len_after, 5);
     });
 }

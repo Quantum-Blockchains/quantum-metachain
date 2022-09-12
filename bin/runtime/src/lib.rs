@@ -268,6 +268,7 @@ impl pallet_sudo::Config for Runtime {
 impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
+    type Randomness = RandomnessCollectiveFlip;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.

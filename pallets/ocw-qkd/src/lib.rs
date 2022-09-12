@@ -3,11 +3,15 @@
 #[cfg(test)]
 mod tests;
 
+use frame_support::traits::Randomness;
+use sp_std::vec::Vec;
 pub use pallet::*;
+use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::pallet_prelude::*;
+    use frame_support::traits::Randomness;
     use frame_system::pallet_prelude::*;
 
     use super::*;
@@ -16,6 +20,7 @@ pub mod pallet {
     pub trait Config: frame_system::Config {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
+        type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
     }
 
     #[pallet::pallet]
@@ -31,7 +36,10 @@ pub mod pallet {
                 block_number,
                 0
             );
-            Self::generate_keys(0).unwrap();
+            let result = Self::generate_keys(1);
+            if let Err(e) = result {
+                log::error!("Key generation failed: {:?}", e);
+            }
         }
     }
 
@@ -39,13 +47,16 @@ pub mod pallet {
     impl<T: Config> Pallet<T> {}
 
     #[pallet::event]
-    pub enum Event<T: Config> {
-        Sth,
+    pub enum Event<T: Config> {}
+
+    #[pallet::error]
+    pub enum Error<T> {
+        CannotGenerateKeyFromEntropy,
     }
 
     #[pallet::storage]
     #[pallet::getter(fn key_by_hash)]
-    pub(super) type KeyByHash<T> = StorageMap<_, Blake2_128Concat, u32, u32, ValueQuery>;
+    pub(super) type KeyByHash<T> = StorageMap<_, Blake2_128Concat, u32, [u8; 32], ValueQuery>;
 }
 
 impl<T: Config> Pallet<T> {
@@ -53,9 +64,13 @@ impl<T: Config> Pallet<T> {
         <KeyByHash<T>>::iter_values().collect::<Vec<_>>().len()
     }
 
-    fn generate_keys(amount: u32) -> Result<(), ()> {
+    fn generate_keys(amount: u32) -> Result<(), Error<T>> {
         for n in 0..amount {
-            <KeyByHash<T>>::insert(n, n);
+            let (seed, _) = T::Randomness::random_seed();
+            let key: [u8; 32] = <[u8; 32]>::try_from(seed.as_ref())
+                .map_err(|_| CannotGenerateKeyFromEntropy)?;
+            log::debug!("Random Key generated: {:?}", &key);
+            <KeyByHash<T>>::insert(n, key);
         }
         Ok(())
     }

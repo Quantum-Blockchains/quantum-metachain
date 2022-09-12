@@ -22,6 +22,9 @@ sp-io = { version = "6.0.0", default-features = false, git = "https://github.com
 sp-runtime = { version = "6.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.28" }
 sp-std = { version = "4.0.0", default-features = false, git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.28" }
 
+[dev-dependencies]
+frame-support-test = { version = "3.0.0", git = "https://github.com/paritytech/substrate.git", branch = "polkadot-v0.9.28" }
+
 [features]
 default = ["std"]
 std = [
