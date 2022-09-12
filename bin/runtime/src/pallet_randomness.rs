@@ -1,20 +1,14 @@
 use frame_support::decl_error;
 use frame_support::traits::Randomness;
 use sp_runtime::offchain;
-use sp_io::offchain_index;
+use sp_io;
+use frame_support::log::debug;
 pub use pallet::*;
-
-decl_error! {
-	pub enum Error {
-		HttpFetchingError,
-	}
-}
 
 #[frame_support::pallet]
 pub mod pallet {
     use super::*;
     use frame_support::dispatch::DispatchResult;
-    use frame_system::Event;
     use frame_system::pallet_prelude::*;
 
     #[pallet::pallet]
@@ -36,16 +30,47 @@ pub mod pallet {
 
 impl<T: Config> Randomness<T::Hash, T::BlockNumber> for Pallet<T> {
     fn random(subject: &[u8]) -> (T::Hash, T::BlockNumber) {
+        let block_number = <frame_system::Pallet<T>>::block_number();
         let timeout = sp_io::offchain::timestamp()
             .add(offchain::Duration::from_millis(5000));
 
         let request = offchain::http::Request::get("https://qrng.qbck.io/4148e4a4-ff17-4c77-a8a1-80d8bef3ea3b/qbck/block/bigint?size=1");
 
-        let pending = request
+        let pending = match request
             .deadline(timeout)
-            .send()
-            .map_err(|| <Error<>)?;
+            .send() {
+            Ok(t) => t,
+            Err(_err) => {
+                debug!("Couldn't send request to QRNG");
 
-        todo!()
+                return (T::Hash::default(), block_number);
+            }
+        };
+
+        let result = match pending.try_wait(timeout) {
+            Ok(t) => t,
+            Err(_err) => {
+                debug!("Couldn't send request to QRNG");
+
+                return (T::Hash::default(), block_number);
+            }
+        };
+        let response = match result {
+            Ok(t) => t,
+            Err(_err) => {
+                debug!("Couldn't send request to QRNG");
+
+                return (T::Hash::default(), block_number);
+            }
+        };
+
+        if response.code != 200 {
+            debug!("Unexpected status code: {}", response.code);
+
+            return (T::Hash::default(), block_number);
+        }
+
+
+        (T::Hash::default(), block_number)
     }
 }
