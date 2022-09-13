@@ -1,15 +1,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-use frame_support::decl_error;
 use frame_support::traits::Randomness;
 use frame_support::log::debug;
 use sp_runtime::offchain;
 use sp_io;
 use sp_std::vec::Vec;
 use sp_std::str;
+use sp_core::{Decode, Encode};
 pub use pallet::*;
-use crate::Error::HttpFetchError;
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 
 #[derive(Deserialize, Encode, Decode, Default)]
 struct QRNGResponse {
@@ -32,6 +31,7 @@ pub mod pallet {
     #[pallet::error]
     pub enum Error<T> {
         HttpFetchError,
+        DeserializeError,
     }
 
     #[pallet::call]
@@ -97,7 +97,14 @@ impl<T: Config> Randomness<T::Hash, T::BlockNumber> for Pallet<T> {
             }
         };
 
-        let qrng_result= serde_json::from_str(&response_body_string);
+        let _qrng_result = match serde_json::from_str(&response_body_string) {
+            Ok(t) => t,
+            Err(_err) => {
+                debug!("Couldn't resolve byte body to string");
+
+                return (T::Hash::default(), block_number);
+            }
+        };
 
         (T::Hash::default(), block_number)
     }
