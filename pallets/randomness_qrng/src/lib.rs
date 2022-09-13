@@ -2,10 +2,19 @@
 
 use frame_support::decl_error;
 use frame_support::traits::Randomness;
+use frame_support::log::debug;
 use sp_runtime::offchain;
 use sp_io;
-use frame_support::log::debug;
+use sp_std::vec::Vec;
+use sp_std::str;
 pub use pallet::*;
+use crate::Error::HttpFetchError;
+use serde::{Deserialize, Deserializer};
+
+#[derive(Deserialize, Encode, Decode, Default)]
+struct QRNGResponse {
+    data: Vec<u32>,
+}
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -20,6 +29,11 @@ pub mod pallet {
     #[pallet::config]
     pub trait Config: frame_system::Config {}
 
+    #[pallet::error]
+    pub enum Error<T> {
+        HttpFetchError,
+    }
+
     #[pallet::call]
     impl<T: Config> Pallet<T> {
         #[pallet::weight(10_000)]
@@ -32,6 +46,7 @@ pub mod pallet {
 
 impl<T: Config> Randomness<T::Hash, T::BlockNumber> for Pallet<T> {
     fn random(subject: &[u8]) -> (T::Hash, T::BlockNumber) {
+        debug!("Starting generating random number");
         let block_number = <frame_system::Pallet<T>>::block_number();
         let timeout = sp_io::offchain::timestamp()
             .add(offchain::Duration::from_millis(5000));
@@ -72,6 +87,17 @@ impl<T: Config> Randomness<T::Hash, T::BlockNumber> for Pallet<T> {
             return (T::Hash::default(), block_number);
         }
 
+        let response_body_bytes = response.body().collect::<Vec<u8>>();
+        let response_body_string = match str::from_utf8(&response_body_bytes) {
+            Ok(t) => t,
+            Err(_err) => {
+                debug!("Couldn't resolve byte body to string");
+
+                return (T::Hash::default(), block_number);
+            }
+        };
+
+        let qrng_result= serde_json::from_str(&response_body_string);
 
         (T::Hash::default(), block_number)
     }

@@ -4943,6 +4943,8 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "scale-info",
+ "serde",
+ "serde_json",
  "sp-core",
  "sp-io",
  "sp-runtime",
