@@ -67,17 +67,32 @@ impl Config for Test {
     type Event = Event;
     type Call = Call;
     type Randomness = TestRandomness<Self>;
+    type TargetKeysAmount = ConstU32<5>;
 }
 
 #[test]
 fn should_generate_required_num_of_keys() {
     sp_io::TestExternalities::default().execute_with(|| {
-        let keys_len_before = OcwQkd::_get_node_keys_len();
+        let keys_len_before = OcwQkd::get_node_keys_len();
 
         OcwQkd::generate_keys(5).unwrap();
 
-        let keys_len_after = OcwQkd::_get_node_keys_len();
+        let keys_len_after = OcwQkd::get_node_keys_len();
         assert_eq!(keys_len_before, 0);
         assert_eq!(keys_len_after, 5);
+    });
+}
+
+#[test]
+fn should_properly_calculate_amount_of_keysto_generate() {
+    sp_io::TestExternalities::default().execute_with(|| {
+
+        let amount_to_generate_before = OcwQkd::calculate_amount_to_generate();
+
+        OcwQkd::generate_keys(1).unwrap();
+
+        let amount_to_generate_after = OcwQkd::calculate_amount_to_generate();
+        assert_eq!(amount_to_generate_before, 5);
+        assert_eq!(amount_to_generate_after, 4);
     });
 }

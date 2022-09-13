@@ -4,6 +4,7 @@
 mod tests;
 
 use frame_support::traits::Randomness;
+use sp_runtime::traits::Get;
 pub use pallet::*;
 
 use crate::Error::CannotGenerateKeyFromEntropy;
@@ -20,6 +21,9 @@ pub mod pallet {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
+
+        #[pallet::constant]
+        type TargetKeysAmount: Get<u32>;
     }
 
     #[pallet::pallet]
@@ -30,15 +34,22 @@ pub mod pallet {
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
-            log::debug!(
+            let amount_to_generate = Self::calculate_amount_to_generate();
+
+            if amount_to_generate > 0 {
+                log::debug!(
                 "Block number: {:?} - generating {:?} single-use keys",
-                block_number,
-                0
+                &block_number,
+                &amount_to_generate
             );
-            let result = Self::generate_keys(1);
-            if let Err(e) = result {
-                log::error!("Key generation failed: {:?}", e);
-            }
+                let result = Self::generate_keys(amount_to_generate);
+                if let Err(e) = result {
+                    log::error!("Key generation failed: {:?}", e);
+                }
+            } else {
+                log::debug!("Block number: {:?} - skipping keys generation, target keys amount fulfilled",
+                    block_number);
+                }
         }
     }
 
@@ -59,8 +70,14 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
-    fn _get_node_keys_len() -> usize {
-        <KeyByHash<T>>::iter_values().count()
+
+    fn calculate_amount_to_generate() -> u32 {
+        let keys_len =  Self::get_node_keys_len();
+        T::TargetKeysAmount::get() - keys_len
+    }
+
+    fn get_node_keys_len() -> u32 {
+        <u32>::try_from(<KeyByHash<T>>::iter_values().count()).unwrap()
     }
 
     fn generate_keys(amount: u32) -> Result<(), Error<T>> {
@@ -69,8 +86,11 @@ impl<T: Config> Pallet<T> {
             let key: [u8; 32] =
                 <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| CannotGenerateKeyFromEntropy)?;
             log::debug!("Random Key generated: {:?}", &key);
-            <KeyByHash<T>>::insert(n, key);
+            <KeyByHash<T>>::mutate(|n, &mut keys_by_hash| n, keys_by_hash.insert(n, key));
+
+            // <KeyByHash<T>>::insert(n, key);
         }
+        let keys_len = Self::get_node_keys_len();
         Ok(())
     }
 }
