@@ -4,15 +4,18 @@
 mod tests;
 
 use frame_support::traits::Randomness;
+use sp_runtime::offchain::storage::{StorageRetrievalError, StorageValueRef};
 use sp_runtime::traits::Get;
 pub use pallet::*;
+use sp_std::collections::btree_map::BTreeMap;
 
-use crate::Error::CannotGenerateKeyFromEntropy;
+use crate::Error::{CannotFetchFromLocalStorage, CannotGenerateKeyFromEntropy};
 
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::{pallet_prelude::*, traits::Randomness};
     use frame_system::pallet_prelude::*;
+    use sp_runtime::offchain::storage::StorageValueRef;
 
     use super::*;
 
@@ -27,13 +30,26 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
-    #[pallet::generate_store(pub (super) trait Store)]
+    #[pallet::without_storage_info]
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
+            let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
+            let temp_storage = match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
+                Ok(v) => match v {
+                    Some(t) => t,
+                    None() => log::debug!("None found")
+                },
+                Err(err) => {
+                    log::error!("Couldn't get keys from local storage, {:?}", err);
+
+                    return;
+                }
+            };
+
             let amount_to_generate = Self::calculate_amount_to_generate();
 
             if amount_to_generate > 0 {
@@ -42,7 +58,7 @@ pub mod pallet {
                 &block_number,
                 &amount_to_generate
             );
-                let result = Self::generate_keys(amount_to_generate);
+                let result = Self::generate_keys(storage, amount_to_generate);
                 if let Err(e) = result {
                     log::error!("Key generation failed: {:?}", e);
                 }
@@ -62,33 +78,33 @@ pub mod pallet {
     #[pallet::error]
     pub enum Error<T> {
         CannotGenerateKeyFromEntropy,
+        CannotFetchFromLocalStorage,
     }
 
-    #[pallet::storage]
-    #[pallet::getter(fn key_by_hash)]
-    pub(super) type KeyByHash<T> = StorageMap<_, Blake2_128Concat, u32, [u8; 32], ValueQuery>;
+    // #[pallet::storage]
+    // #[pallet::getter(fn get_store)]
+    // pub(super) type KeyByHash<T> = StorageValue<_, BTreeMap<u8, [u8; 32]>, ValueQuery>;
 }
 
 impl<T: Config> Pallet<T> {
-
     fn calculate_amount_to_generate() -> u32 {
         let keys_len =  Self::get_node_keys_len();
         T::TargetKeysAmount::get() - keys_len
     }
 
     fn get_node_keys_len() -> u32 {
-        <u32>::try_from(<KeyByHash<T>>::iter_values().count()).unwrap()
+        let storage = KeyByHash::<T>::get();
+        <u32>::try_from(storage.len()).unwrap()
     }
 
-    fn generate_keys(amount: u32) -> Result<(), Error<T>> {
+    fn generate_keys(storage: StorageValueRef, amount: u32) -> Result<(), Error<T>> {
         for n in 0..amount {
             let (seed, _) = T::Randomness::random_seed();
             let key: [u8; 32] =
                 <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| CannotGenerateKeyFromEntropy)?;
             log::debug!("Random Key generated: {:?}", &key);
-            <KeyByHash<T>>::mutate(|n, &mut keys_by_hash| n, keys_by_hash.insert(n, key));
 
-            // <KeyByHash<T>>::insert(n, key);
+
         }
         let keys_len = Self::get_node_keys_len();
         Ok(())
