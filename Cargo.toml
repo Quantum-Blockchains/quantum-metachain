@@ -1,6 +1,7 @@
 [workspace]
 members = [
 	"bin/node",
-	"bin/runtime"
+	"bin/runtime",
+	"primitives/core",
 ]
 
