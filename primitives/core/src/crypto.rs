@@ -265,12 +265,12 @@ pub trait Ss58Codec: Sized + AsMut<[u8]> + AsRef<[u8]> + ByteArray {
 		const CHECKSUM_LEN: usize = 2;
 		let body_len = Self::LEN;
 
-		// let data = s.from_base58().map_err(|_| PublicError::BadBase58)?;
+		let data = s.from_base58().map_err(|_| PublicError::BadBase58)?;
 
-		let data = match s.from_base58() {
-			Ok(data) => data,
-			Err(err) => panic!("Kostia error {:?}", err)
-		};
+		// let data = match s.from_base58() {
+		// 	Ok(data) => data,
+		// 	Err(err) => panic!("Kostia error {:?}", err)
+		// };
 
 		if data.len() < 2 {
 			return Err(PublicError::BadLength)
