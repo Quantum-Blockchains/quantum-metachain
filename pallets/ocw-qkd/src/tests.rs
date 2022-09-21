@@ -4,6 +4,7 @@ use frame_support::{
 };
 use frame_support_test::TestRandomness;
 use sp_core::{sr25519::Signature, H256};
+use sp_std::collections::btree_map::BTreeMap;
 use sp_runtime::{
     testing::Header,
     traits::{BlakeTwo256, IdentityLookup, Verify},
@@ -73,11 +74,12 @@ impl Config for Test {
 #[test]
 fn should_generate_required_num_of_keys() {
     sp_io::TestExternalities::default().execute_with(|| {
-        let keys_len_before = OcwQkd::get_node_keys_len();
+        let storage = &mut <BTreeMap<u8, [u8; 32]>>::default();
+        let keys_len_before = OcwQkd::get_node_keys_len(storage);
 
-        OcwQkd::generate_keys(5).unwrap();
+        OcwQkd::generate_keys(storage, 5).unwrap();
 
-        let keys_len_after = OcwQkd::get_node_keys_len();
+        let keys_len_after = OcwQkd::get_node_keys_len(storage);
         assert_eq!(keys_len_before, 0);
         assert_eq!(keys_len_after, 5);
     });
@@ -86,12 +88,12 @@ fn should_generate_required_num_of_keys() {
 #[test]
 fn should_properly_calculate_amount_of_keysto_generate() {
     sp_io::TestExternalities::default().execute_with(|| {
+        let storage = &mut <BTreeMap<u8, [u8; 32]>>::default();
+        let amount_to_generate_before = OcwQkd::calculate_amount_to_generate(storage);
 
-        let amount_to_generate_before = OcwQkd::calculate_amount_to_generate();
+        OcwQkd::generate_keys(storage, 1).unwrap();
 
-        OcwQkd::generate_keys(1).unwrap();
-
-        let amount_to_generate_after = OcwQkd::calculate_amount_to_generate();
+        let amount_to_generate_after = OcwQkd::calculate_amount_to_generate(storage);
         assert_eq!(amount_to_generate_before, 5);
         assert_eq!(amount_to_generate_after, 4);
     });

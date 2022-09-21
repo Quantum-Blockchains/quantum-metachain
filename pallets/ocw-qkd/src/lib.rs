@@ -4,7 +4,11 @@
 mod tests;
 
 use frame_support::traits::Randomness;
-use sp_runtime::offchain::storage::{StorageRetrievalError, StorageValueRef};
+use sp_runtime::offchain::{
+    Duration,
+    storage::{StorageRetrievalError, StorageValueRef},
+    storage_lock::{BlockAndTime, StorageLock},
+};
 use sp_runtime::traits::Get;
 pub use pallet::*;
 use sp_std::collections::btree_map::BTreeMap;
@@ -38,10 +42,12 @@ pub mod pallet {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
             let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
-            let temp_storage = match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
+            let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
                 Ok(v) => match v {
                     Some(t) => t,
-                    None() => log::debug!("None found")
+                    None => {
+                        <BTreeMap<u8, [u8; 32]>>::default()
+                    },
                 },
                 Err(err) => {
                     log::error!("Couldn't get keys from local storage, {:?}", err);
@@ -50,7 +56,9 @@ pub mod pallet {
                 }
             };
 
-            let amount_to_generate = Self::calculate_amount_to_generate();
+
+
+            let amount_to_generate = Self::calculate_amount_to_generate(temp_storage);
 
             if amount_to_generate > 0 {
                 log::debug!(
@@ -58,7 +66,7 @@ pub mod pallet {
                 &block_number,
                 &amount_to_generate
             );
-                let result = Self::generate_keys(storage, amount_to_generate);
+                let result = Self::generate_keys(temp_storage, amount_to_generate);
                 if let Err(e) = result {
                     log::error!("Key generation failed: {:?}", e);
                 }
@@ -66,6 +74,8 @@ pub mod pallet {
                 log::debug!("Block number: {:?} - skipping keys generation, target keys amount fulfilled",
                     block_number);
                 }
+
+            storage_persistent.set(temp_storage);
         }
     }
 
@@ -80,33 +90,27 @@ pub mod pallet {
         CannotGenerateKeyFromEntropy,
         CannotFetchFromLocalStorage,
     }
-
-    // #[pallet::storage]
-    // #[pallet::getter(fn get_store)]
-    // pub(super) type KeyByHash<T> = StorageValue<_, BTreeMap<u8, [u8; 32]>, ValueQuery>;
 }
 
 impl<T: Config> Pallet<T> {
-    fn calculate_amount_to_generate() -> u32 {
-        let keys_len =  Self::get_node_keys_len();
+    fn calculate_amount_to_generate(storage: &mut BTreeMap<u8, [u8; 32]>) -> u32 {
+        let keys_len =  Self::get_node_keys_len(storage);
         T::TargetKeysAmount::get() - keys_len
     }
 
-    fn get_node_keys_len() -> u32 {
-        let storage = KeyByHash::<T>::get();
+    fn get_node_keys_len(storage: &mut BTreeMap<u8, [u8; 32]>) -> u32 {
         <u32>::try_from(storage.len()).unwrap()
     }
 
-    fn generate_keys(storage: StorageValueRef, amount: u32) -> Result<(), Error<T>> {
+    fn generate_keys(storage: &mut BTreeMap<u8, [u8; 32]>, amount: u32) -> Result<(), Error<T>> {
         for n in 0..amount {
             let (seed, _) = T::Randomness::random_seed();
             let key: [u8; 32] =
                 <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| CannotGenerateKeyFromEntropy)?;
             log::debug!("Random Key generated: {:?}", &key);
 
-
+            storage.insert(<u8>::try_from(n).unwrap(), key);
         }
-        let keys_len = Self::get_node_keys_len();
         Ok(())
     }
 }
