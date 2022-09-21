@@ -1,41 +1,46 @@
 # Quantum Meta Chain
 
 ## Build
-```
+
+```bash
 cargo build --release
 ```
 
 ## Run
-### Alice node
+
+Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
+
+```bash
+./target/release/qmc-node \
+--base-path /tmp/<name_node> \
+--chain ./quantumMetachainSpecRaw.json \
+--name <name_number> \
+--port <port_number> \
+--ws-port <port_number> \
+--rpc-port <port_number> \
+--telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
+--rpc-methods Unsafe \
+--no-mdns
 ```
+
+For example:
+
+```bash
 ./target/release/qmc-node \
 --base-path /tmp/alice \
---chain local \
---alice \
+--chain ./quantumMetachainSpecRaw.json \
+--name alice \
 --port 30333 \
 --ws-port 9945 \
 --rpc-port 9933 \
---node-key 0000000000000000000000000000000000000000000000000000000000000001 \
 --telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
---validator
-```
-
-### Bob node
-```
-./target/release/qmc-node \
---base-path /tmp/bob \
---chain local \
---bob \
---port 30334 \
---ws-port 9946 \
---rpc-port 9934 \
---telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
---validator \
---bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
+--rpc-methods Unsafe \
+--no-mdns
 ```
 
 ## Docker
-```
+
+```bash
 docker build -t quantum-metachain .
 docker run -it quantum-metachain
 ```
@@ -43,24 +48,33 @@ docker run -it quantum-metachain
 ## Test
 
 ### Unit tests
-```
+
+```bash
 cargo test
 ```
 
 ## Documentation
+
 ### Generate
-```
+
+```bash
 cargo doc
 ```
+
 ### Display
+
 In order to display documentation go to `target/doc/<crate you want to see>` and open in the browser located there `index.html` file, e.g.
+
 #### MAC
-```
+
+```bash
 cd target/doc/qmc_p2p
 open -a "Google Chrome" index.html
 ```
+
 #### Linux
-```
+
+```bash
 cd target/doc/qmc_p2p
 firefox index.html
 ```
