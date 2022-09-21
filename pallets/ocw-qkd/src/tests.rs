@@ -4,11 +4,11 @@ use frame_support::{
 };
 use frame_support_test::TestRandomness;
 use sp_core::{sr25519::Signature, H256};
-use sp_std::collections::btree_map::BTreeMap;
 use sp_runtime::{
     testing::Header,
     traits::{BlakeTwo256, IdentityLookup, Verify},
 };
+use sp_std::collections::btree_map::BTreeMap;
 
 use crate as ocw_qkd;
 use crate::*;
@@ -86,7 +86,7 @@ fn should_generate_required_num_of_keys() {
 }
 
 #[test]
-fn should_properly_calculate_amount_of_keysto_generate() {
+fn should_properly_calculate_amount_of_keys_to_generate() {
     sp_io::TestExternalities::default().execute_with(|| {
         let storage = &mut <BTreeMap<u8, [u8; 32]>>::default();
         let amount_to_generate_before = OcwQkd::calculate_amount_to_generate(storage);

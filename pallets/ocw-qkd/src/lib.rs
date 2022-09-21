@@ -4,16 +4,11 @@
 mod tests;
 
 use frame_support::traits::Randomness;
-use sp_runtime::offchain::{
-    Duration,
-    storage::{StorageRetrievalError, StorageValueRef},
-    storage_lock::{BlockAndTime, StorageLock},
-};
-use sp_runtime::traits::Get;
 pub use pallet::*;
+use sp_runtime::traits::Get;
 use sp_std::collections::btree_map::BTreeMap;
 
-use crate::Error::{CannotFetchFromLocalStorage, CannotGenerateKeyFromEntropy};
+use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -45,9 +40,7 @@ pub mod pallet {
             let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
                 Ok(v) => match v {
                     Some(t) => t,
-                    None => {
-                        <BTreeMap<u8, [u8; 32]>>::default()
-                    },
+                    None => <BTreeMap<u8, [u8; 32]>>::default(),
                 },
                 Err(err) => {
                     log::error!("Couldn't get keys from local storage, {:?}", err);
@@ -55,25 +48,24 @@ pub mod pallet {
                     return;
                 }
             };
-
-
-
             let amount_to_generate = Self::calculate_amount_to_generate(temp_storage);
 
             if amount_to_generate > 0 {
                 log::debug!(
-                "Block number: {:?} - generating {:?} single-use keys",
-                &block_number,
-                &amount_to_generate
-            );
+                    "Block number: {:?} - generating {:?} single-use keys",
+                    &block_number,
+                    &amount_to_generate
+                );
                 let result = Self::generate_keys(temp_storage, amount_to_generate);
                 if let Err(e) = result {
                     log::error!("Key generation failed: {:?}", e);
                 }
             } else {
-                log::debug!("Block number: {:?} - skipping keys generation, target keys amount fulfilled",
-                    block_number);
-                }
+                log::debug!(
+                    "Block number: {:?} - skipping keys generation, target keys amount fulfilled",
+                    block_number
+                );
+            }
 
             storage_persistent.set(temp_storage);
         }
@@ -88,13 +80,12 @@ pub mod pallet {
     #[pallet::error]
     pub enum Error<T> {
         CannotGenerateKeyFromEntropy,
-        CannotFetchFromLocalStorage,
     }
 }
 
 impl<T: Config> Pallet<T> {
     fn calculate_amount_to_generate(storage: &mut BTreeMap<u8, [u8; 32]>) -> u32 {
-        let keys_len =  Self::get_node_keys_len(storage);
+        let keys_len = Self::get_node_keys_len(storage);
         T::TargetKeysAmount::get() - keys_len
     }
 
