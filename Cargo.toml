@@ -3,5 +3,6 @@ members = [
 	"bin/node",
 	"bin/runtime",
 	"primitives/core",
+	"pallets/ocw-qkd",
 ]
 
