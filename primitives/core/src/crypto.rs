@@ -23,7 +23,8 @@
 use crate::hexdisplay::HexDisplay;
 use crate::{ed25519, sr25519};
 #[cfg(feature = "std")]
-use base58::{FromBase58, ToBase58};
+// use base58::{FromBase58, ToBase58};
+use bs58;
 use codec::{Decode, Encode, MaxEncodedLen};
 #[cfg(feature = "std")]
 use rand::{rngs::OsRng, RngCore};
@@ -265,12 +266,9 @@ pub trait Ss58Codec: Sized + AsMut<[u8]> + AsRef<[u8]> + ByteArray {
 		const CHECKSUM_LEN: usize = 2;
 		let body_len = Self::LEN;
 
-		let data = s.from_base58().map_err(|_| PublicError::BadBase58)?;
+		// let data = s.from_base58().map_err(|_| PublicError::BadBase58)?;
 
-		// let data = match s.from_base58() {
-		// 	Ok(data) => data,
-		// 	Err(err) => panic!("Kostia error {:?}", err)
-		// };
+		let data = bs58::decode(s).into_vec().map_err(|_| PublicError::BadBase58)?;
 
 		if data.len() < 2 {
 			return Err(PublicError::BadLength)
@@ -323,6 +321,7 @@ pub trait Ss58Codec: Sized + AsMut<[u8]> + AsRef<[u8]> + ByteArray {
 	/// Return the ss58-check string for this key.
 	#[cfg(feature = "std")]
 	fn to_ss58check_with_version(&self, version: Ss58AddressFormat) -> String {
+
 		// We mask out the upper two bits of the ident - SS58 Prefix currently only supports 14-bits
 		let ident: u16 = u16::from(version) & 0b0011_1111_1111_1111;
 		let mut v = match ident {
@@ -340,7 +339,9 @@ pub trait Ss58Codec: Sized + AsMut<[u8]> + AsRef<[u8]> + ByteArray {
 		v.extend(self.as_ref());
 		let r = ss58hash(&v);
 		v.extend(&r.as_bytes()[0..2]);
-		v.to_base58()
+
+		// v.to_base58()
+		bs58::encode(v).into_string()
 	}
 
 	/// Return the ss58-check string for this key.

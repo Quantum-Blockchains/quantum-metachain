@@ -6766,6 +6766,7 @@ dependencies = [
  "base58",
  "bitflags",
  "blake2-rfc",
+ "bs58",
  "byteorder",
  "criterion",
  "dyn-clonable",
