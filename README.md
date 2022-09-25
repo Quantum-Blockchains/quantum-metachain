@@ -12,9 +12,9 @@ Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
 
 ```bash
 ./target/release/qmc-node \
---base-path /tmp/<name_node> \
+--base-path /tmp/<node_name> \
 --chain ./quantumMetachainSpecRaw.json \
---name <name_number> \
+--name <node_name> \
 --port <port_number> \
 --ws-port <port_number> \
 --rpc-port <port_number> \
@@ -68,13 +68,13 @@ In order to display documentation go to `target/doc/<crate you want to see>` and
 #### MAC
 
 ```bash
-cd target/doc/qmc_p2p
+cd target/doc/qmc_node
 open -a "Google Chrome" index.html
 ```
 
 #### Linux
 
 ```bash
-cd target/doc/qmc_p2p
+cd target/doc/qmc_node
 firefox index.html
 ```
