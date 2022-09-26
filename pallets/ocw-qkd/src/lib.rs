@@ -10,7 +10,7 @@ use sp_std::collections::btree_map::BTreeMap;
 use sp_runtime::offchain::http::Request;
 use sp_io::*;
 
-use crate::Error::CannotGenerateKeyFromEntropy;
+use crate::Error::{CannotFetchHttpRequest, CannotGenerateKeyFromEntropy};
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -112,7 +112,7 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    fn generate_qkd_key() {
+    fn generate_qkd_key() -> Result<(), Error<T>> {
         let mut request = Request::get("https://52.208.97.40:8082/api/v1/keys/BobSAE/enc_keys");
 
         let timeout = sp_io::offchain::timestamp()
@@ -130,7 +130,9 @@ impl<T: Config> Pallet<T> {
 
         if response.code != 200 {
             log::error!("Unexpected http request status code: {}", response.code);
-            return;
+            return Err(CannotFetchHttpRequest);
         }
+
+        Ok(())
     }
 }
