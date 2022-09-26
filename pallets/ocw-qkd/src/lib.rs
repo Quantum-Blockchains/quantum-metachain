@@ -7,6 +7,8 @@ use frame_support::traits::Randomness;
 pub use pallet::*;
 use sp_runtime::traits::Get;
 use sp_std::collections::btree_map::BTreeMap;
+use sp_runtime::offchain::http::Request;
+use sp_io::*;
 
 use crate::Error::CannotGenerateKeyFromEntropy;
 
@@ -26,6 +28,9 @@ pub mod pallet {
 
         #[pallet::constant]
         type TargetKeysAmount: Get<u32>;
+
+        // #[pallet::constant]
+        // type BaseQKDURL: Get<String>;
     }
 
     #[pallet::pallet]
@@ -36,6 +41,7 @@ pub mod pallet {
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
+            Self::generate_qkd_key();
             let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
             let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
                 Ok(v) => match v {
@@ -80,6 +86,7 @@ pub mod pallet {
     #[pallet::error]
     pub enum Error<T> {
         CannotGenerateKeyFromEntropy,
+        CannotFetchHttpRequest,
     }
 }
 
@@ -103,5 +110,27 @@ impl<T: Config> Pallet<T> {
             storage.insert(<u8>::try_from(n).unwrap(), key);
         }
         Ok(())
+    }
+
+    fn generate_qkd_key() {
+        let mut request = Request::get("https://52.208.97.40:8082/api/v1/keys/BobSAE/enc_keys");
+
+        let timeout = sp_io::offchain::timestamp()
+            .add(rt_offchain::Duration::from_millis(5_000));
+
+        let pending = request
+            .deadline(timeout) // Setting the timeout time
+            .send() // Sending the request out by the host
+            .map_err(|_| Error::<T>::CannotFetchHttpRequest)?;
+
+        let response = pending
+            .try_wait(timeout)
+            .map_err(|_| Error::<T>::CannotFetchHttpRequest)?
+            .map_err(|_| Error::<T>::CannotFetchHttpRequest)?;
+
+        if response.code != 200 {
+            log::error!("Unexpected http request status code: {}", response.code);
+            return;
+        }
     }
 }
