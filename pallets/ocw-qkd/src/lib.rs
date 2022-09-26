@@ -9,6 +9,7 @@ use sp_runtime::traits::Get;
 use sp_std::collections::btree_map::BTreeMap;
 use sp_runtime::offchain::http::Request;
 use sp_io::*;
+use sp_runtime::offchain;
 
 use crate::Error::{CannotFetchHttpRequest, CannotGenerateKeyFromEntropy};
 
@@ -116,7 +117,7 @@ impl<T: Config> Pallet<T> {
         let mut request = Request::get("https://52.208.97.40:8082/api/v1/keys/BobSAE/enc_keys");
 
         let timeout = sp_io::offchain::timestamp()
-            .add(rt_offchain::Duration::from_millis(5_000));
+            .add(offchain::Duration::from_millis(5_000));
 
         let pending = request
             .deadline(timeout) // Setting the timeout time
