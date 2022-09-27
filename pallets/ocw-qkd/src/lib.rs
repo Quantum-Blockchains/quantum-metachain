@@ -42,7 +42,7 @@ pub mod pallet {
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
-            Self::generate_qkd_key();
+            let result = Self::generate_qkd_key();
             let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
             let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
                 Ok(v) => match v {
@@ -114,7 +114,7 @@ impl<T: Config> Pallet<T> {
     }
 
     fn generate_qkd_key() -> Result<(), Error<T>> {
-        let mut request = Request::get("https://52.208.97.40:8082/api/v1/keys/BobSAE/enc_keys");
+        let mut request = Request::get("http://83.15.55.158:8888/alice/status");
 
         let timeout = sp_io::offchain::timestamp()
             .add(offchain::Duration::from_millis(5_000));
