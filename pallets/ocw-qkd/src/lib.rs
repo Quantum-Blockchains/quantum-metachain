@@ -6,12 +6,43 @@ mod tests;
 use frame_support::traits::Randomness;
 pub use pallet::*;
 use sp_runtime::traits::Get;
-use sp_std::collections::btree_map::BTreeMap;
+use sp_std::{
+    str,
+    collections::btree_map::BTreeMap,
+    vec::Vec,
+};
+use codec::{Encode, Decode};
 use sp_runtime::offchain::http::Request;
-use sp_io::*;
-use sp_runtime::offchain;
+use sp_runtime::{
+    offchain,
+    RuntimeDebug,
+};
+use serde::{Deserialize, Deserializer};
+use serde_json;
 
-use crate::Error::{CannotFetchHttpRequest, CannotGenerateKeyFromEntropy};
+use crate::Error::{FetchHttpRequestError, GenerateKeyFromEntropyError, ResponseDeserializeError};
+
+#[derive(Deserialize, Encode, Decode, Default, RuntimeDebug, scale_info::TypeInfo)]
+pub struct QkdKeyResponse {
+    keys: Vec<QkdKey>,
+}
+
+#[derive(Deserialize, Encode, Decode, Default, RuntimeDebug, scale_info::TypeInfo)]
+struct QkdKey {
+    #[serde(deserialize_with = "de_string_to_bytes")]
+    key_id: Vec<u8>,
+
+    #[serde(deserialize_with = "de_string_to_bytes")]
+    key: Vec<u8>,
+}
+
+pub fn de_string_to_bytes<'de, D>(de: D) -> Result<Vec<u8>, D::Error>
+where
+D: Deserializer<'de>,
+{
+    let s: &str = Deserialize::deserialize(de)?;
+    Ok(s.as_bytes().to_vec())
+}
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -42,7 +73,12 @@ pub mod pallet {
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
-            let result = Self::generate_qkd_key();
+            let key  = match Self::generate_qkd_key() {
+                Ok(t) => t,
+                Err(err) => {
+                    log::error!("Couldn't generate QKD keys: {:?}", err)
+                }
+            };
             let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
             let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
                 Ok(v) => match v {
@@ -86,8 +122,9 @@ pub mod pallet {
 
     #[pallet::error]
     pub enum Error<T> {
-        CannotGenerateKeyFromEntropy,
-        CannotFetchHttpRequest,
+        GenerateKeyFromEntropyError,
+        FetchHttpRequestError,
+        ResponseDeserializeError,
     }
 }
 
@@ -105,7 +142,7 @@ impl<T: Config> Pallet<T> {
         for n in 0..amount {
             let (seed, _) = T::Randomness::random_seed();
             let key: [u8; 32] =
-                <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| CannotGenerateKeyFromEntropy)?;
+                <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| GenerateKeyFromEntropyError)?;
             log::debug!("Random Key generated: {:?}", &key);
 
             storage.insert(<u8>::try_from(n).unwrap(), key);
@@ -114,7 +151,11 @@ impl<T: Config> Pallet<T> {
     }
 
     fn generate_qkd_key() -> Result<(), Error<T>> {
+<<<<<<< HEAD
         let mut request = Request::get("http://83.15.55.158:8888/alice/status");
+=======
+        let request = Request::get("http://83.15.55.158:8888/alice/enc_keys?size=256");
+>>>>>>> d2e6a84 (Write simple message struct)
 
         let timeout = sp_io::offchain::timestamp()
             .add(offchain::Duration::from_millis(5_000));
@@ -122,17 +163,23 @@ impl<T: Config> Pallet<T> {
         let pending = request
             .deadline(timeout) // Setting the timeout time
             .send() // Sending the request out by the host
-            .map_err(|_| Error::<T>::CannotFetchHttpRequest)?;
+            .map_err(|_| Error::<T>::FetchHttpRequestError)?;
 
         let response = pending
             .try_wait(timeout)
-            .map_err(|_| Error::<T>::CannotFetchHttpRequest)?
-            .map_err(|_| Error::<T>::CannotFetchHttpRequest)?;
+            .map_err(|_| Error::<T>::FetchHttpRequestError)?
+            .map_err(|_| Error::<T>::FetchHttpRequestError)?;
 
         if response.code != 200 {
             log::error!("Unexpected http request status code: {}", response.code);
-            return Err(CannotFetchHttpRequest);
+            return Err(FetchHttpRequestError);
         }
+
+        let resp_bytes = response.body().collect::<Vec<u8>>();
+
+        let resp_str = str::from_utf8(&resp_bytes).map_err(|_| GenerateKeyFromEntropyError)?;
+
+        let key: QkdKeyResponse = serde_json::from_str(&resp_str).map_err(|_| ResponseDeserializeError)?;
 
         Ok(())
     }
