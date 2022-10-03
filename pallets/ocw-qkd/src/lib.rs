@@ -12,13 +12,15 @@ use sp_std::{
     vec::Vec,
 };
 use codec::{Encode, Decode};
-use sp_runtime::offchain::http::Request;
+use sp_runtime::offchain::http::{Request, Response};
 use sp_runtime::{
     offchain,
     RuntimeDebug,
 };
 use serde::{Deserialize, Deserializer};
 use serde_json;
+use serde_json::Value;
+use serde_with::json;
 
 use crate::Error::{FetchHttpRequestError, GenerateKeyFromEntropyError, ResponseDeserializeError};
 
@@ -30,8 +32,7 @@ pub struct QkdKeyResponse {
 #[derive(Deserialize, Encode, Decode, Default, RuntimeDebug, scale_info::TypeInfo)]
 struct QkdKey {
     #[serde(deserialize_with = "de_string_to_bytes")]
-    key_id: Vec<u8>,
-
+    key_ID: Vec<u8>,
     #[serde(deserialize_with = "de_string_to_bytes")]
     key: Vec<u8>,
 }
@@ -74,9 +75,13 @@ pub mod pallet {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
             let key  = match Self::generate_qkd_key() {
-                Ok(t) => t,
+                Ok(t) => {
+                    log::info!("{}", t['keys']);
+                    t
+                },
                 Err(err) => {
-                    log::error!("Couldn't generate QKD keys: {:?}", err)
+                    log::error!("Couldn't generate QKD keys: {:?}", err);
+                    return;
                 }
             };
             let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
@@ -150,12 +155,8 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    fn generate_qkd_key() -> Result<(), Error<T>> {
-<<<<<<< HEAD
-        let mut request = Request::get("http://83.15.55.158:8888/alice/status");
-=======
-        let request = Request::get("http://83.15.55.158:8888/alice/enc_keys?size=256");
->>>>>>> d2e6a84 (Write simple message struct)
+    fn generate_qkd_key() -> Result<(Value), Error<T>> {
+        let request = Request::get("http://193.28.230.244:8888/alice/enc_keys?size=256");
 
         let timeout = sp_io::offchain::timestamp()
             .add(offchain::Duration::from_millis(5_000));
@@ -179,8 +180,11 @@ impl<T: Config> Pallet<T> {
 
         let resp_str = str::from_utf8(&resp_bytes).map_err(|_| GenerateKeyFromEntropyError)?;
 
-        let key: QkdKeyResponse = serde_json::from_str(&resp_str).map_err(|_| ResponseDeserializeError)?;
+        let key: Value = serde_json::from_str(&resp_str).map_err(|err| {
+            log::error!("error from serde: {}", err);
+            ResponseDeserializeError
+        })?;
 
-        Ok(())
+        Ok(key)
     }
 }
