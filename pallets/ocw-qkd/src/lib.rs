@@ -76,7 +76,7 @@ pub mod pallet {
         fn offchain_worker(block_number: T::BlockNumber) {
             let key  = match Self::generate_qkd_key() {
                 Ok(t) => {
-                    log::info!("{}", t['keys']);
+                    log::info!("{}", t["keys"]);
                     t
                 },
                 Err(err) => {
@@ -180,11 +180,17 @@ impl<T: Config> Pallet<T> {
 
         let resp_str = str::from_utf8(&resp_bytes).map_err(|_| GenerateKeyFromEntropyError)?;
 
-        let key: Value = serde_json::from_str(&resp_str).map_err(|err| {
+        let keys_resp: Value = serde_json::from_str(&resp_str).map_err(|err| {
             log::error!("error from serde: {}", err);
             ResponseDeserializeError
         })?;
 
-        Ok(key)
+        let keys_list = &keys_resp["keys"];
+        let key = &keys_list[0];
+
+        log::info!("key: {}", key["key"]);
+        log::info!("keyID: {}", key["key_ID"]);
+
+        Ok(keys)
     }
 }
