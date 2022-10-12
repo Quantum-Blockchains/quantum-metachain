@@ -9,7 +9,8 @@ use jsonrpsee::{
     proc_macros::rpc,
     types::error::{CallError, ErrorObject},
 };
-use libp2p::PeerId;
+// use libp2p::PeerId;
+use sc_network::PeerId;
 use sc_service::config::NetworkConfiguration;
 use serde::{Deserialize, Serialize};
 use serde_json;

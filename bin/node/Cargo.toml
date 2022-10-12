@@ -23,6 +23,7 @@ sp-core = { version = "6.0.0", git = "https://github.com/Quantum-Blockchains/sub
 sc-executor = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", features = ["wasmtime"] , branch = "kostia/JEQB-126/Configure_psk_key_file" }
 sc-service = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", features = ["wasmtime"] , branch = "kostia/JEQB-126/Configure_psk_key_file" }
 sc-telemetry = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file" }
+sc-network = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file" }
 sc-keystore = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file" }
 sc-transaction-pool = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file" }
 sc-transaction-pool-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file" }
@@ -52,7 +53,7 @@ substrate-frame-rpc-system = { version = "4.0.0-dev", git = "https://github.com/
 pallet-transaction-payment-rpc = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file" }
 futures = '0.3.1'
 sc-consensus-manual-seal = {version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-126/Configure_psk_key_file"}
-libp2p = "0.48.0"
+# libp2p = "0.48.0"
 serde = { version = "1.0.136", features = ["derive"] }
 serde_json = "1.0.86"
 reqwest = "0.11.12"
