@@ -53,11 +53,5 @@ where
 	module.merge(TransactionPayment::new(client.clone()).into_rpc())?;
     module.merge(PskApiServer::into_rpc(Psk::new(client.clone(), config.clone())))?;
 
-	// Extend this RPC with a custom API by using the following syntax.
-	// `YourRpcStruct` should have a reference to a client, which is needed
-	// to call into the runtime.
-    // `module.merge(YourRpcTrait::into_rpc(YourRpcStruct::new(ReferenceToClient, ...)))?;`
-	// module.merge(Silly::new(ReferenceToClient, ...)))?;
-
 	Ok(module)
 }

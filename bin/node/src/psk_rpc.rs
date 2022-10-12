@@ -1,3 +1,5 @@
+//! Psk specific RPC methods.
+
 use std::sync::Arc;
 
 use jsonrpsee::{
@@ -12,45 +14,49 @@ use serde_json;
 use base64::decode;
 use hex;
 
+/// Structure corrsponding to the data received from the QKD simulator
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Key {
+    /// Key identifier
     pub key_ID: String,
+    /// Key
 	pub key: String,
 }
 
-// #[derive(Deserialize)]
-// pub struct ResponseQKD {
-//     key_ID: String,
-//     key: String,
-// }
-
+/// Psk RPC methods
 #[rpc(client, server)]
 pub trait PskApi {
+    /// Returns the encripted pre-shared key.
 	#[method(name = "psk_getKey", aliases = ["getKey"])]
     async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key>;
 }
 
 /// Error type of this RPC api.
-pub enum ErrorRPC {
-	/// The transaction was not decodable.
-	PeerIdError,
+pub enum Error {
+    /// Parse peer id failed.
+	ParsePeerIdError,
+    /// The call to runtime failed.
+	RuntimeError,
 }
 
-impl From<ErrorRPC> for i32 {
-	fn from(e: ErrorRPC) -> i32 {
+impl From<Error> for i32 {
+	fn from(e: Error) -> i32 {
 		match e {
-			ErrorRPC::PeerIdError => 1,
+			Error::ParsePeerIdError => 1,
+            Error::RuntimeError => 2,
 		}
 	}
 }
 
+/// An implementation of Psk-specific RPC methods on full client.
 pub struct Psk<C> {
 	client: Arc<C>,
     config: NetworkConfiguration,
 }
 
 impl<C> Psk<C> {
+    /// Create new `FullSystem` given client and configuration.
 	pub fn new(client: Arc<C>, config: NetworkConfiguration) -> Self {
 		Self { client, config }
 	}
@@ -65,33 +71,33 @@ where
 
         let peerId = peer_id.parse::<PeerId>().map_err(|e| {
             CallError::Custom(ErrorObject::owned(
-                ErrorRPC::PeerIdError.into(),
+                Error::ParsePeerIdError.into(),
                 "Invalid peer id.",
                 Some(e.to_string()),
             ))
         })?;
 
-        // todo Sprawdzic czy jest dostempny endpoint dla peer_id
+        // TODO Get URL from configuration by peer id.
+
+        let url = "http://212.244.177.99:9082/api/v1/keys/AliceSAE/enc_keys?size=256";
 
         let psk = self.config.pre_shared_key.clone().into_pre_share_key()?;
         let psk_string = psk.to_string();
         let split = psk_string.split("\n");
         let vec = split.collect::<Vec<&str>>();
         let mut psk_bytes = hex::decode(vec[2].to_string()).unwrap();
-        
-
-        let url = "http://212.244.177.99:9082/api/v1/keys/AliceSAE/enc_keys?size=256";
+    
         let response = reqwest::get(url).await.map_err(|e| {
             CallError::Custom(ErrorObject::owned(
-                ErrorRPC::PeerIdError.into(),
-                "Unable to query nonce.",
+                Error::RuntimeError.into(),
+                "Error in getting the key from the QKD simulator.",
                 Some(e.to_string()),
             ))
         })?;
         let body = response.text().await.map_err(|e| {
             CallError::Custom(ErrorObject::owned(
-                ErrorRPC::PeerIdError.into(),
-                "Unable to query nonce.",
+                Error::RuntimeError.into(),
+                "Error in getting the key from the QKD simulator.",
                 Some(e.to_string()),
             ))
         })?;
