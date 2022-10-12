@@ -2,7 +2,6 @@
 
 use std::{sync::Arc, time::Duration};
 
-use jsonrpsee::RpcModule;
 use qmc_runtime::{self, opaque::Block, RuntimeApi};
 use sc_client_api::{BlockBackend, ExecutorProvider};
 use sc_consensus_aura::{ImportQueueParams, SlotProportion, StartAuraParams};

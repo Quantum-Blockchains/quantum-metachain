@@ -1,22 +1,18 @@
 //! Psk specific RPC methods.
 
-use std::sync::Arc;
-
 use base64::decode;
-use hex;
 use jsonrpsee::{
     core::{async_trait, RpcResult},
     proc_macros::rpc,
     types::error::{CallError, ErrorObject},
 };
-// use libp2p::PeerId;
 use sc_network::PeerId;
 use sc_service::config::NetworkConfiguration;
 use serde::{Deserialize, Serialize};
-use serde_json;
 
 /// Structure corrsponding to the data received from the QKD simulator
 #[derive(Serialize, Deserialize)]
+#[allow(non_snake_case)]
 pub struct Key {
     pub key_ID: String,
     pub key: String,
@@ -53,25 +49,22 @@ impl From<Error> for i32 {
 }
 
 /// An implementation of Psk-specific RPC methods on full client.
-pub struct Psk<C> {
-    client: Arc<C>,
+pub struct Psk {
     config: NetworkConfiguration,
 }
 
-impl<C> Psk<C> {
+impl Psk {
     /// Create new `FullSystem` given client and configuration.
-    pub fn new(client: Arc<C>, config: NetworkConfiguration) -> Self {
-        Self { client, config }
+    pub fn new( config: NetworkConfiguration) -> Self {
+        Self { config }
     }
 }
 
 #[async_trait]
-impl<C> PskApiServer for Psk<C>
-where
-    C: Send + Sync + 'static,
+impl PskApiServer for Psk
 {
     async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key> {
-        let peerId = peer_id.parse::<PeerId>().map_err(|e| {
+        let _peer_id = peer_id.parse::<PeerId>().map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::ParsePeerIdError.into(),
                 "Invalid peer id.",
