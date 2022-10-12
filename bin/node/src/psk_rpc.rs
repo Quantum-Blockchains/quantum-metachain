@@ -55,14 +55,13 @@ pub struct Psk {
 
 impl Psk {
     /// Create new `FullSystem` given client and configuration.
-    pub fn new( config: NetworkConfiguration) -> Self {
+    pub fn new(config: NetworkConfiguration) -> Self {
         Self { config }
     }
 }
 
 #[async_trait]
-impl PskApiServer for Psk
-{
+impl PskApiServer for Psk {
     async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key> {
         let _peer_id = peer_id.parse::<PeerId>().map_err(|e| {
             CallError::Custom(ErrorObject::owned(
