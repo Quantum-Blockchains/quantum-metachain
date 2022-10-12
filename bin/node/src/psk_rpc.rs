@@ -2,77 +2,74 @@
 
 use std::sync::Arc;
 
-use jsonrpsee::{
-	core::{RpcResult, async_trait },
-	proc_macros::rpc,
-    types::error::{CallError, ErrorObject},
-};
-use sc_service::config::NetworkConfiguration;
-use libp2p::PeerId;
-use serde::{Deserialize, Serialize};
-use serde_json;
 use base64::decode;
 use hex;
+use jsonrpsee::{
+    core::{async_trait, RpcResult},
+    proc_macros::rpc,
+    types::error::{CallError, ErrorObject},
+};
+use libp2p::PeerId;
+use sc_service::config::NetworkConfiguration;
+use serde::{Deserialize, Serialize};
+use serde_json;
 
 /// Structure corrsponding to the data received from the QKD simulator
 #[derive(Serialize, Deserialize)]
 pub struct Key {
     pub key_ID: String,
-	pub key: String,
+    pub key: String,
 }
 
 #[derive(Deserialize)]
 pub struct Keys {
-    pub keys: Vec<Key>
+    pub keys: Vec<Key>,
 }
 
 /// Psk RPC methods
 #[rpc(client, server)]
 pub trait PskApi {
     /// Returns the encripted pre-shared key.
-	#[method(name = "psk_getKey", aliases = ["getKey"])]
+    #[method(name = "psk_getKey", aliases = ["getKey"])]
     async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key>;
 }
 
 /// Error type of this RPC api.
 pub enum Error {
     /// Parse peer id failed.
-	ParsePeerIdError,
+    ParsePeerIdError,
     /// The call to runtime failed.
-	RuntimeError,
+    RuntimeError,
 }
 
 impl From<Error> for i32 {
-	fn from(e: Error) -> i32 {
-		match e {
-			Error::ParsePeerIdError => 1,
+    fn from(e: Error) -> i32 {
+        match e {
+            Error::ParsePeerIdError => 1,
             Error::RuntimeError => 2,
-		}
-	}
+        }
+    }
 }
-
 
 /// An implementation of Psk-specific RPC methods on full client.
 pub struct Psk<C> {
-	client: Arc<C>,
+    client: Arc<C>,
     config: NetworkConfiguration,
 }
 
-
 impl<C> Psk<C> {
     /// Create new `FullSystem` given client and configuration.
-	pub fn new(client: Arc<C>, config: NetworkConfiguration) -> Self {
-		Self { client, config }
-	}
+    pub fn new(client: Arc<C>, config: NetworkConfiguration) -> Self {
+        Self { client, config }
+    }
 }
 
 #[async_trait]
-impl<C>PskApiServer for Psk<C>
+impl<C> PskApiServer for Psk<C>
 where
-	C: Send + Sync + 'static,
+    C: Send + Sync + 'static,
 {
     async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key> {
-
         let peerId = peer_id.parse::<PeerId>().map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::ParsePeerIdError.into(),
@@ -84,14 +81,18 @@ where
         // TODO Get URL from configuration by peer id.
 
         let url = "http://212.244.177.99:9082/api/v1/keys/AliceSAE/enc_keys?size=256";
-
-        let psk = self.config.pre_shared_key.clone().into_pre_share_key().map_err(|e| {
-            CallError::Custom(ErrorObject::owned(
-                Error::RuntimeError.into(),
-                "Pre-shared key not",
-                Some(e.to_string()),
-            ))
-        })?;
+        let psk = self
+            .config
+            .pre_shared_key
+            .clone()
+            .into_pre_share_key()
+            .map_err(|e| {
+                CallError::Custom(ErrorObject::owned(
+                    Error::RuntimeError.into(),
+                    "Pre-shared key not",
+                    Some(e.to_string()),
+                ))
+            })?;
         let psk_string = psk.to_string();
         let split = psk_string.split("\n");
         let vec = split.collect::<Vec<&str>>();
@@ -102,7 +103,6 @@ where
                 Some(e.to_string()),
             ))
         })?;
-    
         let response = reqwest::get(url).await.map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::RuntimeError.into(),
@@ -137,12 +137,9 @@ where
         for i in 0..32 {
             psk_bytes[i] ^= qkd_key_bytes[i];
         }
-        
-        Ok(
-            Key {
-                key_ID: qkd_key.keys[0].key_ID.clone(),
-                key: hex::encode(psk_bytes),
-            }
-        )		
+        Ok(Key {
+            key_ID: qkd_key.keys[0].key_ID.clone(),
+            key: hex::encode(psk_bytes),
+        })
     }
 }
