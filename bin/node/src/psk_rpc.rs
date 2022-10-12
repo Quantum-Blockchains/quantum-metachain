@@ -15,13 +15,15 @@ use base64::decode;
 use hex;
 
 /// Structure corrsponding to the data received from the QKD simulator
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Serialize, Deserialize)]
 pub struct Key {
-    /// Key identifier
     pub key_ID: String,
-    /// Key
 	pub key: String,
+}
+
+#[derive(Deserialize)]
+pub struct Keys {
+    pub keys: Vec<Key>
 }
 
 /// Psk RPC methods
@@ -49,11 +51,13 @@ impl From<Error> for i32 {
 	}
 }
 
+
 /// An implementation of Psk-specific RPC methods on full client.
 pub struct Psk<C> {
 	client: Arc<C>,
     config: NetworkConfiguration,
 }
+
 
 impl<C> Psk<C> {
     /// Create new `FullSystem` given client and configuration.
@@ -81,11 +85,23 @@ where
 
         let url = "http://212.244.177.99:9082/api/v1/keys/AliceSAE/enc_keys?size=256";
 
-        let psk = self.config.pre_shared_key.clone().into_pre_share_key()?;
+        let psk = self.config.pre_shared_key.clone().into_pre_share_key().map_err(|e| {
+            CallError::Custom(ErrorObject::owned(
+                Error::RuntimeError.into(),
+                "Pre-shared key not",
+                Some(e.to_string()),
+            ))
+        })?;
         let psk_string = psk.to_string();
         let split = psk_string.split("\n");
         let vec = split.collect::<Vec<&str>>();
-        let mut psk_bytes = hex::decode(vec[2].to_string()).unwrap();
+        let mut psk_bytes = hex::decode(vec[2].to_string()).map_err(|e| {
+            CallError::Custom(ErrorObject::owned(
+                Error::RuntimeError.into(),
+                "Error in decoding pre-shared key.",
+                Some(e.to_string()),
+            ))
+        })?;
     
         let response = reqwest::get(url).await.map_err(|e| {
             CallError::Custom(ErrorObject::owned(
@@ -102,9 +118,21 @@ where
             ))
         })?;
 
-        let qkd_key: Vec<Key> = serde_json::from_str(&body)?;
+        let qkd_key: Keys = serde_json::from_str(&body).map_err(|e| {
+            CallError::Custom(ErrorObject::owned(
+                Error::RuntimeError.into(),
+                "Error in deserialization of data received from QKD simulator",
+                Some(e.to_string()),
+            ))
+        })?;
 
-        let qkd_key_bytes = decode(qkd_key[0].key.clone()).unwrap();
+        let qkd_key_bytes = decode(qkd_key.keys[0].key.clone()).map_err(|e| {
+            CallError::Custom(ErrorObject::owned(
+                Error::RuntimeError.into(),
+                "Error in decoding of QKD key.",
+                Some(e.to_string()),
+            ))
+        })?;
 
         for i in 0..32 {
             psk_bytes[i] ^= qkd_key_bytes[i];
@@ -112,7 +140,7 @@ where
         
         Ok(
             Key {
-                key_ID: qkd_key[0].key_ID.clone(),
+                key_ID: qkd_key.keys[0].key_ID.clone(),
                 key: hex::encode(psk_bytes),
             }
         )		
