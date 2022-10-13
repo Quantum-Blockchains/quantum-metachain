@@ -87,9 +87,9 @@ impl PskApiServer for Psk {
                 ))
             })?;
         let psk_string = psk.to_string();
-        let split = psk_string.split("\n");
+        let split = psk_string.split('\n');
         let vec = split.collect::<Vec<&str>>();
-        let mut psk_bytes = hex::decode(vec[2].to_string()).map_err(|e| {
+        let mut psk_bytes = hex::decode(vec[2]).map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::RuntimeError.into(),
                 "Error in decoding pre-shared key.",
