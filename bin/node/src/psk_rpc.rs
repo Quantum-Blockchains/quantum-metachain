@@ -6,21 +6,37 @@ use jsonrpsee::{
     proc_macros::rpc,
     types::error::{CallError, ErrorObject},
 };
-use sc_network::PeerId;
+use sc_network::{PeerId, PreSharedKey};
 use sc_service::config::NetworkConfiguration;
 use serde::{Deserialize, Serialize};
+
+trait ToBytes {
+    fn to_bytes(self) -> Result<[u8; 32], hex::FromHexError>;
+}
+
+impl ToBytes for PreSharedKey {
+    fn to_bytes(self) -> Result<[u8; 32], hex::FromHexError> {
+        let psk_string = self.to_string();
+        let split = psk_string.split('\n');
+        let vec = split.collect::<Vec<&str>>();
+        let vec_bytes = hex::decode(vec[2])?;
+        let mut bytes: [u8; 32] = [0; 32];
+        bytes[..32].copy_from_slice(&vec_bytes[..32]);
+        Ok(bytes)
+    }
+}
 
 /// Structure corrsponding to the data received from the QKD simulator
 #[derive(Serialize, Deserialize)]
 #[allow(non_snake_case)]
-pub struct Key {
+pub struct QkdKey {
     pub key_ID: String,
     pub key: String,
 }
 
 #[derive(Deserialize)]
-pub struct Keys {
-    pub keys: Vec<Key>,
+pub struct QkdResponse {
+    pub keys: Vec<QkdKey>,
 }
 
 /// Psk RPC methods
@@ -28,7 +44,7 @@ pub struct Keys {
 pub trait PskApi {
     /// Returns the encripted pre-shared key.
     #[method(name = "psk_getKey", aliases = ["getKey"])]
-    async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key>;
+    async fn psk_get_key(&self, peer_id: String) -> RpcResult<QkdKey>;
 }
 
 /// Error type of this RPC api.
@@ -62,7 +78,7 @@ impl Psk {
 
 #[async_trait]
 impl PskApiServer for Psk {
-    async fn psk_get_key(&self, peer_id: String) -> RpcResult<Key> {
+    async fn psk_get_key(&self, peer_id: String) -> RpcResult<QkdKey> {
         let _peer_id = peer_id.parse::<PeerId>().map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::ParsePeerIdError.into(),
@@ -73,7 +89,7 @@ impl PskApiServer for Psk {
 
         // TODO Get URL from configuration by peer id.
 
-        let url = "http://212.244.177.99:9082/api/v1/keys/AliceSAE/enc_keys?size=256";
+        let qkd_url = "http://212.244.177.99:9082/api/v1/keys/AliceSAE/enc_keys?size=256";
         let psk = self
             .config
             .pre_shared_key
@@ -82,21 +98,18 @@ impl PskApiServer for Psk {
             .map_err(|e| {
                 CallError::Custom(ErrorObject::owned(
                     Error::RuntimeError.into(),
-                    "Pre-shared key not",
+                    "Pre-shared key not found.",
                     Some(e.to_string()),
                 ))
             })?;
-        let psk_string = psk.to_string();
-        let split = psk_string.split('\n');
-        let vec = split.collect::<Vec<&str>>();
-        let mut psk_bytes = hex::decode(vec[2]).map_err(|e| {
+        let mut psk_bytes = psk.to_bytes().map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::RuntimeError.into(),
                 "Error in decoding pre-shared key.",
                 Some(e.to_string()),
             ))
         })?;
-        let response = reqwest::get(url).await.map_err(|e| {
+        let response = reqwest::get(qkd_url).await.map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::RuntimeError.into(),
                 "Error in getting the key from the QKD simulator.",
@@ -111,7 +124,7 @@ impl PskApiServer for Psk {
             ))
         })?;
 
-        let qkd_key: Keys = serde_json::from_str(&body).map_err(|e| {
+        let qkd_key: QkdResponse = serde_json::from_str(&body).map_err(|e| {
             CallError::Custom(ErrorObject::owned(
                 Error::RuntimeError.into(),
                 "Error in deserialization of data received from QKD simulator",
@@ -130,7 +143,7 @@ impl PskApiServer for Psk {
         for i in 0..32 {
             psk_bytes[i] ^= qkd_key_bytes[i];
         }
-        Ok(Key {
+        Ok(QkdKey {
             key_ID: qkd_key.keys[0].key_ID.clone(),
             key: hex::encode(psk_bytes),
         })

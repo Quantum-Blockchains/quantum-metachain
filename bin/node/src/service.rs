@@ -225,15 +225,12 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
     let prometheus_registry = config.prometheus_registry().cloned();
 
     let rpc_extensions_builder = {
-        let client = client.clone();
-        let pool = transaction_pool.clone();
+        // let client = client.clone();
+        // let pool = transaction_pool.clone();
         let config = config.network.clone();
-        Box::new(move |deny_unsafe, _| {
+        Box::new(move |_, _| {
             let deps = crate::rpc::FullDeps {
-                client: client.clone(),
-                pool: pool.clone(),
                 config: config.clone(),
-                deny_unsafe,
             };
             crate::rpc::create_full(deps).map_err(Into::into)
         })
