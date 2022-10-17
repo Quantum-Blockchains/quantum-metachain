@@ -6,8 +6,11 @@
     "/ip4/193.28.230.244/tcp/30333/p2p/12D3KooWMFV7xY2UweNGHEyRF3eWqsGn21pHAaNtfNmAzGNzgecH"
   ],
   "telemetryEndpoints": null,
-  "protocolId": null,
-  "properties": null,
+  "protocolId": "qmc1",
+  "properties": {
+    "tokenDecimals": 15,
+    "tokenSymbol": "QBIT"
+  },
   "codeSubstitutes": {},
   "genesis": {
     "raw": {
