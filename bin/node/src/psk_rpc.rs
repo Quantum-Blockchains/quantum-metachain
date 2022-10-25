@@ -90,8 +90,9 @@ impl PskApiServer for Psk {
         let mut qkd_url = String::new();
         let addrs = self.config.qkd_addr.clone();
 
-        if addrs.is_empty() {
+        if !addrs.is_empty() {
             for item in &addrs {
+                println!("kostia");
                 if item.peer_id == _peer_id {
                     qkd_url.push_str("http://");
                     qkd_url.push_str(&item.host.to_string());
