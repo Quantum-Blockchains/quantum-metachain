@@ -90,12 +90,12 @@ impl PskApiServer for Psk {
         let mut qkd_url = String::new();
         let addrs = self.config.qkd_addr.clone();
 
-        if addrs.is_empty(){
-            for i in 0..addrs.len(){
-                if addrs[i].peer_id == _peer_id {
+        if addrs.is_empty() {
+            for item in &addrs {
+                if item.peer_id == _peer_id {
                     qkd_url.push_str("http://");
-                    qkd_url.push_str(&addrs[i].host.to_string());
-                    let d: String = addrs[i].path.clone().unwrap();
+                    qkd_url.push_str(&item.host.to_string());
+                    let d: String = item.path.clone().unwrap();
                     qkd_url.push_str(&d);
                     qkd_url.push_str("/enc_keys?size=256");
                 }
@@ -103,7 +103,9 @@ impl PskApiServer for Psk {
         }
 
         if qkd_url.is_empty() {
-            return Err(jsonrpsee::core::error::Error::Custom("The provided peer id doers not have a qkd address configured.".to_string()))
+            return Err(jsonrpsee::core::error::Error::Custom(
+                "The provided peer id doers not have a qkd address configured.".to_string(),
+            ));
         }
 
         let psk = self
