@@ -216,11 +216,12 @@ dependencies = [
 
 [[package]]
 name = "async-lock"
-version = "2.5.0"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e97a171d191782fba31bb902b14ad94e24a68145032b7eedf871ab0bc0d077b6"
+checksum = "c8101efe8695a6c17e02911402145357e718ac92d3ff88ae8419e84b1707b685"
 dependencies = [
  "event-listener",
+ "futures-lite",
 ]
 
 [[package]]
@@ -754,9 +755,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "3.2.21"
+version = "3.2.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ed5341b2301a26ab80be5cbdced622e80ed808483c52e45e3310a877d3b37d7"
+checksum = "71655c45cb9845d3270c9d6df84ebe72b4dad3c2ba3f7023ad47c144e4e473a5"
 dependencies = [
  "atty",
  "bitflags",
@@ -1637,7 +1638,7 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 [[package]]
 name = "fork-tree"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
 ]
@@ -1654,7 +1655,7 @@ dependencies = [
 [[package]]
 name = "frame-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1676,7 +1677,7 @@ dependencies = [
 [[package]]
 name = "frame-benchmarking-cli"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "Inflector",
  "chrono",
@@ -1727,7 +1728,7 @@ dependencies = [
 [[package]]
 name = "frame-executive"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1755,7 +1756,7 @@ dependencies = [
 [[package]]
 name = "frame-support"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "bitflags",
  "frame-metadata",
@@ -1786,7 +1787,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "Inflector",
  "frame-support-procedural-tools",
@@ -1798,7 +1799,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support-procedural-tools-derive",
  "proc-macro-crate",
@@ -1810,7 +1811,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools-derive"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1820,7 +1821,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-support-test-pallet",
@@ -1843,7 +1844,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test-pallet"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1854,7 +1855,7 @@ dependencies = [
 [[package]]
 name = "frame-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "log",
@@ -1871,7 +1872,7 @@ dependencies = [
 [[package]]
 name = "frame-system-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -1886,7 +1887,7 @@ dependencies = [
 [[package]]
 name = "frame-system-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -1895,7 +1896,7 @@ dependencies = [
 [[package]]
 name = "frame-try-runtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "sp-api",
@@ -2040,6 +2041,10 @@ name = "futures-timer"
 version = "3.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e64b03909df88034c26dc1547e8970b91f98bdb65165d6a4e9110d94263dbb2c"
+dependencies = [
+ "gloo-timers",
+ "send_wrapper",
+]
 
 [[package]]
 name = "futures-util"
@@ -2162,6 +2167,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "gloo-net"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec897194fb9ac576c708f63d35604bc58f2a262b8cec0fabfed26f3991255f21"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "futures-sink",
+ "gloo-utils",
+ "js-sys",
+ "pin-project",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
 name = "gloo-timers"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2171,6 +2196,19 @@ dependencies = [
  "futures-core",
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "gloo-utils"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40913a05c8297adca04392f707b1e73b12ba7b8eab7244a4961580b1fd34063c"
+dependencies = [
+ "js-sys",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
@@ -2186,9 +2224,9 @@ dependencies = [
 
 [[package]]
 name = "h2"
-version = "0.3.14"
+version = "0.3.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ca32592cf21ac7ccab1825cd87f6c9b3d9022c44d086172ed0966bec8af30be"
+checksum = "5f9f29bc9dda355256b2916cf526ab02ce0aeaaaf2bad60d65ef3f12f11dd0f4"
 dependencies = [
  "bytes",
  "fnv",
@@ -2402,6 +2440,7 @@ dependencies = [
  "rustls-native-certs",
  "tokio",
  "tokio-rustls",
+ "webpki-roots",
 ]
 
 [[package]]
@@ -2632,10 +2671,13 @@ version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8bd0d559d5e679b1ab2f869b486a11182923863b1b3ee8b421763cdd707b783a"
 dependencies = [
+ "jsonrpsee-client-transport",
  "jsonrpsee-core",
+ "jsonrpsee-http-client",
  "jsonrpsee-http-server",
  "jsonrpsee-proc-macros",
  "jsonrpsee-types",
+ "jsonrpsee-wasm-client",
  "jsonrpsee-ws-client",
  "jsonrpsee-ws-server",
  "tracing",
@@ -2647,7 +2689,11 @@ version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8752740ecd374bcbf8b69f3e80b0327942df76f793f8d4e60d3355650c31fb74"
 dependencies = [
+ "anyhow",
+ "futures-channel",
+ "futures-timer",
  "futures-util",
+ "gloo-net",
  "http",
  "jsonrpsee-core",
  "jsonrpsee-types",
@@ -2692,6 +2738,27 @@ dependencies = [
  "tracing",
  "tracing-futures",
  "unicase",
+ "wasm-bindgen-futures",
+]
+
+[[package]]
+name = "jsonrpsee-http-client"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52f7c0e2333ab2115c302eeb4f137c8a4af5ab609762df68bbda8f06496677c9"
+dependencies = [
+ "async-trait",
+ "hyper",
+ "hyper-rustls",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-futures",
 ]
 
 [[package]]
@@ -2736,6 +2803,17 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tracing",
+]
+
+[[package]]
+name = "jsonrpsee-wasm-client"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "597b4eb94730e7695d0a2a429bc37a12e6e84d12680fdafb9b8f5f53652aab57"
+dependencies = [
+ "jsonrpsee-client-transport",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
 ]
 
 [[package]]
@@ -2850,9 +2928,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "libc"
-version = "0.2.135"
+version = "0.2.137"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68783febc7782c6c5cb401fbda4de5a9898be1762314da0bb2c10ced61f18b0c"
+checksum = "fc7fcc620a3bff7cdd7a365be3376c97191aeaccc2a603e600951e452615bf89"
 
 [[package]]
 name = "libloading"
@@ -3697,14 +3775,14 @@ dependencies = [
 
 [[package]]
 name = "mio"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "57ee1c23c7c63b0c9250c339ffdc69255f110b298b901b9f6c82547b7b87caaf"
+checksum = "e5d732bc30207a6423068df043e3d02e0735b155ad7ce1a6f76fe2baa5b158de"
 dependencies = [
  "libc",
  "log",
  "wasi 0.11.0+wasi-snapshot-preview1",
- "windows-sys 0.36.1",
+ "windows-sys 0.42.0",
 ]
 
 [[package]]
@@ -4158,7 +4236,7 @@ dependencies = [
 [[package]]
 name = "pallet-aura"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4174,7 +4252,7 @@ dependencies = [
 [[package]]
 name = "pallet-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4189,7 +4267,7 @@ dependencies = [
 [[package]]
 name = "pallet-balances"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4204,7 +4282,7 @@ dependencies = [
 [[package]]
 name = "pallet-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4227,7 +4305,7 @@ dependencies = [
 [[package]]
 name = "pallet-randomness-collective-flip"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4241,7 +4319,7 @@ dependencies = [
 [[package]]
 name = "pallet-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4262,7 +4340,7 @@ dependencies = [
 [[package]]
 name = "pallet-sudo"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4276,7 +4354,7 @@ dependencies = [
 [[package]]
 name = "pallet-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4294,7 +4372,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4310,7 +4388,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "jsonrpsee",
  "pallet-transaction-payment-rpc-runtime-api",
@@ -4325,7 +4403,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "pallet-transaction-payment",
  "parity-scale-codec",
@@ -4611,9 +4689,9 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pkg-config"
-version = "0.3.25"
+version = "0.3.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1df8c4ec4b0627e53bdf214615ad287367e482558cf84b109250b37464dc03ae"
+checksum = "6ac9a59f73473f1b8d852421e59e64809f025994837ef743615c6d0c5b305160"
 
 [[package]]
 name = "platforms"
@@ -5189,7 +5267,7 @@ dependencies = [
 [[package]]
 name = "remote-externalities"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "env_logger",
  "jsonrpsee",
@@ -5470,7 +5548,7 @@ dependencies = [
 [[package]]
 name = "sc-allocator"
 version = "4.1.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "log",
  "sp-core",
@@ -5481,7 +5559,7 @@ dependencies = [
 [[package]]
 name = "sc-basic-authorship"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "futures-timer",
@@ -5504,7 +5582,7 @@ dependencies = [
 [[package]]
 name = "sc-block-builder"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "sc-client-api",
@@ -5520,7 +5598,7 @@ dependencies = [
 [[package]]
 name = "sc-chain-spec"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "impl-trait-for-tuples",
  "memmap2",
@@ -5537,7 +5615,7 @@ dependencies = [
 [[package]]
 name = "sc-chain-spec-derive"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -5548,7 +5626,7 @@ dependencies = [
 [[package]]
 name = "sc-cli"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "chrono",
  "clap",
@@ -5587,7 +5665,7 @@ dependencies = [
 [[package]]
 name = "sc-client-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "fnv",
  "futures",
@@ -5615,7 +5693,7 @@ dependencies = [
 [[package]]
 name = "sc-client-db"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "hash-db",
  "kvdb",
@@ -5640,7 +5718,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "futures",
@@ -5664,7 +5742,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-aura"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "futures",
@@ -5693,7 +5771,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "fork-tree",
@@ -5735,7 +5813,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-epochs"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "fork-tree",
  "parity-scale-codec",
@@ -5748,7 +5826,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-manual-seal"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "assert_matches",
  "async-trait",
@@ -5782,7 +5860,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "futures",
@@ -5807,7 +5885,7 @@ dependencies = [
 [[package]]
 name = "sc-executor"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "lazy_static",
  "lru",
@@ -5834,7 +5912,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-common"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -5850,7 +5928,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-wasmi"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -5865,7 +5943,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-wasmtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "cfg-if",
  "libc",
@@ -5885,7 +5963,7 @@ dependencies = [
 [[package]]
 name = "sc-finality-grandpa"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "ahash",
  "async-trait",
@@ -5926,7 +6004,7 @@ dependencies = [
 [[package]]
 name = "sc-informant"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "ansi_term",
  "futures",
@@ -5943,7 +6021,7 @@ dependencies = [
 [[package]]
 name = "sc-keystore"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "hex",
@@ -5958,10 +6036,11 @@ dependencies = [
 [[package]]
 name = "sc-network"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "asynchronous-codec",
+ "base64",
  "bitflags",
  "bytes",
  "cid",
@@ -5972,6 +6051,7 @@ dependencies = [
  "futures-timer",
  "hex",
  "ip_network",
+ "jsonrpsee",
  "libp2p",
  "linked-hash-map",
  "linked_hash_set",
@@ -5984,6 +6064,7 @@ dependencies = [
  "prost-build",
  "rand 0.7.3",
  "regex",
+ "reqwest",
  "sc-block-builder",
  "sc-client-api",
  "sc-consensus",
@@ -6008,7 +6089,7 @@ dependencies = [
 [[package]]
 name = "sc-network-common"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "bitflags",
@@ -6029,7 +6110,7 @@ dependencies = [
 [[package]]
 name = "sc-network-gossip"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "ahash",
  "futures",
@@ -6047,7 +6128,7 @@ dependencies = [
 [[package]]
 name = "sc-network-light"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "hex",
@@ -6068,7 +6149,7 @@ dependencies = [
 [[package]]
 name = "sc-network-sync"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "fork-tree",
  "futures",
@@ -6096,7 +6177,7 @@ dependencies = [
 [[package]]
 name = "sc-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "bytes",
  "fnv",
@@ -6125,7 +6206,7 @@ dependencies = [
 [[package]]
 name = "sc-peerset"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "libp2p",
@@ -6138,7 +6219,7 @@ dependencies = [
 [[package]]
 name = "sc-proposer-metrics"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "log",
  "substrate-prometheus-endpoint",
@@ -6147,7 +6228,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "hash-db",
@@ -6177,7 +6258,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc-api"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "jsonrpsee",
@@ -6200,7 +6281,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc-server"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "jsonrpsee",
@@ -6213,7 +6294,7 @@ dependencies = [
 [[package]]
 name = "sc-service"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "directories",
@@ -6280,7 +6361,7 @@ dependencies = [
 [[package]]
 name = "sc-state-db"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -6294,7 +6375,7 @@ dependencies = [
 [[package]]
 name = "sc-sysinfo"
 version = "6.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "libc",
@@ -6313,7 +6394,7 @@ dependencies = [
 [[package]]
 name = "sc-telemetry"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "chrono",
  "futures",
@@ -6331,7 +6412,7 @@ dependencies = [
 [[package]]
 name = "sc-tracing"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "ansi_term",
  "atty",
@@ -6362,7 +6443,7 @@ dependencies = [
 [[package]]
 name = "sc-tracing-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -6373,7 +6454,7 @@ dependencies = [
 [[package]]
 name = "sc-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "futures-timer",
@@ -6399,7 +6480,7 @@ dependencies = [
 [[package]]
 name = "sc-transaction-pool-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "log",
@@ -6412,7 +6493,7 @@ dependencies = [
 [[package]]
 name = "sc-utils"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "futures-timer",
@@ -6512,9 +6593,9 @@ dependencies = [
 
 [[package]]
 name = "secp256k1"
-version = "0.24.0"
+version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7649a0b3ffb32636e60c7ce0d70511eda9c52c658cd0634e194d5a19943aeff"
+checksum = "ff55dc09d460954e9ef2fa8a7ced735a964be9981fd50e870b2b3b0705e14964"
 dependencies = [
  "secp256k1-sys",
 ]
@@ -6592,6 +6673,12 @@ name = "semver-parser"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
+
+[[package]]
+name = "send_wrapper"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f638d531eccd6e23b980caf34876660d38e265409d8e99b397ab71eb3612fad0"
 
 [[package]]
 name = "serde"
@@ -6844,7 +6931,7 @@ dependencies = [
 [[package]]
 name = "sp-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "hash-db",
  "log",
@@ -6861,7 +6948,7 @@ dependencies = [
 [[package]]
 name = "sp-api-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "blake2",
  "proc-macro-crate",
@@ -6873,7 +6960,7 @@ dependencies = [
 [[package]]
 name = "sp-application-crypto"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -6886,7 +6973,7 @@ dependencies = [
 [[package]]
 name = "sp-arithmetic"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "integer-sqrt",
  "num-traits",
@@ -6901,7 +6988,7 @@ dependencies = [
 [[package]]
 name = "sp-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -6913,7 +7000,7 @@ dependencies = [
 [[package]]
 name = "sp-block-builder"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -6925,7 +7012,7 @@ dependencies = [
 [[package]]
 name = "sp-blockchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures",
  "log",
@@ -6943,7 +7030,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "futures",
@@ -6962,7 +7049,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-aura"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -6980,7 +7067,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "merlin",
@@ -7003,7 +7090,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7017,7 +7104,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-vrf"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7030,7 +7117,7 @@ dependencies = [
 [[package]]
 name = "sp-core"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "base58",
  "bitflags",
@@ -7076,7 +7163,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "blake2",
  "byteorder",
@@ -7090,7 +7177,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7101,7 +7188,7 @@ dependencies = [
 [[package]]
 name = "sp-database"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "kvdb",
  "parking_lot 0.12.1",
@@ -7110,7 +7197,7 @@ dependencies = [
 [[package]]
 name = "sp-debug-derive"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7120,7 +7207,7 @@ dependencies = [
 [[package]]
 name = "sp-externalities"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -7131,7 +7218,7 @@ dependencies = [
 [[package]]
 name = "sp-finality-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "finality-grandpa",
  "log",
@@ -7149,7 +7236,7 @@ dependencies = [
 [[package]]
 name = "sp-inherents"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "impl-trait-for-tuples",
@@ -7163,7 +7250,7 @@ dependencies = [
 [[package]]
 name = "sp-io"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "bytes",
  "futures",
@@ -7189,7 +7276,7 @@ dependencies = [
 [[package]]
 name = "sp-keyring"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "lazy_static",
  "sp-core",
@@ -7200,7 +7287,7 @@ dependencies = [
 [[package]]
 name = "sp-keystore"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "futures",
@@ -7217,7 +7304,7 @@ dependencies = [
 [[package]]
 name = "sp-maybe-compressed-blob"
 version = "4.1.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "thiserror",
  "zstd",
@@ -7226,7 +7313,7 @@ dependencies = [
 [[package]]
 name = "sp-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "sp-api",
  "sp-core",
@@ -7236,7 +7323,7 @@ dependencies = [
 [[package]]
 name = "sp-panic-handler"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "backtrace",
  "lazy_static",
@@ -7246,7 +7333,7 @@ dependencies = [
 [[package]]
 name = "sp-rpc"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -7256,7 +7343,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "either",
  "hash256-std-hasher",
@@ -7278,7 +7365,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "bytes",
  "impl-trait-for-tuples",
@@ -7296,7 +7383,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "Inflector",
  "proc-macro-crate",
@@ -7308,7 +7395,7 @@ dependencies = [
 [[package]]
 name = "sp-sandbox"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -7322,7 +7409,7 @@ dependencies = [
 [[package]]
 name = "sp-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7336,7 +7423,7 @@ dependencies = [
 [[package]]
 name = "sp-staking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7347,7 +7434,7 @@ dependencies = [
 [[package]]
 name = "sp-state-machine"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "hash-db",
  "log",
@@ -7369,12 +7456,12 @@ dependencies = [
 [[package]]
 name = "sp-std"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 
 [[package]]
 name = "sp-storage"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -7387,7 +7474,7 @@ dependencies = [
 [[package]]
 name = "sp-tasks"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "log",
  "sp-core",
@@ -7400,7 +7487,7 @@ dependencies = [
 [[package]]
 name = "sp-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "futures-timer",
@@ -7416,7 +7503,7 @@ dependencies = [
 [[package]]
 name = "sp-tracing"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "sp-std",
@@ -7428,7 +7515,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "sp-api",
  "sp-runtime",
@@ -7437,7 +7524,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-storage-proof"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "async-trait",
  "log",
@@ -7453,7 +7540,7 @@ dependencies = [
 [[package]]
 name = "sp-trie"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "hash-db",
  "memory-db",
@@ -7469,7 +7556,7 @@ dependencies = [
 [[package]]
 name = "sp-version"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -7486,7 +7573,7 @@ dependencies = [
 [[package]]
 name = "sp-version-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "parity-scale-codec",
  "proc-macro2",
@@ -7497,7 +7584,7 @@ dependencies = [
 [[package]]
 name = "sp-wasm-interface"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "impl-trait-for-tuples",
  "log",
@@ -7597,7 +7684,7 @@ dependencies = [
 [[package]]
 name = "substrate-build-script-utils"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "platforms",
 ]
@@ -7605,7 +7692,7 @@ dependencies = [
 [[package]]
 name = "substrate-frame-rpc-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "frame-system-rpc-runtime-api",
  "futures",
@@ -7626,7 +7713,7 @@ dependencies = [
 [[package]]
 name = "substrate-prometheus-endpoint"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "futures-util",
  "hyper",
@@ -7639,7 +7726,7 @@ dependencies = [
 [[package]]
 name = "substrate-wasm-builder"
 version = "5.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "ansi_term",
  "build-helper",
@@ -7740,9 +7827,9 @@ dependencies = [
 
 [[package]]
 name = "textwrap"
-version = "0.15.0"
+version = "0.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b1141d4d61095b28419e22cb0bbf02755f5e54e0526f97f1e3d1d160e60885fb"
+checksum = "222a222a5bfe1bba4a77b45ec488a741b3cb8872e5e499451fd7d0129c9c7c3d"
 
 [[package]]
 name = "thiserror"
@@ -8098,7 +8185,7 @@ checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
 [[package]]
 name = "try-runtime-cli"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport#3553b814c88f1b3106d6b91cc5372c31755f3200"
 dependencies = [
  "clap",
  "jsonrpsee",
@@ -8345,6 +8432,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eaf9f5aceeec8be17c128b2e93e031fb8a4d469bb9c4ae2d7dc1888b26887268"
 dependencies = [
  "cfg-if",
+ "serde",
+ "serde_json",
  "wasm-bindgen-macro",
 ]
 

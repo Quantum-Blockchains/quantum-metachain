@@ -153,7 +153,7 @@ fn remote_keystore(_url: &str) -> Result<Arc<LocalKeystore>, &'static str> {
 }
 
 /// Builds a new service for a full client.
-pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> {
+pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> {
     let sc_service::PartialComponents {
         client,
         backend,
@@ -206,7 +206,7 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
             import_queue,
             block_announce_validator_builder: None,
             warp_sync: Some(warp_sync),
-        })?;
+        }).await?;
 
     if config.offchain_worker.enabled {
         sc_service::build_offchain_workers(
