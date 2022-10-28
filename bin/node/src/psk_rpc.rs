@@ -92,7 +92,6 @@ impl PskApiServer for Psk {
 
         if !addrs.is_empty() {
             for item in &addrs {
-                println!("kostia");
                 if item.peer_id == _peer_id {
                     qkd_url.push_str("http://");
                     qkd_url.push_str(&item.host.to_string());

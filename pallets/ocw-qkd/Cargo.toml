@@ -15,15 +15,15 @@ targets = ["x86_64-unknown-linux-gnu"]
 codec = { package = "parity-scale-codec", version = "3.0.0", default-features = false }
 log = { version = "0.4.17", default-features = false }
 scale-info = { version = "2.1.1", default-features = false, features = ["derive"] }
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
-sp-core = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
-sp-io = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
-sp-runtime = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
-sp-std = { version = "4.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
+sp-core = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
+sp-io = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
+sp-runtime = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
+sp-std = { version = "4.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
 
 [dev-dependencies]
-frame-support-test = { version = "3.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-134/Fetch_PSK_from_psk_file_in_P2P_transport" }
+frame-support-test = { version = "3.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "kostia/JEQB-127/Get_pre-shared_key_before_p2p_starts" }
 
 [features]
 default = ["std"]
