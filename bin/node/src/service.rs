@@ -1,16 +1,19 @@
 //! Service and ServiceFactory implementation. Specialized wrapper over substrate service.
 
-use std::{sync::Arc, time::Duration};
+use std::{sync::Arc, time::Duration, path::PathBuf};
 
 use qmc_runtime::{self, opaque::Block, RuntimeApi};
-use sc_client_api::{BlockBackend, ExecutorProvider};
+use sc_client_api::{BlockBackend, ExecutorProvider, Backend, LocalBackend};
 use sc_consensus_aura::{ImportQueueParams, SlotProportion, StartAuraParams};
 pub use sc_executor::NativeElseWasmExecutor;
 use sc_finality_grandpa::SharedVoterState;
 use sc_keystore::LocalKeystore;
+use sc_rpc::system::{SystemApiClient, SystemApiServer};
 use sc_service::{error::Error as ServiceError, Configuration, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryWorker};
 use sp_consensus_aura::sr25519::AuthorityPair as AuraPair;
+use sp_core::{hexdisplay::AsBytesRef, Bytes};
+use sp_runtime::offchain::{STORAGE_PREFIX, storage::StorageValueRef, OffchainStorage};
 
 // Our native executor instance.
 pub struct ExecutorDispatch;
@@ -154,6 +157,7 @@ fn remote_keystore(_url: &str) -> Result<Arc<LocalKeystore>, &'static str> {
 
 /// Builds a new service for a full client.
 pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> {
+
     let sc_service::PartialComponents {
         client,
         backend,
@@ -208,6 +212,38 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
             warp_sync: Some(warp_sync),
         })?;
 
+
+        println!("Args: {:?}", std::env::args_os());
+        let mut args = std::env::args_os();
+        // let iter = args.into_iter();
+        // use sp_std::vec::{ Vec };
+        // let mut vec: Vec<u8> = Vec::new();
+        for _ in 0..args.len() {
+            //args.next();
+            let d = args.next().unwrap();
+            
+            if d == "--psk-file" {
+                let d = args.next().unwrap();
+                let s = d.to_str().unwrap();
+                let qwerty = s.to_string();
+                // let _path = PathBuf::from(qwerty.clone());
+
+                let dfg = qwerty.as_bytes();
+                let t=  dfg.to_vec();
+               
+                // let r = t.as_bytes_ref();
+                let r = Bytes::from(t);
+                
+                println!("Vector - {:?}", r);
+                if let Some(mut sd) = backend.offchain_storage() {
+                    sd.set(STORAGE_PREFIX, b"path_to_psk_file", &r);
+                    
+                    // sd.set(STORAGE_PREFIX, b"path_to_psk_file", r);
+                };
+                break;
+            }
+        }
+
     if config.offchain_worker.enabled {
         sc_service::build_offchain_workers(
             &config,
@@ -215,7 +251,10 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
             client.clone(),
             network.clone(),
         );
+    
     }
+
+    
 
     let role = config.role.clone();
     let force_authoring = config.force_authoring;
@@ -223,6 +262,8 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
     let name = config.network.node_name.clone();
     let enable_grandpa = !config.disable_grandpa;
     let prometheus_registry = config.prometheus_registry().cloned();
+
+    // use 
 
     let rpc_extensions_builder = {
         // let client = client.clone();

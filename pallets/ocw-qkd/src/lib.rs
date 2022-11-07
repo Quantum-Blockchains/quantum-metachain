@@ -13,8 +13,9 @@ use crate::Error::CannotGenerateKeyFromEntropy;
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::{pallet_prelude::*, traits::Randomness};
-    use frame_system::pallet_prelude::*;
-    use sp_runtime::offchain::storage::StorageValueRef;
+    use frame_system::{pallet_prelude::*};
+    use sp_core::Bytes;
+    use sp_runtime::offchain::{storage::StorageValueRef, StorageKind, http};
 
     use super::*;
 
@@ -36,6 +37,35 @@ pub mod pallet {
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
+            // let parent_hash = <system::Pallet<T>>::block_hash(block_number - 1u32.into());
+
+            use sp_std::vec::Vec;
+        
+            use scale_info::prelude::string::String;
+            // use frame_support::inherent::Vec;
+            let st = StorageValueRef::persistent(b"path_to_psk_file");
+                
+            use sp_io;
+            // StorageKind::PERSISTENT
+            
+            if let Some(g) = sp_io::offchain::local_storage_get(StorageKind::PERSISTENT, b"path_to_psk_file") {
+                let s = String::from_utf8(g).unwrap();
+        
+                log::info!("1 path to file with pre-shared key: {:?}", s);    
+            }
+            else {
+                log::info!(" 1 NO");
+            }
+
+            if let Ok(Some(res)) = st.get::<Vec<u8>>() {
+                let s = String::from_utf8(res.to_vec()).unwrap();
+        
+                log::info!(" 2 path to file with pre-shared key: {:?}", s);            
+            }
+            else {
+                log::info!(" 2 NO");
+            }
+            
             let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
             let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
                 Ok(v) => match v {
