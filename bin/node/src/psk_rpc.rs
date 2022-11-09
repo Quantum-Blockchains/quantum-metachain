@@ -6,9 +6,12 @@ use jsonrpsee::{
     proc_macros::rpc,
     types::error::{CallError, ErrorObject},
 };
+use sc_client_db::offchain::LocalStorage;
 use sc_network::{PeerId, PreSharedKey};
 use sc_service::config::NetworkConfiguration;
 use serde::{Deserialize, Serialize};
+use sp_core::offchain::OffchainStorage;
+use sp_runtime::offchain::STORAGE_PREFIX;
 
 trait ToBytes {
     fn to_bytes(self) -> Result<[u8; 32], hex::FromHexError>;
@@ -45,6 +48,9 @@ pub trait PskApi {
     /// Returns the encripted pre-shared key.
     #[method(name = "psk_getKey", aliases = ["getKey"])]
     async fn psk_get_key(&self, peer_id: String) -> RpcResult<QkdKey>;
+    /// Tries to take the key from the local storage and writes it to a file.
+    #[method(name = "psk_saveKey", aliases = ["saveKey"])]
+    fn psk_save_key(&self) -> RpcResult<()>;
 }
 
 /// Error type of this RPC api.
@@ -67,12 +73,13 @@ impl From<Error> for i32 {
 /// An implementation of Psk-specific RPC methods on full client.
 pub struct Psk {
     config: NetworkConfiguration,
+    storage: LocalStorage,
 }
 
 impl Psk {
-    /// Create new `FullSystem` given client and configuration.
-    pub fn new(config: NetworkConfiguration) -> Self {
-        Self { config }
+    /// Create new `FullSystem` given configuration and offchain storage.
+    pub fn new(config: NetworkConfiguration, storage: LocalStorage) -> Self {
+        Self { config, storage }
     }
 }
 
@@ -166,5 +173,16 @@ impl PskApiServer for Psk {
             key_ID: qkd_key.keys[0].key_ID.clone(),
             key: hex::encode(psk_bytes),
         })
+    }
+
+    fn psk_save_key(&self) -> RpcResult<()> {
+        if let Some(psk) = self.storage.get(STORAGE_PREFIX, b"pre-shared-key") {
+            self.config.pre_shared_key.clone().write_psk_to_file(&psk);
+            Ok(())
+        } else {
+            Err(jsonrpsee::core::Error::Custom(
+                "No new pre-shared key was found in the local storage.".to_string(),
+            ))
+        }
     }
 }

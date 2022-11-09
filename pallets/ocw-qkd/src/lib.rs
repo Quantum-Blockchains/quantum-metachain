@@ -3,12 +3,16 @@
 #[cfg(test)]
 mod tests;
 
-use frame_support::traits::Randomness;
+// use frame_support::traits::Randomness;
 pub use pallet::*;
-use sp_runtime::traits::Get;
-use sp_std::collections::btree_map::BTreeMap;
+use sp_io::offchain::timestamp;
+use sp_runtime::offchain::{http::Request, Duration};
+use sp_std::vec::Vec;
 
-use crate::Error::CannotGenerateKeyFromEntropy;
+#[macro_use]
+extern crate alloc;
+
+// use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -23,9 +27,6 @@ pub mod pallet {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
-
-        #[pallet::constant]
-        type TargetKeysAmount: Get<u32>;
     }
 
     #[pallet::pallet]
@@ -35,39 +36,34 @@ pub mod pallet {
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
         /// QKD offchain worker entry point.
-        fn offchain_worker(block_number: T::BlockNumber) {
-            let storage_persistent = StorageValueRef::persistent(b"ocw-qkd-storage");
-            let temp_storage = &mut match storage_persistent.get::<BTreeMap<u8, [u8; 32]>>() {
-                Ok(v) => match v {
-                    Some(t) => t,
-                    None => <BTreeMap<u8, [u8; 32]>>::default(),
+        fn offchain_worker(_block_number: T::BlockNumber) {
+            let storage_psk = StorageValueRef::persistent(b"pre-shared-key");
+            let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
+            let rpc_port = match storage_rpc_port.get::<u16>() {
+                Ok(p) => match p {
+                    Some(port) => port,
+                    None => {
+                        log::error!("The RPC port is not passed to the offchain worker.");
+                        return;
+                    }
                 },
-                Err(err) => {
-                    log::error!("Couldn't get keys from local storage, {:?}", err);
-
+                Err(_err) => {
+                    log::error!("The RPC port is not passed to the offchain worker.");
                     return;
                 }
             };
-            let amount_to_generate = Self::calculate_amount_to_generate(temp_storage);
+            let new_psk = Self::generate_new_pre_shared_key();
 
-            if amount_to_generate > 0 {
-                log::debug!(
-                    "Block number: {:?} - generating {:?} single-use keys",
-                    &block_number,
-                    &amount_to_generate
-                );
-                let result = Self::generate_keys(temp_storage, amount_to_generate);
-                if let Err(e) = result {
-                    log::error!("Key generation failed: {:?}", e);
+            storage_psk.set(&new_psk);
+
+            match Self::send_reqwest_save_new_psk(rpc_port) {
+                Ok(_) => {
+                    log::info!("The new pre-shared key is saved.");
                 }
-            } else {
-                log::debug!(
-                    "Block number: {:?} - skipping keys generation, target keys amount fulfilled",
-                    block_number
-                );
+                Err(err) => {
+                    log::error!("Error: {:?}", err);
+                }
             }
-
-            storage_persistent.set(temp_storage);
         }
     }
 
@@ -80,27 +76,43 @@ pub mod pallet {
     #[pallet::error]
     pub enum Error<T> {
         CannotGenerateKeyFromEntropy,
+        HttpFetchingError,
     }
 }
 
 impl<T: Config> Pallet<T> {
-    fn calculate_amount_to_generate(storage: &mut BTreeMap<u8, [u8; 32]>) -> u32 {
-        let keys_len = Self::get_node_keys_len(storage);
-        T::TargetKeysAmount::get() - keys_len
+    // TODO generate ne pre-shared key
+    /// This function generates a new key.
+    fn generate_new_pre_shared_key() -> &'static [u8; 64] {
+        log::info!("A new pre-shared key is generated.");
+        b"28617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
     }
 
-    fn get_node_keys_len(storage: &mut BTreeMap<u8, [u8; 32]>) -> u32 {
-        <u32>::try_from(storage.len()).unwrap()
-    }
+    /// This function calls tje "psk_saveKey" RPC method, which writes a new key to the file.
+    fn send_reqwest_save_new_psk(rpc_port: u16) -> Result<(), Error<T>> {
+        let url = format!("http://localhost:{}", rpc_port);
 
-    fn generate_keys(storage: &mut BTreeMap<u8, [u8; 32]>, amount: u32) -> Result<(), Error<T>> {
-        for n in 0..amount {
-            let (seed, _) = T::Randomness::random_seed();
-            let key: [u8; 32] =
-                <[u8; 32]>::try_from(seed.as_ref()).map_err(|_| CannotGenerateKeyFromEntropy)?;
-            log::debug!("Random Key generated: {:?}", &key);
+        let mut vec_body: Vec<&[u8]> = Vec::new();
+        let data = b"{\"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"psk_saveKey\"}";
+        vec_body.push(data);
 
-            storage.insert(<u8>::try_from(n).unwrap(), key);
+        let request = Request::post(&url, vec_body);
+        let timeout = timestamp().add(Duration::from_millis(3000));
+
+        let pending = request
+            .add_header("Content-Type", "application/json")
+            .deadline(timeout)
+            .send()
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        let response = pending
+            .try_wait(timeout)
+            .map_err(|_| <Error<T>>::HttpFetchingError)?
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        if response.code != 200 {
+            log::error!("Unexpected http request status code: {}", response.code);
+            return Err(<Error<T>>::HttpFetchingError);
         }
         Ok(())
     }

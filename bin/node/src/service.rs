@@ -3,7 +3,7 @@
 use std::{sync::Arc, time::Duration};
 
 use qmc_runtime::{self, opaque::Block, RuntimeApi};
-use sc_client_api::{BlockBackend, ExecutorProvider};
+use sc_client_api::{Backend, BlockBackend, ExecutorProvider};
 use sc_consensus_aura::{ImportQueueParams, SlotProportion, StartAuraParams};
 pub use sc_executor::NativeElseWasmExecutor;
 use sc_finality_grandpa::SharedVoterState;
@@ -11,6 +11,7 @@ use sc_keystore::LocalKeystore;
 use sc_service::{error::Error as ServiceError, Configuration, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryWorker};
 use sp_consensus_aura::sr25519::AuthorityPair as AuraPair;
+use sp_runtime::offchain::{OffchainStorage, STORAGE_PREFIX};
 
 // Our native executor instance.
 pub struct ExecutorDispatch;
@@ -153,7 +154,7 @@ fn remote_keystore(_url: &str) -> Result<Arc<LocalKeystore>, &'static str> {
 }
 
 /// Builds a new service for a full client.
-pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> {
+pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> {
     let sc_service::PartialComponents {
         client,
         backend,
@@ -206,7 +207,8 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
             import_queue,
             block_announce_validator_builder: None,
             warp_sync: Some(warp_sync),
-        })?;
+        })
+        .await?;
 
     if config.offchain_worker.enabled {
         sc_service::build_offchain_workers(
@@ -225,15 +227,27 @@ pub fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceError> 
     let prometheus_registry = config.prometheus_registry().cloned();
 
     let rpc_extensions_builder = {
-        // let client = client.clone();
-        // let pool = transaction_pool.clone();
         let config = config.network.clone();
-        Box::new(move |_, _| {
-            let deps = crate::rpc::FullDeps {
-                config: config.clone(),
-            };
-            crate::rpc::create_full(deps).map_err(Into::into)
-        })
+        match backend.offchain_storage() {
+            Some(storage) => Box::new(move |_, _| {
+                let deps = crate::rpc::FullDeps {
+                    config: config.clone(),
+                    storage: storage.clone(),
+                };
+                crate::rpc::create_full(deps).map_err(Into::into)
+            }),
+            None => {
+                return Err(ServiceError::Other(
+                    "Failed to pass \"offchain storage\" to RPC.".to_string(),
+                ))
+            }
+        }
+    };
+
+    let rpc_address = config.rpc_http.unwrap();
+    let rpc_port = rpc_address.port().to_le_bytes();
+    if let Some(mut storage) = backend.offchain_storage() {
+        storage.set(STORAGE_PREFIX, b"rpc-port", &rpc_port);
     };
 
     let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {

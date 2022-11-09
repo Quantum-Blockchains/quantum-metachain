@@ -3,60 +3,32 @@
 //! used by Substrate nodes. This file extends those RPC definitions with
 //! capabilities that are specific to this project's runtime configuration.
 
-#![warn(missing_docs)]
-
-// use std::sync::Arc;
+//TODO
+// #![warn(missing_docs)]
 
 use jsonrpsee::RpcModule;
-// use qmc_runtime::{opaque::Block, AccountId, Balance, Index};
+use sc_client_db::offchain::LocalStorage;
 pub use sc_rpc_api::DenyUnsafe;
 use sc_service::config::NetworkConfiguration;
-// use sc_transaction_pool_api::TransactionPool;
-// use sp_api::ProvideRuntimeApi;
-// use sp_block_builder::BlockBuilder;
-// use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 
 /// Full client dependencies.
 pub struct FullDeps {
-    //// The client instance to use.
-    // pub client: Arc<C>,
-    //// Transaction pool instance.
-    // pub pool: Arc<P>,
-    //// Network configuration
+    /// Network configuration
     pub config: NetworkConfiguration,
-    //// Whether to deny unsafe calls
-    // pub deny_unsafe: DenyUnsafe,
+    /// Offchain storage
+    pub storage: LocalStorage,
 }
 
 /// Instantiate all full RPC extensions.
 pub fn create_full(
     deps: FullDeps,
-) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
-// where
-//     C: ProvideRuntimeApi<Block>,
-//     C: HeaderBackend<Block> + HeaderMetadata<Block, Error = BlockChainError> + 'static,
-//     C: Send + Sync + 'static,
-//     C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Index>,
-//     C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>,
-//     C::Api: BlockBuilder<Block>,
-    // P: TransactionPool + 'static,
-{
-    // use pallet_transaction_payment_rpc::{TransactionPayment, TransactionPaymentApiServer};
-    // use substrate_frame_rpc_system::{System, SystemApiServer};
-
+) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>> {
     use crate::psk_rpc::{Psk, PskApiServer};
 
     let mut module = RpcModule::new(());
-    let FullDeps {
-        //client,
-        // pool,
-        config,
-        //deny_unsafe,
-    } = deps;
+    let FullDeps { config, storage } = deps;
 
-    // module.merge(System::new(client.clone(), pool, deny_unsafe).into_rpc())?;
-    // module.merge(TransactionPayment::new(client).into_rpc())?;
-    module.merge(PskApiServer::into_rpc(Psk::new(config)))?;
+    module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
 
     Ok(module)
 }
