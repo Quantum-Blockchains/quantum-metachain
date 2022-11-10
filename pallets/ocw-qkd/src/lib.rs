@@ -6,8 +6,9 @@ mod tests;
 // use frame_support::traits::Randomness;
 pub use pallet::*;
 use sp_io::offchain::timestamp;
-use sp_runtime::offchain::{http::Request, Duration};
+use sp_runtime::offchain::{http::{Request, Response}, Duration};
 use sp_std::vec::Vec;
+// use sp_runtime::offchain::http::Response;
 
 #[macro_use]
 extern crate alloc;
@@ -64,6 +65,15 @@ pub mod pallet {
                     log::error!("Error: {:?}", err);
                 }
             }
+
+            match Self::send_request_get_peers(rpc_port) {
+                Ok(_) => {
+                    log::info!("Peers are fetched");
+                }
+                Err(err) => {
+                    log::error!("Error: {:?}", err);
+                }
+            }
         }
     }
 
@@ -115,5 +125,37 @@ impl<T: Config> Pallet<T> {
             return Err(<Error<T>>::HttpFetchingError);
         }
         Ok(())
+    }
+
+    // Fetching peers test
+    fn send_request_get_peers(rpc_port: u16) -> Result<(), Error<T>> {
+        let url = format!("http://localhost:{}", rpc_port);
+
+        let mut vec_body: Vec<&[u8]> = Vec::new();
+        // https://polkadot.js.org/docs/substrate/rpc/#peers-vecpeerinfo
+        let data = b"{\"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"system_peers\"}";
+        vec_body.push(data);
+
+        // Request::get takes only url arg
+        let request = Request::post(&url, vec_body);
+        let timeout = timestamp().add(Duration::from_millis(3000));
+
+        let pending = request
+            .add_header("Content-Type", "application/json")
+            .deadline(timeout)
+            .send()
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        let response = pending
+            .try_wait(timeout)
+            .map_err(|_| <Error<T>>::HttpFetchingError)?
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        if response.code != 200 {
+            log::error!("Unexpected http request status code: {}", response.code);
+            return Err(<Error<T>>::HttpFetchingError);
+        }
+        Ok(())
+        // response
     }
 }
