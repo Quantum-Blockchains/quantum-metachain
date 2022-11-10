@@ -1637,7 +1637,7 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 [[package]]
 name = "fork-tree"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "parity-scale-codec",
 ]
@@ -1654,7 +1654,7 @@ dependencies = [
 [[package]]
 name = "frame-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1676,7 +1676,7 @@ dependencies = [
 [[package]]
 name = "frame-benchmarking-cli"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "Inflector",
  "chrono",
@@ -1727,7 +1727,7 @@ dependencies = [
 [[package]]
 name = "frame-executive"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1755,7 +1755,7 @@ dependencies = [
 [[package]]
 name = "frame-support"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "bitflags",
  "frame-metadata",
@@ -1786,7 +1786,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "Inflector",
  "frame-support-procedural-tools",
@@ -1798,7 +1798,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support-procedural-tools-derive",
  "proc-macro-crate",
@@ -1810,7 +1810,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools-derive"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1820,7 +1820,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-support-test-pallet",
@@ -1843,7 +1843,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test-pallet"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1854,7 +1854,7 @@ dependencies = [
 [[package]]
 name = "frame-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "log",
@@ -1871,7 +1871,7 @@ dependencies = [
 [[package]]
 name = "frame-system-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -1886,7 +1886,7 @@ dependencies = [
 [[package]]
 name = "frame-system-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -1895,7 +1895,7 @@ dependencies = [
 [[package]]
 name = "frame-try-runtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "sp-api",
@@ -2040,6 +2040,10 @@ name = "futures-timer"
 version = "3.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e64b03909df88034c26dc1547e8970b91f98bdb65165d6a4e9110d94263dbb2c"
+dependencies = [
+ "gloo-timers",
+ "send_wrapper",
+]
 
 [[package]]
 name = "futures-util"
@@ -2162,6 +2166,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "gloo-net"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ec897194fb9ac576c708f63d35604bc58f2a262b8cec0fabfed26f3991255f21"
+dependencies = [
+ "futures-channel",
+ "futures-core",
+ "futures-sink",
+ "gloo-utils",
+ "js-sys",
+ "pin-project",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
+
+[[package]]
 name = "gloo-timers"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2171,6 +2195,19 @@ dependencies = [
  "futures-core",
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "gloo-utils"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40913a05c8297adca04392f707b1e73b12ba7b8eab7244a4961580b1fd34063c"
+dependencies = [
+ "js-sys",
+ "serde",
+ "serde_json",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
@@ -2402,6 +2439,7 @@ dependencies = [
  "rustls-native-certs",
  "tokio",
  "tokio-rustls",
+ "webpki-roots",
 ]
 
 [[package]]
@@ -2632,10 +2670,13 @@ version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8bd0d559d5e679b1ab2f869b486a11182923863b1b3ee8b421763cdd707b783a"
 dependencies = [
+ "jsonrpsee-client-transport",
  "jsonrpsee-core",
+ "jsonrpsee-http-client",
  "jsonrpsee-http-server",
  "jsonrpsee-proc-macros",
  "jsonrpsee-types",
+ "jsonrpsee-wasm-client",
  "jsonrpsee-ws-client",
  "jsonrpsee-ws-server",
  "tracing",
@@ -2647,7 +2688,11 @@ version = "0.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8752740ecd374bcbf8b69f3e80b0327942df76f793f8d4e60d3355650c31fb74"
 dependencies = [
+ "anyhow",
+ "futures-channel",
+ "futures-timer",
  "futures-util",
+ "gloo-net",
  "http",
  "jsonrpsee-core",
  "jsonrpsee-types",
@@ -2692,6 +2737,27 @@ dependencies = [
  "tracing",
  "tracing-futures",
  "unicase",
+ "wasm-bindgen-futures",
+]
+
+[[package]]
+name = "jsonrpsee-http-client"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "52f7c0e2333ab2115c302eeb4f137c8a4af5ab609762df68bbda8f06496677c9"
+dependencies = [
+ "async-trait",
+ "hyper",
+ "hyper-rustls",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
+ "rustc-hash",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-futures",
 ]
 
 [[package]]
@@ -2736,6 +2802,17 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tracing",
+]
+
+[[package]]
+name = "jsonrpsee-wasm-client"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "597b4eb94730e7695d0a2a429bc37a12e6e84d12680fdafb9b8f5f53652aab57"
+dependencies = [
+ "jsonrpsee-client-transport",
+ "jsonrpsee-core",
+ "jsonrpsee-types",
 ]
 
 [[package]]
@@ -4158,7 +4235,7 @@ dependencies = [
 [[package]]
 name = "pallet-aura"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4174,7 +4251,7 @@ dependencies = [
 [[package]]
 name = "pallet-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4189,7 +4266,7 @@ dependencies = [
 [[package]]
 name = "pallet-balances"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4204,7 +4281,7 @@ dependencies = [
 [[package]]
 name = "pallet-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4227,7 +4304,7 @@ dependencies = [
 [[package]]
 name = "pallet-randomness-collective-flip"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4241,7 +4318,7 @@ dependencies = [
 [[package]]
 name = "pallet-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4262,7 +4339,7 @@ dependencies = [
 [[package]]
 name = "pallet-sudo"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4276,7 +4353,7 @@ dependencies = [
 [[package]]
 name = "pallet-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4294,7 +4371,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4310,7 +4387,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "jsonrpsee",
  "pallet-transaction-payment-rpc-runtime-api",
@@ -4325,7 +4402,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "pallet-transaction-payment",
  "parity-scale-codec",
@@ -5189,7 +5266,7 @@ dependencies = [
 [[package]]
 name = "remote-externalities"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "env_logger",
  "jsonrpsee",
@@ -5470,7 +5547,7 @@ dependencies = [
 [[package]]
 name = "sc-allocator"
 version = "4.1.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "log",
  "sp-core",
@@ -5481,7 +5558,7 @@ dependencies = [
 [[package]]
 name = "sc-basic-authorship"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "futures",
  "futures-timer",
@@ -5504,7 +5581,7 @@ dependencies = [
 [[package]]
 name = "sc-block-builder"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "parity-scale-codec",
  "sc-client-api",
@@ -5520,7 +5597,7 @@ dependencies = [
 [[package]]
 name = "sc-chain-spec"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "impl-trait-for-tuples",
  "memmap2",
@@ -5537,7 +5614,7 @@ dependencies = [
 [[package]]
 name = "sc-chain-spec-derive"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#7363aea9500f48320bf3e2c02483aa058307724a"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -5548,7 +5625,7 @@ dependencies = [
 [[package]]
 name = "sc-cli"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "chrono",
  "clap",
@@ -5587,7 +5664,7 @@ dependencies = [
 [[package]]
 name = "sc-client-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "fnv",
  "futures",
@@ -5615,7 +5692,7 @@ dependencies = [
 [[package]]
 name = "sc-client-db"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "hash-db",
  "kvdb",
@@ -5640,7 +5717,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "futures",
@@ -5664,7 +5741,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-aura"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "futures",
@@ -5693,7 +5770,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "fork-tree",
@@ -5735,7 +5812,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-epochs"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "fork-tree",
  "parity-scale-codec",
@@ -5748,7 +5825,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-manual-seal"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "assert_matches",
  "async-trait",
@@ -5782,7 +5859,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "futures",
@@ -5807,7 +5884,7 @@ dependencies = [
 [[package]]
 name = "sc-executor"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "lazy_static",
  "lru",
@@ -5834,7 +5911,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-common"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -5850,7 +5927,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-wasmi"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -5865,7 +5942,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-wasmtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "cfg-if",
  "libc",
@@ -5885,7 +5962,7 @@ dependencies = [
 [[package]]
 name = "sc-finality-grandpa"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "ahash",
  "async-trait",
@@ -5926,7 +6003,7 @@ dependencies = [
 [[package]]
 name = "sc-informant"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "ansi_term",
  "futures",
@@ -5943,7 +6020,7 @@ dependencies = [
 [[package]]
 name = "sc-keystore"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "hex",
@@ -5958,10 +6035,11 @@ dependencies = [
 [[package]]
 name = "sc-network"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "asynchronous-codec",
+ "base64",
  "bitflags",
  "bytes",
  "cid",
@@ -5972,6 +6050,7 @@ dependencies = [
  "futures-timer",
  "hex",
  "ip_network",
+ "jsonrpsee",
  "libp2p",
  "linked-hash-map",
  "linked_hash_set",
@@ -5984,6 +6063,7 @@ dependencies = [
  "prost-build",
  "rand 0.7.3",
  "regex",
+ "reqwest",
  "sc-block-builder",
  "sc-client-api",
  "sc-consensus",
@@ -6008,7 +6088,7 @@ dependencies = [
 [[package]]
 name = "sc-network-common"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "bitflags",
@@ -6029,7 +6109,7 @@ dependencies = [
 [[package]]
 name = "sc-network-gossip"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "ahash",
  "futures",
@@ -6047,7 +6127,7 @@ dependencies = [
 [[package]]
 name = "sc-network-light"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "hex",
@@ -6068,7 +6148,7 @@ dependencies = [
 [[package]]
 name = "sc-network-sync"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "fork-tree",
  "futures",
@@ -6096,7 +6176,7 @@ dependencies = [
 [[package]]
 name = "sc-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "bytes",
  "fnv",
@@ -6125,7 +6205,7 @@ dependencies = [
 [[package]]
 name = "sc-peerset"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "libp2p",
@@ -6138,7 +6218,7 @@ dependencies = [
 [[package]]
 name = "sc-proposer-metrics"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "log",
  "substrate-prometheus-endpoint",
@@ -6147,7 +6227,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "hash-db",
@@ -6177,7 +6257,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc-api"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "jsonrpsee",
@@ -6200,7 +6280,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc-server"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "jsonrpsee",
@@ -6213,7 +6293,7 @@ dependencies = [
 [[package]]
 name = "sc-service"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "directories",
@@ -6280,7 +6360,7 @@ dependencies = [
 [[package]]
 name = "sc-state-db"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -6294,7 +6374,7 @@ dependencies = [
 [[package]]
 name = "sc-sysinfo"
 version = "6.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "libc",
@@ -6313,7 +6393,7 @@ dependencies = [
 [[package]]
 name = "sc-telemetry"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "chrono",
  "futures",
@@ -6331,7 +6411,7 @@ dependencies = [
 [[package]]
 name = "sc-tracing"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "ansi_term",
  "atty",
@@ -6362,7 +6442,7 @@ dependencies = [
 [[package]]
 name = "sc-tracing-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -6373,7 +6453,7 @@ dependencies = [
 [[package]]
 name = "sc-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "futures-timer",
@@ -6399,7 +6479,7 @@ dependencies = [
 [[package]]
 name = "sc-transaction-pool-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "log",
@@ -6412,7 +6492,7 @@ dependencies = [
 [[package]]
 name = "sc-utils"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "futures-timer",
@@ -6592,6 +6672,12 @@ name = "semver-parser"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
+
+[[package]]
+name = "send_wrapper"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f638d531eccd6e23b980caf34876660d38e265409d8e99b397ab71eb3612fad0"
 
 [[package]]
 name = "serde"
@@ -6844,7 +6930,7 @@ dependencies = [
 [[package]]
 name = "sp-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "hash-db",
  "log",
@@ -6861,7 +6947,7 @@ dependencies = [
 [[package]]
 name = "sp-api-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "blake2",
  "proc-macro-crate",
@@ -6873,7 +6959,7 @@ dependencies = [
 [[package]]
 name = "sp-application-crypto"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -6886,7 +6972,7 @@ dependencies = [
 [[package]]
 name = "sp-arithmetic"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "integer-sqrt",
  "num-traits",
@@ -6901,7 +6987,7 @@ dependencies = [
 [[package]]
 name = "sp-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -6913,7 +6999,7 @@ dependencies = [
 [[package]]
 name = "sp-block-builder"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -6925,7 +7011,7 @@ dependencies = [
 [[package]]
 name = "sp-blockchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures",
  "log",
@@ -6943,7 +7029,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "futures",
@@ -6962,7 +7048,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-aura"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -6980,7 +7066,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "merlin",
@@ -7003,7 +7089,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7017,7 +7103,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-vrf"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7030,7 +7116,7 @@ dependencies = [
 [[package]]
 name = "sp-core"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "base58",
  "bitflags",
@@ -7076,7 +7162,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "blake2",
  "byteorder",
@@ -7090,7 +7176,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7101,7 +7187,7 @@ dependencies = [
 [[package]]
 name = "sp-database"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "kvdb",
  "parking_lot 0.12.1",
@@ -7110,7 +7196,7 @@ dependencies = [
 [[package]]
 name = "sp-debug-derive"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7120,7 +7206,7 @@ dependencies = [
 [[package]]
 name = "sp-externalities"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -7131,7 +7217,7 @@ dependencies = [
 [[package]]
 name = "sp-finality-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "finality-grandpa",
  "log",
@@ -7149,7 +7235,7 @@ dependencies = [
 [[package]]
 name = "sp-inherents"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "impl-trait-for-tuples",
@@ -7163,7 +7249,7 @@ dependencies = [
 [[package]]
 name = "sp-io"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "bytes",
  "futures",
@@ -7189,7 +7275,7 @@ dependencies = [
 [[package]]
 name = "sp-keyring"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "lazy_static",
  "sp-core",
@@ -7200,7 +7286,7 @@ dependencies = [
 [[package]]
 name = "sp-keystore"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "futures",
@@ -7217,7 +7303,7 @@ dependencies = [
 [[package]]
 name = "sp-maybe-compressed-blob"
 version = "4.1.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "thiserror",
  "zstd",
@@ -7226,7 +7312,7 @@ dependencies = [
 [[package]]
 name = "sp-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "sp-api",
  "sp-core",
@@ -7236,7 +7322,7 @@ dependencies = [
 [[package]]
 name = "sp-panic-handler"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "backtrace",
  "lazy_static",
@@ -7246,7 +7332,7 @@ dependencies = [
 [[package]]
 name = "sp-rpc"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -7256,7 +7342,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "either",
  "hash256-std-hasher",
@@ -7278,7 +7364,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "bytes",
  "impl-trait-for-tuples",
@@ -7296,7 +7382,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "Inflector",
  "proc-macro-crate",
@@ -7308,7 +7394,7 @@ dependencies = [
 [[package]]
 name = "sp-sandbox"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -7322,7 +7408,7 @@ dependencies = [
 [[package]]
 name = "sp-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7336,7 +7422,7 @@ dependencies = [
 [[package]]
 name = "sp-staking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7347,7 +7433,7 @@ dependencies = [
 [[package]]
 name = "sp-state-machine"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "hash-db",
  "log",
@@ -7369,12 +7455,12 @@ dependencies = [
 [[package]]
 name = "sp-std"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 
 [[package]]
 name = "sp-storage"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -7387,7 +7473,7 @@ dependencies = [
 [[package]]
 name = "sp-tasks"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "log",
  "sp-core",
@@ -7400,7 +7486,7 @@ dependencies = [
 [[package]]
 name = "sp-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "futures-timer",
@@ -7416,7 +7502,7 @@ dependencies = [
 [[package]]
 name = "sp-tracing"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "sp-std",
@@ -7428,7 +7514,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "sp-api",
  "sp-runtime",
@@ -7437,7 +7523,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-storage-proof"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "async-trait",
  "log",
@@ -7453,7 +7539,7 @@ dependencies = [
 [[package]]
 name = "sp-trie"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "hash-db",
  "memory-db",
@@ -7469,7 +7555,7 @@ dependencies = [
 [[package]]
 name = "sp-version"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -7486,7 +7572,7 @@ dependencies = [
 [[package]]
 name = "sp-version-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "parity-scale-codec",
  "proc-macro2",
@@ -7497,7 +7583,7 @@ dependencies = [
 [[package]]
 name = "sp-wasm-interface"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "impl-trait-for-tuples",
  "log",
@@ -7597,7 +7683,7 @@ dependencies = [
 [[package]]
 name = "substrate-build-script-utils"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "platforms",
 ]
@@ -7605,7 +7691,7 @@ dependencies = [
 [[package]]
 name = "substrate-frame-rpc-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "frame-system-rpc-runtime-api",
  "futures",
@@ -7626,7 +7712,7 @@ dependencies = [
 [[package]]
 name = "substrate-prometheus-endpoint"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "futures-util",
  "hyper",
@@ -7639,7 +7725,7 @@ dependencies = [
 [[package]]
 name = "substrate-wasm-builder"
 version = "5.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "ansi_term",
  "build-helper",
@@ -8098,7 +8184,7 @@ checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
 [[package]]
 name = "try-runtime-cli"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#1bfe8b41f0aef73daee9b6bac08b88c03898c874"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=lukasz/JEQB-135/dilithium-mock2#4d543fde2503c4f18acf220a546dc3f878a4882a"
 dependencies = [
  "clap",
  "jsonrpsee",
@@ -8345,6 +8431,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "eaf9f5aceeec8be17c128b2e93e031fb8a4d469bb9c4ae2d7dc1888b26887268"
 dependencies = [
  "cfg-if",
+ "serde",
+ "serde_json",
  "wasm-bindgen-macro",
 ]
 
