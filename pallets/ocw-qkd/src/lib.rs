@@ -56,7 +56,7 @@ pub mod pallet {
 
             storage_psk.set(&new_psk);
 
-            match Self::send_reqwest_save_new_psk(rpc_port) {
+            match Self::send_request_save_new_psk(rpc_port) {
                 Ok(_) => {
                     log::info!("The new pre-shared key is saved.");
                 }
@@ -88,8 +88,8 @@ impl<T: Config> Pallet<T> {
         b"28617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
     }
 
-    /// This function calls tje "psk_saveKey" RPC method, which writes a new key to the file.
-    fn send_reqwest_save_new_psk(rpc_port: u16) -> Result<(), Error<T>> {
+    /// This function calls the "psk_saveKey" RPC method, which writes a new key to the file.
+    fn send_request_save_new_psk(rpc_port: u16) -> Result<(), Error<T>> {
         let url = format!("http://localhost:{}", rpc_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
