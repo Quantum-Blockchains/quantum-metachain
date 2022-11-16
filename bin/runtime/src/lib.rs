@@ -269,7 +269,6 @@ impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
-    type TargetKeysAmount = ConstU32<5>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
