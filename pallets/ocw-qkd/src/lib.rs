@@ -8,6 +8,7 @@ pub use pallet::*;
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::{Request, Response}, Duration};
 use sp_std::vec::Vec;
+use crate::Error::HttpFetchingError;
 // use sp_runtime::offchain::http::Response;
 
 #[macro_use]
@@ -67,8 +68,8 @@ pub mod pallet {
             }
 
             match Self::send_request_get_peers(rpc_port) {
-                Ok(_) => {
-                    log::info!("Peers are fetched");
+                Ok(resp_body) => {
+                    log::info!("Peers are fetched: {:?}", resp_body);
                 }
                 Err(err) => {
                     log::error!("Error: {:?}", err);
@@ -128,7 +129,7 @@ impl<T: Config> Pallet<T> {
     }
 
     // Fetching peers test
-    fn send_request_get_peers(rpc_port: u16) -> Result<(), Error<T>> {
+    fn send_request_get_peers(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
         let url = format!("http://localhost:{}", rpc_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
@@ -155,7 +156,8 @@ impl<T: Config> Pallet<T> {
             log::error!("Unexpected http request status code: {}", response.code);
             return Err(<Error<T>>::HttpFetchingError);
         }
-        Ok(())
+
+        Ok(response.body().collect::<Vec<u8>>())
         // response
     }
 }
