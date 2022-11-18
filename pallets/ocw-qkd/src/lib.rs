@@ -10,7 +10,7 @@ use sp_runtime::offchain::{http::Request, Duration};
 use sp_std::vec::Vec;
 use alloc::string::String;
 use crate::Error::HttpFetchingError;
-use serde::{Deserialize, Deserializer};
+use serde::Deserialize;
 // use sp_runtime::offchain::http::Response;
 
 #[macro_use]
@@ -18,7 +18,7 @@ extern crate alloc;
 
 #[derive(Deserialize)]
 pub struct PeerInfoResponse {
-    pub result: Vec<Vec<PeerInfoResult>>
+    pub result: Vec<PeerInfoResult>
 }
 
 #[derive(Deserialize, Debug)]
@@ -148,16 +148,13 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    // Fetching peers test
     fn fetch_peers(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
         let url = format!("http://localhost:{}", rpc_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
-        // https://polkadot.js.org/docs/substrate/rpc/#peers-vecpeerinfo
         let data = b"{\"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"system_peers\"}";
         vec_body.push(data);
 
-        // Request::get takes only url arg
         let request = Request::post(&url, vec_body);
         let timeout = timestamp().add(Duration::from_millis(3000));
 
@@ -180,18 +177,20 @@ impl<T: Config> Pallet<T> {
         Ok(response.body().collect::<Vec<u8>>())
     }
 
-    fn fetch_n_parse(rpc_port: u16) -> Result<Vec<Vec<PeerInfoResult>>, Error<T>> {
+    fn fetch_n_parse(rpc_port: u16) -> Result<Vec<PeerInfoResult>, Error<T>> {
         let resp_bytes = Self::fetch_peers(rpc_port)
             .map_err(|e| {
-                log::error!("fetch_from_remote error: {:?}", e);
+                log::error!("fetch_peers error: {:?}", e);
                 <Error<T>>::HttpFetchingError
             })?;
     
 
-        let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes).map_err(|_| <Error<T>>::HttpFetchingError)?;
-        log::info!("Peer info vector has length {}", json_res.result.len());
-        log::info!("Peer info vector: {:?}", json_res.result);
-        
+        let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes).unwrap();
+
+        // for x in json_res.result.iter() {
+        //     log::info!("Peer id: {:?}", x.peerId);
+        // }
+
         Ok(json_res.result)
     }
 }
