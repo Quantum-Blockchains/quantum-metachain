@@ -6,14 +6,25 @@ mod tests;
 // use frame_support::traits::Randomness;
 pub use pallet::*;
 use sp_io::offchain::timestamp;
-use sp_runtime::offchain::{http::{Request, Response}, Duration};
+use sp_runtime::offchain::{http::Request, Duration};
 use sp_std::vec::Vec;
+use alloc::string::String;
 use crate::Error::HttpFetchingError;
+use serde::{Deserialize, Deserializer};
 // use sp_runtime::offchain::http::Response;
 
 #[macro_use]
 extern crate alloc;
 
+#[derive(Deserialize)]
+pub struct PeerInfoResponse {
+    pub result: Vec<Vec<PeerInfoResult>>
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PeerInfoResult {
+    pub peerId: String,
+}
 // use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[frame_support::pallet]
@@ -67,9 +78,18 @@ pub mod pallet {
                 }
             }
 
-            match Self::send_request_get_peers(rpc_port) {
+            match Self::fetch_peers(rpc_port) {
                 Ok(resp_body) => {
                     log::info!("Peers are fetched: {:?}", resp_body);
+                }
+                Err(err) => {
+                    log::error!("Error: {:?}", err);
+                }
+            }
+
+            match Self::fetch_n_parse(rpc_port) {
+                Ok(res) => {
+                    log::info!("Peers are parsed: {:?}", res);
                 }
                 Err(err) => {
                     log::error!("Error: {:?}", err);
@@ -129,7 +149,7 @@ impl<T: Config> Pallet<T> {
     }
 
     // Fetching peers test
-    fn send_request_get_peers(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
+    fn fetch_peers(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
         let url = format!("http://localhost:{}", rpc_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
@@ -158,6 +178,20 @@ impl<T: Config> Pallet<T> {
         }
 
         Ok(response.body().collect::<Vec<u8>>())
-        // response
+    }
+
+    fn fetch_n_parse(rpc_port: u16) -> Result<Vec<Vec<PeerInfoResult>>, Error<T>> {
+        let resp_bytes = Self::fetch_peers(rpc_port)
+            .map_err(|e| {
+                log::error!("fetch_from_remote error: {:?}", e);
+                <Error<T>>::HttpFetchingError
+            })?;
+    
+
+        let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes).map_err(|_| <Error<T>>::HttpFetchingError)?;
+        log::info!("Peer info vector has length {}", json_res.result.len());
+        log::info!("Peer info vector: {:?}", json_res.result);
+        
+        Ok(json_res.result)
     }
 }
