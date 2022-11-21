@@ -8,7 +8,7 @@ pub use pallet::*;
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
 use sp_std::vec::Vec;
-use alloc::string::String;
+use alloc::string::{String, ToString};
 use crate::Error::HttpFetchingError;
 use serde::Deserialize;
 // use sp_runtime::offchain::http::Response;
@@ -87,9 +87,19 @@ pub mod pallet {
                 }
             }
 
+            let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
+
             match Self::fetch_n_parse(rpc_port) {
                 Ok(res) => {
                     log::info!("Peers are parsed: {:?}", res);
+                    match Self::choose_psk_creator(mock_entropy, res) {
+                        Ok(_) => {
+                            log::info!("The psk creator has been chosen");
+                        }
+                        Err(err) => {
+                            log::error!("Error: {:?}", err);
+                        } 
+                    }
                 }
                 Err(err) => {
                     log::error!("Error: {:?}", err);
@@ -187,10 +197,27 @@ impl<T: Config> Pallet<T> {
 
         let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes).unwrap();
 
-        // for x in json_res.result.iter() {
-        //     log::info!("Peer id: {:?}", x.peerId);
-        // }
-
         Ok(json_res.result)
+    }
+
+    fn choose_psk_creator(entropy: String, peers: Vec<PeerInfoResult>) -> Result<(), Error<T>>  {
+        let mut xored_ids: Vec<Vec<String, String>> = Vec::new();
+        for peer in peers {
+            // Peer id conversion to binary
+            let mut p_id_bin = String::from("");
+            for character in peer.peerId.clone().into_bytes() {
+                p_id_bin += &format!("0{:b} ", character);
+            }
+            let p_id_bin_trim: String = p_id_bin.chars().filter(|c| !c.is_whitespace()).collect();
+
+            let mut xored_p_id_vec = Vec::new();
+            for (i, x) in entropy.chars().enumerate() {
+                let p_n = p_id_bin_trim.chars().nth(i).unwrap().to_string().parse::<i32>().unwrap();
+                let e_n = x.clone().to_string().parse::<i32>().unwrap();
+                xored_p_id_vec.push((p_n ^ e_n).to_string());
+            }
+            let xored_p_id = xored_p_id_vec.join("");
+        }
+        Ok(())
     }
 }
