@@ -87,6 +87,7 @@ pub mod pallet {
                 }
             }
 
+            // Mock entropy (256): 
             let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
 
             match Self::fetch_n_parse(rpc_port) {
@@ -201,7 +202,7 @@ impl<T: Config> Pallet<T> {
     }
 
     fn choose_psk_creator(entropy: String, peers: Vec<PeerInfoResult>) -> Result<(), Error<T>>  {
-        let mut xored_ids: Vec<Vec<String, String>> = Vec::new();
+        let mut xored_ids: Vec<_> = Vec::new();
         for peer in peers {
             // Peer id conversion to binary
             let mut p_id_bin = String::from("");
@@ -217,6 +218,8 @@ impl<T: Config> Pallet<T> {
                 xored_p_id_vec.push((p_n ^ e_n).to_string());
             }
             let xored_p_id = xored_p_id_vec.join("");
+            let peer_data = vec![peer.peerId, xored_p_id];
+            xored_ids.push(peer_data);
         }
         Ok(())
     }
