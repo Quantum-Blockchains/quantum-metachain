@@ -28,7 +28,8 @@ pub use pallet_timestamp::Call as TimestampCall;
 use pallet_transaction_payment::CurrencyAdapter;
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
-use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
+use sp_consensus_babe::AuthorityId as BabeId;
+use sp_core::{crypto::KeyTypeId, OpaqueMetadata, Void};
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
 use sp_runtime::{
@@ -38,6 +39,7 @@ use sp_runtime::{
     ApplyExtrinsicResult, MultiSignature,
 };
 pub use sp_runtime::{Perbill, Permill};
+pub use pallet_session::historical::{self as pallet_session_historical};
 use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
@@ -80,7 +82,7 @@ pub mod opaque {
 
     impl_opaque_keys! {
         pub struct SessionKeys {
-            pub aura: Aura,
+            pub babe: Babe,
             pub grandpa: Grandpa,
         }
     }
@@ -132,6 +134,11 @@ pub fn native_version() -> NativeVersion {
 }
 
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
+pub const BABE_GENESIS_EPOCH_CONFIG: sp_consensus_babe::BabeEpochConfiguration =
+    sp_consensus_babe::BabeEpochConfiguration {
+        c: PRIMARY_PROBABILITY,
+        allowed_slots: sp_consensus_babe::AllowedSlots::PrimaryAndSecondaryPlainSlots,
+    };
 
 parameter_types! {
     pub const BlockHashCount: BlockNumber = 2400;
@@ -141,7 +148,12 @@ parameter_types! {
         ::with_sensible_defaults(2 * WEIGHT_PER_SECOND, NORMAL_DISPATCH_RATIO);
     pub BlockLength: frame_system::limits::BlockLength = frame_system::limits::BlockLength
         ::max_with_normal_ratio(5 * 1024 * 1024, NORMAL_DISPATCH_RATIO);
+    pub const MaxAuthorities: u32 = 100;
     pub const SS58Prefix: u8 = 42;
+    pub const EpochDuration: u64 = EPOCH_DURATION_IN_SLOTS;
+	pub const ExpectedBlockTime: Moment = MILLISECS_PER_BLOCK;
+	pub const ReportLongevity: u64 =
+		BondingDuration::get() as u64 * SessionsPerEra::get() as u64 * EpochDuration::get();
 }
 
 // Configure FRAME pallets to include in runtime.
@@ -200,17 +212,15 @@ impl frame_system::Config for Runtime {
 
 impl pallet_randomness_collective_flip::Config for Runtime {}
 
-impl pallet_aura::Config for Runtime {
-    type AuthorityId = AuraId;
-    type DisabledValidators = ();
-    type MaxAuthorities = ConstU32<32>;
-}
+// impl pallet_aura::Config for Runtime {
+//     type AuthorityId = AuraId;
+//     type MaxAuthorities = ConstU32<32>;
+//     type DisabledValidators = ();
+// }
 
 impl pallet_grandpa::Config for Runtime {
     type Event = Event;
     type Call = Call;
-
-    type KeyOwnerProofSystem = ();
 
     type KeyOwnerProof =
         <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
@@ -219,6 +229,8 @@ impl pallet_grandpa::Config for Runtime {
         KeyTypeId,
         GrandpaId,
     )>>::IdentificationTuple;
+
+    type KeyOwnerProofSystem = ();
 
     type HandleEquivocation = ();
 
@@ -229,7 +241,7 @@ impl pallet_grandpa::Config for Runtime {
 impl pallet_timestamp::Config for Runtime {
     /// A timestamp: milliseconds since the unix epoch.
     type Moment = u64;
-    type OnTimestampSet = Aura;
+    type OnTimestampSet = Babe;
     type MinimumPeriod = ConstU64<{ SLOT_DURATION / 2 }>;
     type WeightInfo = ();
 }
@@ -238,17 +250,17 @@ impl pallet_timestamp::Config for Runtime {
 pub const EXISTENTIAL_DEPOSIT: u128 = 500;
 
 impl pallet_balances::Config for Runtime {
-    type MaxLocks = ConstU32<50>;
-    type MaxReserves = ();
-    type ReserveIdentifier = [u8; 8];
     /// The type for recording an account's balance.
     type Balance = Balance;
+    type DustRemoval = ();
     /// The ubiquitous event type.
     type Event = Event;
-    type DustRemoval = ();
     type ExistentialDeposit = ConstU128<EXISTENTIAL_DEPOSIT>;
     type AccountStore = System;
     type WeightInfo = pallet_balances::weights::SubstrateWeight<Runtime>;
+    type MaxLocks = ConstU32<50>;
+    type MaxReserves = ();
+    type ReserveIdentifier = [u8; 8];
 }
 
 impl pallet_transaction_payment::Config for Runtime {
@@ -263,6 +275,31 @@ impl pallet_transaction_payment::Config for Runtime {
 impl pallet_sudo::Config for Runtime {
     type Event = Event;
     type Call = Call;
+}
+
+impl pallet_babe::Config for Runtime {
+    type EpochDuration = EpochDuration;
+    type ExpectedBlockTime = ExpectedBlockTime;
+    type EpochChangeTrigger = pallet_babe::ExternalTrigger;
+    type DisabledValidators = ();
+
+    type KeyOwnerProofSystem = Historical;
+
+    type KeyOwnerProof = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
+        KeyTypeId,
+        pallet_babe::AuthorityId,
+    )>>::Proof;
+
+    type KeyOwnerIdentification = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(
+        KeyTypeId,
+        pallet_babe::AuthorityId,
+    )>>::IdentificationTuple;
+
+    type HandleEquivocation =
+        pallet_babe::EquivocationHandler<Self::KeyOwnerIdentification, Offences, ReportLongevity>;
+
+    type WeightInfo = ();
+    type MaxAuthorities = MaxAuthorities;
 }
 
 impl ocw_qkd::Config for Runtime {
@@ -282,11 +319,13 @@ construct_runtime!(
         System: frame_system,
         RandomnessCollectiveFlip: pallet_randomness_collective_flip,
         Timestamp: pallet_timestamp,
-        Aura: pallet_aura,
+        // Aura: pallet_aura,
+        Babe: pallet_babe,
         Grandpa: pallet_grandpa,
         Balances: pallet_balances,
         TransactionPayment: pallet_transaction_payment,
         Sudo: pallet_sudo,
+        Historical: pallet_session_historical::{Pallet},
         // QMC pallets
         OcwQkd: ocw_qkd,
     }
@@ -394,15 +433,68 @@ impl_runtime_apis! {
         }
     }
 
-    impl sp_consensus_aura::AuraApi<Block, AuraId> for Runtime {
-        fn slot_duration() -> sp_consensus_aura::SlotDuration {
-            sp_consensus_aura::SlotDuration::from_millis(Aura::slot_duration())
-        }
+    // impl sp_consensus_aura::AuraApi<Block, AuraId> for Runtime {
+    //     fn slot_duration() -> sp_consensus_aura::SlotDuration {
+    //         sp_consensus_aura::SlotDuration::from_millis(Aura::slot_duration())
+    //     }
+    //
+    //     fn authorities() -> Vec<AuraId> {
+    //         Aura::authorities().into_inner()
+    //     }
+    // }
 
-        fn authorities() -> Vec<AuraId> {
-            Aura::authorities().into_inner()
-        }
-    }
+    impl sp_consensus_babe::BabeApi<Block> for Runtime {
+		fn configuration() -> sp_consensus_babe::BabeGenesisConfiguration {
+			// The choice of `c` parameter (where `1 - c` represents the
+			// probability of a slot being empty), is done in accordance to the
+			// slot duration and expected target block time, for safely
+			// resisting network delays of maximum two seconds.
+			// <https://research.web3.foundation/en/latest/polkadot/BABE/Babe/#6-practical-results>
+			sp_consensus_babe::BabeGenesisConfiguration {
+				slot_duration: Babe::slot_duration(),
+				epoch_length: EpochDuration::get(),
+				c: BABE_GENESIS_EPOCH_CONFIG.c,
+				genesis_authorities: Babe::authorities().to_vec(),
+				randomness: Babe::randomness(),
+				allowed_slots: BABE_GENESIS_EPOCH_CONFIG.allowed_slots,
+			}
+		}
+
+		fn current_epoch_start() -> sp_consensus_babe::Slot {
+			Babe::current_epoch_start()
+		}
+
+		fn current_epoch() -> sp_consensus_babe::Epoch {
+			Babe::current_epoch()
+		}
+
+		fn next_epoch() -> sp_consensus_babe::Epoch {
+			Babe::next_epoch()
+		}
+
+		fn generate_key_ownership_proof(
+			_slot: sp_consensus_babe::Slot,
+			authority_id: sp_consensus_babe::AuthorityId,
+		) -> Option<sp_consensus_babe::OpaqueKeyOwnershipProof> {
+			use codec::Encode;
+
+			Historical::prove((sp_consensus_babe::KEY_TYPE, authority_id))
+				.map(|p| p.encode())
+				.map(sp_consensus_babe::OpaqueKeyOwnershipProof::new)
+		}
+
+		fn submit_report_equivocation_unsigned_extrinsic(
+			equivocation_proof: sp_consensus_babe::EquivocationProof<<Block as BlockT>::Header>,
+			key_owner_proof: sp_consensus_babe::OpaqueKeyOwnershipProof,
+		) -> Option<()> {
+			let key_owner_proof = key_owner_proof.decode()?;
+
+			Babe::submit_unsigned_equivocation_report(
+				equivocation_proof,
+				key_owner_proof,
+			)
+		}
+	}
 
     impl sp_session::SessionKeys<Block> for Runtime {
         fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {

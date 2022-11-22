@@ -1647,7 +1647,7 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
 [[package]]
 name = "fork-tree"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
 ]
@@ -1664,7 +1664,7 @@ dependencies = [
 [[package]]
 name = "frame-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1686,7 +1686,7 @@ dependencies = [
 [[package]]
 name = "frame-benchmarking-cli"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "Inflector",
  "chrono",
@@ -1737,7 +1737,7 @@ dependencies = [
 [[package]]
 name = "frame-executive"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1765,7 +1765,7 @@ dependencies = [
 [[package]]
 name = "frame-support"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "bitflags",
  "frame-metadata",
@@ -1796,7 +1796,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "Inflector",
  "frame-support-procedural-tools",
@@ -1808,7 +1808,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support-procedural-tools-derive",
  "proc-macro-crate",
@@ -1820,7 +1820,7 @@ dependencies = [
 [[package]]
 name = "frame-support-procedural-tools-derive"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1830,7 +1830,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-support-test-pallet",
@@ -1853,7 +1853,7 @@ dependencies = [
 [[package]]
 name = "frame-support-test-pallet"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -1864,7 +1864,7 @@ dependencies = [
 [[package]]
 name = "frame-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "log",
@@ -1881,7 +1881,7 @@ dependencies = [
 [[package]]
 name = "frame-system-benchmarking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -1896,7 +1896,7 @@ dependencies = [
 [[package]]
 name = "frame-system-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -1905,7 +1905,7 @@ dependencies = [
 [[package]]
 name = "frame-try-runtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "sp-api",
@@ -2131,8 +2131,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c05aeb6a22b8f62540c194aac980f2115af067bfe15a0734d7277a768d396b31"
 dependencies = [
  "cfg-if",
+ "js-sys",
  "libc",
  "wasi 0.11.0+wasi-snapshot-preview1",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -4149,6 +4151,7 @@ dependencies = [
  "log",
  "parity-scale-codec",
  "scale-info",
+ "serde",
  "serde_json",
  "sp-core",
  "sp-io",
@@ -4244,25 +4247,9 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-aura"
-version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
-dependencies = [
- "frame-support",
- "frame-system",
- "pallet-timestamp",
- "parity-scale-codec",
- "scale-info",
- "sp-application-crypto",
- "sp-consensus-aura",
- "sp-runtime",
- "sp-std",
-]
-
-[[package]]
 name = "pallet-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4275,9 +4262,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-babe"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-authorship",
+ "pallet-session",
+ "pallet-timestamp",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-application-crypto",
+ "sp-consensus-babe",
+ "sp-consensus-vrf",
+ "sp-io",
+ "sp-runtime",
+ "sp-session",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-balances"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4292,7 +4303,7 @@ dependencies = [
 [[package]]
 name = "pallet-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4315,7 +4326,7 @@ dependencies = [
 [[package]]
 name = "pallet-randomness-collective-flip"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4329,7 +4340,7 @@ dependencies = [
 [[package]]
 name = "pallet-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4350,7 +4361,7 @@ dependencies = [
 [[package]]
 name = "pallet-sudo"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4364,7 +4375,7 @@ dependencies = [
 [[package]]
 name = "pallet-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-benchmarking",
  "frame-support",
@@ -4382,7 +4393,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-support",
  "frame-system",
@@ -4398,7 +4409,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "jsonrpsee",
  "pallet-transaction-payment-rpc-runtime-api",
@@ -4413,7 +4424,7 @@ dependencies = [
 [[package]]
 name = "pallet-transaction-payment-rpc-runtime-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "pallet-transaction-payment",
  "parity-scale-codec",
@@ -4997,12 +5008,14 @@ dependencies = [
  "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
+ "getrandom 0.2.8",
  "hex-literal",
  "ocw-qkd",
- "pallet-aura",
+ "pallet-babe",
  "pallet-balances",
  "pallet-grandpa",
  "pallet-randomness-collective-flip",
+ "pallet-session",
  "pallet-sudo",
  "pallet-timestamp",
  "pallet-transaction-payment",
@@ -5011,7 +5024,7 @@ dependencies = [
  "scale-info",
  "sp-api",
  "sp-block-builder",
- "sp-consensus-aura",
+ "sp-consensus-babe",
  "sp-core",
  "sp-inherents",
  "sp-offchain",
@@ -5278,7 +5291,7 @@ dependencies = [
 [[package]]
 name = "remote-externalities"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "env_logger",
  "jsonrpsee",
@@ -5559,7 +5572,7 @@ dependencies = [
 [[package]]
 name = "sc-allocator"
 version = "4.1.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "log",
  "sp-core",
@@ -5570,7 +5583,7 @@ dependencies = [
 [[package]]
 name = "sc-basic-authorship"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "futures-timer",
@@ -5593,7 +5606,7 @@ dependencies = [
 [[package]]
 name = "sc-block-builder"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "sc-client-api",
@@ -5609,7 +5622,7 @@ dependencies = [
 [[package]]
 name = "sc-chain-spec"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "impl-trait-for-tuples",
  "memmap2",
@@ -5626,7 +5639,7 @@ dependencies = [
 [[package]]
 name = "sc-chain-spec-derive"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -5637,7 +5650,7 @@ dependencies = [
 [[package]]
 name = "sc-cli"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "chrono",
  "clap",
@@ -5676,7 +5689,7 @@ dependencies = [
 [[package]]
 name = "sc-client-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "fnv",
  "futures",
@@ -5704,7 +5717,7 @@ dependencies = [
 [[package]]
 name = "sc-client-db"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "hash-db",
  "kvdb",
@@ -5729,7 +5742,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "futures",
@@ -5753,7 +5766,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-aura"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "futures",
@@ -5782,7 +5795,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "fork-tree",
@@ -5824,7 +5837,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-epochs"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "fork-tree",
  "parity-scale-codec",
@@ -5837,7 +5850,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-manual-seal"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "assert_matches",
  "async-trait",
@@ -5871,7 +5884,7 @@ dependencies = [
 [[package]]
 name = "sc-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "futures",
@@ -5896,7 +5909,7 @@ dependencies = [
 [[package]]
 name = "sc-executor"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "lazy_static",
  "lru",
@@ -5923,7 +5936,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-common"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -5939,7 +5952,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-wasmi"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -5954,7 +5967,7 @@ dependencies = [
 [[package]]
 name = "sc-executor-wasmtime"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "cfg-if",
  "libc",
@@ -5974,7 +5987,7 @@ dependencies = [
 [[package]]
 name = "sc-finality-grandpa"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "ahash",
  "async-trait",
@@ -6015,7 +6028,7 @@ dependencies = [
 [[package]]
 name = "sc-informant"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "ansi_term",
  "futures",
@@ -6032,7 +6045,7 @@ dependencies = [
 [[package]]
 name = "sc-keystore"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "hex",
@@ -6047,7 +6060,7 @@ dependencies = [
 [[package]]
 name = "sc-network"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "asynchronous-codec",
@@ -6100,7 +6113,7 @@ dependencies = [
 [[package]]
 name = "sc-network-common"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "bitflags",
@@ -6121,7 +6134,7 @@ dependencies = [
 [[package]]
 name = "sc-network-gossip"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "ahash",
  "futures",
@@ -6139,7 +6152,7 @@ dependencies = [
 [[package]]
 name = "sc-network-light"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "hex",
@@ -6160,7 +6173,7 @@ dependencies = [
 [[package]]
 name = "sc-network-sync"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "fork-tree",
  "futures",
@@ -6188,7 +6201,7 @@ dependencies = [
 [[package]]
 name = "sc-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "bytes",
  "fnv",
@@ -6217,7 +6230,7 @@ dependencies = [
 [[package]]
 name = "sc-peerset"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "libp2p",
@@ -6230,7 +6243,7 @@ dependencies = [
 [[package]]
 name = "sc-proposer-metrics"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "log",
  "substrate-prometheus-endpoint",
@@ -6239,7 +6252,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "hash-db",
@@ -6269,7 +6282,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc-api"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "jsonrpsee",
@@ -6292,7 +6305,7 @@ dependencies = [
 [[package]]
 name = "sc-rpc-server"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "jsonrpsee",
@@ -6305,7 +6318,7 @@ dependencies = [
 [[package]]
 name = "sc-service"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "directories",
@@ -6372,7 +6385,7 @@ dependencies = [
 [[package]]
 name = "sc-state-db"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -6386,7 +6399,7 @@ dependencies = [
 [[package]]
 name = "sc-sysinfo"
 version = "6.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "libc",
@@ -6405,7 +6418,7 @@ dependencies = [
 [[package]]
 name = "sc-telemetry"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "chrono",
  "futures",
@@ -6423,7 +6436,7 @@ dependencies = [
 [[package]]
 name = "sc-tracing"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "ansi_term",
  "atty",
@@ -6454,7 +6467,7 @@ dependencies = [
 [[package]]
 name = "sc-tracing-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "proc-macro-crate",
  "proc-macro2",
@@ -6465,7 +6478,7 @@ dependencies = [
 [[package]]
 name = "sc-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "futures-timer",
@@ -6491,7 +6504,7 @@ dependencies = [
 [[package]]
 name = "sc-transaction-pool-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "log",
@@ -6504,7 +6517,7 @@ dependencies = [
 [[package]]
 name = "sc-utils"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "futures-timer",
@@ -6942,7 +6955,7 @@ dependencies = [
 [[package]]
 name = "sp-api"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "hash-db",
  "log",
@@ -6959,7 +6972,7 @@ dependencies = [
 [[package]]
 name = "sp-api-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "blake2",
  "proc-macro-crate",
@@ -6971,7 +6984,7 @@ dependencies = [
 [[package]]
 name = "sp-application-crypto"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -6984,7 +6997,7 @@ dependencies = [
 [[package]]
 name = "sp-arithmetic"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "integer-sqrt",
  "num-traits",
@@ -6999,7 +7012,7 @@ dependencies = [
 [[package]]
 name = "sp-authorship"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -7011,7 +7024,7 @@ dependencies = [
 [[package]]
 name = "sp-block-builder"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "sp-api",
@@ -7023,7 +7036,7 @@ dependencies = [
 [[package]]
 name = "sp-blockchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures",
  "log",
@@ -7041,7 +7054,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "futures",
@@ -7060,7 +7073,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-aura"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "parity-scale-codec",
@@ -7078,7 +7091,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-babe"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "merlin",
@@ -7101,7 +7114,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-slots"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7115,7 +7128,7 @@ dependencies = [
 [[package]]
 name = "sp-consensus-vrf"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7128,7 +7141,7 @@ dependencies = [
 [[package]]
 name = "sp-core"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "base58",
  "bitflags",
@@ -7174,7 +7187,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "blake2",
  "byteorder",
@@ -7188,7 +7201,7 @@ dependencies = [
 [[package]]
 name = "sp-core-hashing-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7199,7 +7212,7 @@ dependencies = [
 [[package]]
 name = "sp-database"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "kvdb",
  "parking_lot 0.12.1",
@@ -7208,7 +7221,7 @@ dependencies = [
 [[package]]
 name = "sp-debug-derive"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -7218,7 +7231,7 @@ dependencies = [
 [[package]]
 name = "sp-externalities"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "environmental",
  "parity-scale-codec",
@@ -7229,7 +7242,7 @@ dependencies = [
 [[package]]
 name = "sp-finality-grandpa"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "finality-grandpa",
  "log",
@@ -7247,7 +7260,7 @@ dependencies = [
 [[package]]
 name = "sp-inherents"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "impl-trait-for-tuples",
@@ -7261,7 +7274,7 @@ dependencies = [
 [[package]]
 name = "sp-io"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "bytes",
  "futures",
@@ -7287,7 +7300,7 @@ dependencies = [
 [[package]]
 name = "sp-keyring"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "lazy_static",
  "sp-core",
@@ -7298,7 +7311,7 @@ dependencies = [
 [[package]]
 name = "sp-keystore"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "futures",
@@ -7315,7 +7328,7 @@ dependencies = [
 [[package]]
 name = "sp-maybe-compressed-blob"
 version = "4.1.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "thiserror",
  "zstd",
@@ -7324,7 +7337,7 @@ dependencies = [
 [[package]]
 name = "sp-offchain"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "sp-api",
  "sp-core",
@@ -7334,7 +7347,7 @@ dependencies = [
 [[package]]
 name = "sp-panic-handler"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "backtrace",
  "lazy_static",
@@ -7344,7 +7357,7 @@ dependencies = [
 [[package]]
 name = "sp-rpc"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "rustc-hash",
  "serde",
@@ -7354,7 +7367,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "either",
  "hash256-std-hasher",
@@ -7376,7 +7389,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "bytes",
  "impl-trait-for-tuples",
@@ -7394,7 +7407,7 @@ dependencies = [
 [[package]]
 name = "sp-runtime-interface-proc-macro"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "Inflector",
  "proc-macro-crate",
@@ -7406,7 +7419,7 @@ dependencies = [
 [[package]]
 name = "sp-sandbox"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "log",
  "parity-scale-codec",
@@ -7420,7 +7433,7 @@ dependencies = [
 [[package]]
 name = "sp-session"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7434,7 +7447,7 @@ dependencies = [
 [[package]]
 name = "sp-staking"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "scale-info",
@@ -7445,7 +7458,7 @@ dependencies = [
 [[package]]
 name = "sp-state-machine"
 version = "0.12.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "hash-db",
  "log",
@@ -7467,12 +7480,12 @@ dependencies = [
 [[package]]
 name = "sp-std"
 version = "4.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 
 [[package]]
 name = "sp-storage"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -7485,7 +7498,7 @@ dependencies = [
 [[package]]
 name = "sp-tasks"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "log",
  "sp-core",
@@ -7498,7 +7511,7 @@ dependencies = [
 [[package]]
 name = "sp-timestamp"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "futures-timer",
@@ -7514,7 +7527,7 @@ dependencies = [
 [[package]]
 name = "sp-tracing"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "sp-std",
@@ -7526,7 +7539,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-pool"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "sp-api",
  "sp-runtime",
@@ -7535,7 +7548,7 @@ dependencies = [
 [[package]]
 name = "sp-transaction-storage-proof"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "async-trait",
  "log",
@@ -7551,7 +7564,7 @@ dependencies = [
 [[package]]
 name = "sp-trie"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "hash-db",
  "memory-db",
@@ -7567,7 +7580,7 @@ dependencies = [
 [[package]]
 name = "sp-version"
 version = "5.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "impl-serde",
  "parity-scale-codec",
@@ -7584,7 +7597,7 @@ dependencies = [
 [[package]]
 name = "sp-version-proc-macro"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "parity-scale-codec",
  "proc-macro2",
@@ -7595,7 +7608,7 @@ dependencies = [
 [[package]]
 name = "sp-wasm-interface"
 version = "6.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "impl-trait-for-tuples",
  "log",
@@ -7695,7 +7708,7 @@ dependencies = [
 [[package]]
 name = "substrate-build-script-utils"
 version = "3.0.0"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "platforms",
 ]
@@ -7703,7 +7716,7 @@ dependencies = [
 [[package]]
 name = "substrate-frame-rpc-system"
 version = "4.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "frame-system-rpc-runtime-api",
  "futures",
@@ -7724,7 +7737,7 @@ dependencies = [
 [[package]]
 name = "substrate-prometheus-endpoint"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "futures-util",
  "hyper",
@@ -7737,7 +7750,7 @@ dependencies = [
 [[package]]
 name = "substrate-wasm-builder"
 version = "5.0.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "ansi_term",
  "build-helper",
@@ -8196,7 +8209,7 @@ checksum = "59547bce71d9c38b83d9c0e92b6066c4253371f15005def0c30d9657f50c7642"
 [[package]]
 name = "try-runtime-cli"
 version = "0.10.0-dev"
-source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#dbd2cee9222a419566b6f81a1c33ecdb79c728ec"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
 dependencies = [
  "clap",
  "jsonrpsee",
