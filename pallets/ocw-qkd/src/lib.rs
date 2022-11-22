@@ -8,6 +8,7 @@ pub use pallet::*;
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
 use sp_std::vec::Vec;
+use sp_std::num::ParseIntError;
 use alloc::string::{String, ToString};
 use crate::Error::HttpFetchingError;
 use serde::Deserialize;
@@ -25,7 +26,11 @@ pub struct PeerInfoResponse {
 pub struct PeerInfoResult {
     pub peerId: String,
 }
-// use crate::Error::CannotGenerateKeyFromEntropy;
+
+#[derive(Deserialize)]
+pub struct LocalPeeridResponse {
+    pub result: String
+}
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -78,19 +83,10 @@ pub mod pallet {
                 }
             }
 
-            match Self::fetch_peers(rpc_port) {
-                Ok(resp_body) => {
-                    log::info!("Peers are fetched: {:?}", resp_body);
-                }
-                Err(err) => {
-                    log::error!("Error: {:?}", err);
-                }
-            }
-
             // Mock entropy (256): 
             let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
 
-            match Self::fetch_n_parse(rpc_port) {
+            match Self::fetch_n_parse_peers(rpc_port) {
                 Ok(res) => {
                     log::info!("Peers are parsed: {:?}", res);
                     match Self::choose_psk_creator(mock_entropy, res) {
@@ -101,6 +97,15 @@ pub mod pallet {
                             log::error!("Error: {:?}", err);
                         } 
                     }
+                }
+                Err(err) => {
+                    log::error!("Error: {:?}", err);
+                }
+            }
+
+            match Self::fetch_n_parse_local_peerid(rpc_port) {
+                Ok(res) => {
+                    log::info!("Local peerid is parsed: {:?}", res);
                 }
                 Err(err) => {
                     log::error!("Error: {:?}", err);
@@ -119,6 +124,7 @@ pub mod pallet {
     pub enum Error<T> {
         CannotGenerateKeyFromEntropy,
         HttpFetchingError,
+        ParseIntError,
     }
 }
 
@@ -188,7 +194,7 @@ impl<T: Config> Pallet<T> {
         Ok(response.body().collect::<Vec<u8>>())
     }
 
-    fn fetch_n_parse(rpc_port: u16) -> Result<Vec<PeerInfoResult>, Error<T>> {
+    fn fetch_n_parse_peers(rpc_port: u16) -> Result<Vec<PeerInfoResult>, Error<T>> {
         let resp_bytes = Self::fetch_peers(rpc_port)
             .map_err(|e| {
                 log::error!("fetch_peers error: {:?}", e);
@@ -196,7 +202,56 @@ impl<T: Config> Pallet<T> {
             })?;
     
 
-        let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes).unwrap();
+        let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes)
+            .map_err(|e: serde_json::Error| {
+                log::error!("Parse peers error: {:?}", e);
+                <Error<T>>::HttpFetchingError
+            })?;
+
+        Ok(json_res.result)
+    }
+
+    fn fetch_local_peerid(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
+        let url = format!("http://localhost:{}", rpc_port);
+
+        let mut vec_body: Vec<&[u8]> = Vec::new();
+        let data = b"{\"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"system_localPeerId\"}";
+        vec_body.push(data);
+
+        let request = Request::post(&url, vec_body);
+        let timeout = timestamp().add(Duration::from_millis(3000));
+
+        let pending = request
+            .add_header("Content-Type", "application/json")
+            .deadline(timeout)
+            .send()
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        let response = pending
+            .try_wait(timeout)
+            .map_err(|_| <Error<T>>::HttpFetchingError)?
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        if response.code != 200 {
+            log::error!("Unexpected http request status code: {}", response.code);
+            return Err(<Error<T>>::HttpFetchingError);
+        }
+
+        Ok(response.body().collect::<Vec<u8>>())
+    }
+
+    fn fetch_n_parse_local_peerid(rpc_port: u16) -> Result<String, Error<T>> {
+        let resp_bytes = Self::fetch_local_peerid(rpc_port)
+            .map_err(|e| {
+                log::error!("fetch_local_peerid error: {:?}", e);
+                <Error<T>>::HttpFetchingError
+            })?;
+
+        let json_res: LocalPeeridResponse = serde_json::from_slice(&resp_bytes)
+            .map_err(|e: serde_json::Error| {
+                log::error!("Parse local peerid error: {:?}", e);
+                <Error<T>>::HttpFetchingError
+            })?;
 
         Ok(json_res.result)
     }
@@ -213,8 +268,16 @@ impl<T: Config> Pallet<T> {
 
             let mut xored_p_id_vec = Vec::new();
             for (i, x) in entropy.chars().enumerate() {
-                let p_n = p_id_bin_trim.chars().nth(i).unwrap().to_string().parse::<i32>().unwrap();
-                let e_n = x.clone().to_string().parse::<i32>().unwrap();
+                let p_n = p_id_bin_trim.chars().nth(i).unwrap().to_string().parse::<i32>()
+                    .map_err(|e| {
+                        log::error!("Peer bit error: {:?}", e);
+                        <Error<T>>::ParseIntError
+                    })?;
+                let e_n = x.clone().to_string().parse::<i32>()
+                    .map_err(|e| {
+                        log::error!("Entropy bit error: {:?}", e);
+                        <Error<T>>::ParseIntError
+                    })?;
                 xored_p_id_vec.push((p_n ^ e_n).to_string());
             }
             let xored_p_id = xored_p_id_vec.join("");
