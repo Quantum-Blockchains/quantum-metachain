@@ -86,26 +86,25 @@ pub mod pallet {
             // Mock entropy (256): 
             let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
 
-            match Self::fetch_n_parse_peers(rpc_port) {
-                Ok(res) => {
-                    log::info!("Peers are parsed: {:?}", res);
-                    match Self::choose_psk_creator(mock_entropy, res) {
-                        Ok(_) => {
-                            log::info!("The psk creator has been chosen");
+            let peers = match Self::fetch_n_parse_peers(rpc_port) {
+                Ok(peers) => peers,
+                Err(_err) => {
+                    log::error!("Failed to retrieve peers");
+                    return;
                         }
-                        Err(err) => {
-                            log::error!("Error: {:?}", err);
-                        } 
-                    }
-                }
-                Err(err) => {
-                    log::error!("Error: {:?}", err);
-                }
-            }
+            };
 
-            match Self::fetch_n_parse_local_peerid(rpc_port) {
-                Ok(res) => {
-                    log::info!("Local peerid is parsed: {:?}", res);
+            let local_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
+                Ok(id) => id,
+                Err(_err) => {
+                    log::error!("Failed to retrieve local peerid");
+                    return;
+                        } 
+            };
+
+            match Self::choose_psk_creator(mock_entropy, peers, local_id) {
+                Ok(_) => {
+                    log::info!("The psk creator has been chosen");
                 }
                 Err(err) => {
                     log::error!("Error: {:?}", err);
@@ -256,8 +255,13 @@ impl<T: Config> Pallet<T> {
         Ok(json_res.result)
     }
 
-    fn choose_psk_creator(entropy: String, peers: Vec<PeerInfoResult>) -> Result<(), Error<T>>  {
+    fn choose_psk_creator(entropy: String, mut peers: Vec<PeerInfoResult>, local_id: String) -> Result<(), Error<T>>  {
+        // log::info!("Entropy: {}", entropy);
         let mut xored_ids: Vec<_> = Vec::new();
+        let local_peer = PeerInfoResult {
+            peerId: local_id
+        };
+        peers.push(local_peer);
         for peer in peers {
             // Peer id conversion to binary
             let mut p_id_bin = String::from("");
