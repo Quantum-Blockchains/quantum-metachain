@@ -103,8 +103,8 @@ pub mod pallet {
             };
 
             match Self::choose_psk_creator(mock_entropy, peers, local_id) {
-                Ok(_) => {
-                    log::info!("The psk creator has been chosen");
+                Ok(p) => {
+                    log::info!("The psk creator has been chosen: {}", p);
                 }
                 Err(err) => {
                     log::error!("Error: {:?}", err);
@@ -255,16 +255,18 @@ impl<T: Config> Pallet<T> {
         Ok(json_res.result)
     }
 
-    fn choose_psk_creator(entropy: String, mut peers: Vec<PeerInfoResult>, local_id: String) -> Result<(), Error<T>>  {
+    fn choose_psk_creator(entropy: String, mut peers: Vec<PeerInfoResult>, local_id: String) -> Result<String, Error<T>>  {
         // log::info!("Entropy: {}", entropy);
-        let mut xored_ids: Vec<_> = Vec::new();
+        // let mut xored_ids: Vec<_> = Vec::new();
         let local_peer = PeerInfoResult {
             peerId: local_id
         };
         peers.push(local_peer);
+        let mut psk_generator = String::new();
+        let mut psk_generator_xored = String::new();
         for peer in peers {
             // Peer id conversion to binary
-            let mut p_id_bin = String::from("");
+            let mut p_id_bin = String::new();
             for character in peer.peerId.clone().into_bytes() {
                 p_id_bin += &format!("0{:b} ", character);
             }
@@ -272,12 +274,12 @@ impl<T: Config> Pallet<T> {
 
             let mut xored_p_id_vec = Vec::new();
             for (i, x) in entropy.chars().enumerate() {
-                let p_n = p_id_bin_trim.chars().nth(i).unwrap().to_string().parse::<i32>()
+                let p_n: i32 = p_id_bin_trim.chars().nth(i).unwrap().to_string().parse()
                     .map_err(|e| {
                         log::error!("Peer bit error: {:?}", e);
                         <Error<T>>::ParseIntError
                     })?;
-                let e_n = x.clone().to_string().parse::<i32>()
+                let e_n: i32 = x.clone().to_string().parse()
                     .map_err(|e| {
                         log::error!("Entropy bit error: {:?}", e);
                         <Error<T>>::ParseIntError
@@ -285,9 +287,22 @@ impl<T: Config> Pallet<T> {
                 xored_p_id_vec.push((p_n ^ e_n).to_string());
             }
             let xored_p_id = xored_p_id_vec.join("");
-            let peer_data = vec![peer.peerId, xored_p_id];
-            xored_ids.push(peer_data);
+            if psk_generator.clone().is_empty() || psk_generator_xored.clone().is_empty() {
+                psk_generator = peer.peerId;
+                psk_generator_xored = xored_p_id;
+            } else {
+                let psk_gen_xor_slice = &psk_generator_xored[(&psk_generator_xored.len() - 32)..psk_generator_xored.len()];
+                let xor_pid_slice = &xored_p_id[(&xored_p_id.len() - 32)..xored_p_id.len()];
+                let psk_gen_xor_intval = isize::from_str_radix(&psk_gen_xor_slice, 2).expect("psk_generator_xored_intval parsing failed");
+                let xored_p_id_intval = isize::from_str_radix(&xor_pid_slice, 2).expect("xored_p_id_intval parsing failed");
+                if xored_p_id_intval > psk_gen_xor_intval {
+                    psk_generator = peer.peerId;
+                    psk_generator_xored = xored_p_id;
         }
-        Ok(())
+            }
+        }
+        // log::info!("Xored p_ids: {:#?}", xored_ids);
+
+        Ok(psk_generator)
     }
 }
