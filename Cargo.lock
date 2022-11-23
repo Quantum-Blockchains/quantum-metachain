@@ -1735,6 +1735,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "frame-election-provider-solution-type"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "frame-election-provider-support"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "frame-election-provider-solution-type",
+ "frame-support",
+ "frame-system",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-arithmetic",
+ "sp-npos-elections",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "frame-executive"
 version = "4.0.0-dev"
 source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
@@ -4324,6 +4351,65 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-im-online"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-authorship",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-application-crypto",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
+name = "pallet-offences"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-balances",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
+name = "pallet-offences-benchmarking"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "pallet-babe",
+ "pallet-balances",
+ "pallet-grandpa",
+ "pallet-im-online",
+ "pallet-offences",
+ "pallet-session",
+ "pallet-staking",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
+]
+
+[[package]]
 name = "pallet-randomness-collective-flip"
 version = "4.0.0-dev"
 source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
@@ -4356,6 +4442,28 @@ dependencies = [
  "sp-staking",
  "sp-std",
  "sp-trie",
+]
+
+[[package]]
+name = "pallet-staking"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "frame-benchmarking",
+ "frame-election-provider-support",
+ "frame-support",
+ "frame-system",
+ "log",
+ "pallet-authorship",
+ "pallet-session",
+ "parity-scale-codec",
+ "rand_chacha 0.2.2",
+ "scale-info",
+ "sp-application-crypto",
+ "sp-io",
+ "sp-runtime",
+ "sp-staking",
+ "sp-std",
 ]
 
 [[package]]
@@ -5014,6 +5122,8 @@ dependencies = [
  "pallet-babe",
  "pallet-balances",
  "pallet-grandpa",
+ "pallet-offences",
+ "pallet-offences-benchmarking",
  "pallet-randomness-collective-flip",
  "pallet-session",
  "pallet-sudo",
@@ -7332,6 +7442,19 @@ source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0
 dependencies = [
  "thiserror",
  "zstd",
+]
+
+[[package]]
+name = "sp-npos-elections"
+version = "4.0.0-dev"
+source = "git+https://github.com/Quantum-Blockchains/substrate.git?branch=qmc-v0.0.1#2e8b06f9046d665cabde3e6ba8b011499e868fde"
+dependencies = [
+ "parity-scale-codec",
+ "scale-info",
+ "sp-arithmetic",
+ "sp-core",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]

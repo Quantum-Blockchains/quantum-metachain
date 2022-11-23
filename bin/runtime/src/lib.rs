@@ -27,7 +27,7 @@ use pallet_grandpa::{
 pub use pallet_timestamp::Call as TimestampCall;
 use pallet_transaction_payment::CurrencyAdapter;
 use sp_api::impl_runtime_apis;
-use sp_consensus_aura::sr25519::AuthorityId as AuraId;
+// use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_consensus_babe::AuthorityId as BabeId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata, Void};
 #[cfg(any(feature = "std", test))]
@@ -325,6 +325,7 @@ construct_runtime!(
         Balances: pallet_balances,
         TransactionPayment: pallet_transaction_payment,
         Sudo: pallet_sudo,
+        Offences: pallet_offences,
         Historical: pallet_session_historical::{Pallet},
         // QMC pallets
         OcwQkd: ocw_qkd,

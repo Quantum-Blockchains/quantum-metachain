@@ -23,6 +23,8 @@ pallet-randomness-collective-flip = { version = "4.0.0-dev", default-features = 
 pallet-babe = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 pallet-session = { version = "4.0.0-dev", features = ["historical"], git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 getrandom = { version = "0.2", features = ["js"] }
+pallet-offences = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
+pallet-offences-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1", optional = true }
 pallet-sudo = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 frame-try-runtime = { version = "0.10.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", optional = true , branch = "qmc-v0.0.1" }
@@ -70,6 +72,7 @@ std = [
 	"pallet-balances/std",
 	"pallet-babe/std",
 	"pallet-grandpa/std",
+	"pallet-offences/std",
 	"pallet-randomness-collective-flip/std",
 	"pallet-session/std",
 	"pallet-sudo/std",
@@ -98,6 +101,7 @@ runtime-benchmarks = [
 	"pallet-babe/runtime-benchmarks",
 	"pallet-balances/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
+	"pallet-offences-benchmarking",
 	"pallet-timestamp/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 ]
@@ -109,6 +113,7 @@ try-runtime = [
 	"pallet-babe/try-runtime",
 	"pallet-balances/try-runtime",
 	"pallet-grandpa/try-runtime",
+	"pallet-offences/try-runtime",
 	"pallet-randomness-collective-flip/try-runtime",
 	"pallet-session/try-runtime",
 	"pallet-sudo/try-runtime",
