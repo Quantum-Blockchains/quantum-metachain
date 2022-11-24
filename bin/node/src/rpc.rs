@@ -3,9 +3,6 @@
 //! used by Substrate nodes. This file extends those RPC definitions with
 //! capabilities that are specific to this project's runtime configuration.
 
-//TODO
-// #![warn(missing_docs)]
-
 use jsonrpsee::RpcModule;
 use sc_client_db::offchain::LocalStorage;
 pub use sc_rpc_api::DenyUnsafe;
