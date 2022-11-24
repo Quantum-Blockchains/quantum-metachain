@@ -25,6 +25,7 @@ pub struct PeerInfoResponse {
 
 #[derive(Deserialize, Debug)]
 pub struct PeerInfoResult {
+    #[rustfmt::skip]
     pub peerId: String,
 }
 
