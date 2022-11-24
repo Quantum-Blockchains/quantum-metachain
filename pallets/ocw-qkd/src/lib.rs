@@ -7,7 +7,7 @@ mod tests;
 use alloc::string::{String, ToString};
 
 pub use pallet::*;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
 use sp_std::vec::Vec;
@@ -23,10 +23,10 @@ pub struct PeerInfoResponse {
     pub result: Vec<PeerInfoResult>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Serialize, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct PeerInfoResult {
-    #[rustfmt::skip]
-    pub peerId: String,
+    pub peer_id: String,
 }
 
 #[derive(Deserialize)]
@@ -261,14 +261,14 @@ impl<T: Config> Pallet<T> {
     ) -> Result<String, Error<T>> {
         // log::info!("Entropy: {}", entropy);
         // let mut xored_ids: Vec<_> = Vec::new();
-        let local_peer = PeerInfoResult { peerId: local_id };
+        let local_peer = PeerInfoResult { peer_id: local_id };
         peers.push(local_peer);
         let mut psk_generator = String::new();
         let mut psk_generator_xored = String::new();
         for peer in peers {
             // Peer id conversion to binary
             let mut p_id_bin = String::new();
-            for character in peer.peerId.clone().into_bytes() {
+            for character in peer.peer_id.clone().into_bytes() {
                 p_id_bin += &format!("0{:b} ", character);
             }
             let p_id_bin_trim: String = p_id_bin.chars().filter(|c| !c.is_whitespace()).collect();
@@ -293,7 +293,7 @@ impl<T: Config> Pallet<T> {
             }
             let xored_p_id = xored_p_id_vec.join("");
             if psk_generator.clone().is_empty() || psk_generator_xored.clone().is_empty() {
-                psk_generator = peer.peerId;
+                psk_generator = peer.peer_id;
                 psk_generator_xored = xored_p_id;
             } else {
                 let psk_gen_xor_slice = &psk_generator_xored
@@ -304,7 +304,7 @@ impl<T: Config> Pallet<T> {
                 let xored_p_id_intval = isize::from_str_radix(xor_pid_slice, 2)
                     .expect("xored_p_id_intval parsing failed");
                 if xored_p_id_intval > psk_gen_xor_intval {
-                    psk_generator = peer.peerId;
+                    psk_generator = peer.peer_id;
                     psk_generator_xored = xored_p_id;
                 }
             }
