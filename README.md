@@ -2,6 +2,14 @@
 
 ## Build
 
+### Runner dependencies
+```bash
+python3 -m venv venv
+. ./venv/bin/activate
+pip3 install -r requirements.txt
+```
+
+### Node dependencies
 ```bash
 cargo build --release
 ```
@@ -11,7 +19,7 @@ cargo build --release
 Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
 
 ```bash
-./target/release/qmc-node \
+python3 runner/app.py ./target/release/qmc-node \
 --base-path /tmp/<node_name> \
 --chain ./quantumMetachainSpecRaw.json \
 --name <node_name> \
@@ -26,7 +34,7 @@ Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
 For example:
 
 ```bash
-./target/release/qmc-node \
+python3 runner/app.py ./target/release/qmc-node \
 --base-path /tmp/alice \
 --chain ./quantumMetachainSpecRaw.json \
 --name alice \
