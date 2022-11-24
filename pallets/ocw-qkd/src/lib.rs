@@ -10,9 +10,9 @@ pub use pallet::*;
 use serde::Deserialize;
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
-use sp_std::{num::ParseIntError, vec::Vec};
+use sp_std::vec::Vec;
 
-use crate::Error::HttpFetchingError;
+// use crate::Error::HttpFetchingError;
 // use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[macro_use]
@@ -298,9 +298,9 @@ impl<T: Config> Pallet<T> {
                 let psk_gen_xor_slice = &psk_generator_xored
                     [(&psk_generator_xored.len() - 32)..psk_generator_xored.len()];
                 let xor_pid_slice = &xored_p_id[(&xored_p_id.len() - 32)..xored_p_id.len()];
-                let psk_gen_xor_intval = isize::from_str_radix(&psk_gen_xor_slice, 2)
+                let psk_gen_xor_intval = isize::from_str_radix(psk_gen_xor_slice, 2)
                     .expect("psk_generator_xored_intval parsing failed");
-                let xored_p_id_intval = isize::from_str_radix(&xor_pid_slice, 2)
+                let xored_p_id_intval = isize::from_str_radix(xor_pid_slice, 2)
                     .expect("xored_p_id_intval parsing failed");
                 if xored_p_id_intval > psk_gen_xor_intval {
                     psk_generator = peer.peerId;
