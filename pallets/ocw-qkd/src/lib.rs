@@ -4,14 +4,15 @@
 mod tests;
 
 // use frame_support::traits::Randomness;
+use alloc::string::{String, ToString};
+
 pub use pallet::*;
+use serde::Deserialize;
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
-use sp_std::vec::Vec;
-use sp_std::num::ParseIntError;
-use alloc::string::{String, ToString};
+use sp_std::{num::ParseIntError, vec::Vec};
+
 use crate::Error::HttpFetchingError;
-use serde::Deserialize;
 // use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[macro_use]
@@ -19,7 +20,7 @@ extern crate alloc;
 
 #[derive(Deserialize)]
 pub struct PeerInfoResponse {
-    pub result: Vec<PeerInfoResult>
+    pub result: Vec<PeerInfoResult>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -29,7 +30,7 @@ pub struct PeerInfoResult {
 
 #[derive(Deserialize)]
 pub struct LocalPeeridResponse {
-    pub result: String
+    pub result: String,
 }
 
 #[frame_support::pallet]
@@ -83,7 +84,7 @@ pub mod pallet {
                 }
             }
 
-            // Mock entropy (256): 
+            // Mock entropy (256):
             let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
 
             let peers = match Self::fetch_n_parse_peers(rpc_port) {
@@ -91,7 +92,7 @@ pub mod pallet {
                 Err(_err) => {
                     log::error!("Failed to retrieve peers");
                     return;
-                        }
+                }
             };
 
             let local_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
@@ -99,7 +100,7 @@ pub mod pallet {
                 Err(_err) => {
                     log::error!("Failed to retrieve local peerid");
                     return;
-                        } 
+                }
             };
 
             match Self::choose_psk_creator(mock_entropy, peers, local_id) {
@@ -194,15 +195,13 @@ impl<T: Config> Pallet<T> {
     }
 
     fn fetch_n_parse_peers(rpc_port: u16) -> Result<Vec<PeerInfoResult>, Error<T>> {
-        let resp_bytes = Self::fetch_peers(rpc_port)
-            .map_err(|e| {
-                log::error!("fetch_peers error: {:?}", e);
-                <Error<T>>::HttpFetchingError
-            })?;
-    
+        let resp_bytes = Self::fetch_peers(rpc_port).map_err(|e| {
+            log::error!("fetch_peers error: {:?}", e);
+            <Error<T>>::HttpFetchingError
+        })?;
 
-        let json_res: PeerInfoResponse = serde_json::from_slice(&resp_bytes)
-            .map_err(|e: serde_json::Error| {
+        let json_res: PeerInfoResponse =
+            serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
                 log::error!("Parse peers error: {:?}", e);
                 <Error<T>>::HttpFetchingError
             })?;
@@ -240,14 +239,13 @@ impl<T: Config> Pallet<T> {
     }
 
     fn fetch_n_parse_local_peerid(rpc_port: u16) -> Result<String, Error<T>> {
-        let resp_bytes = Self::fetch_local_peerid(rpc_port)
-            .map_err(|e| {
-                log::error!("fetch_local_peerid error: {:?}", e);
-                <Error<T>>::HttpFetchingError
-            })?;
+        let resp_bytes = Self::fetch_local_peerid(rpc_port).map_err(|e| {
+            log::error!("fetch_local_peerid error: {:?}", e);
+            <Error<T>>::HttpFetchingError
+        })?;
 
-        let json_res: LocalPeeridResponse = serde_json::from_slice(&resp_bytes)
-            .map_err(|e: serde_json::Error| {
+        let json_res: LocalPeeridResponse =
+            serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
                 log::error!("Parse local peerid error: {:?}", e);
                 <Error<T>>::HttpFetchingError
             })?;
@@ -255,12 +253,14 @@ impl<T: Config> Pallet<T> {
         Ok(json_res.result)
     }
 
-    fn choose_psk_creator(entropy: String, mut peers: Vec<PeerInfoResult>, local_id: String) -> Result<String, Error<T>>  {
+    fn choose_psk_creator(
+        entropy: String,
+        mut peers: Vec<PeerInfoResult>,
+        local_id: String,
+    ) -> Result<String, Error<T>> {
         // log::info!("Entropy: {}", entropy);
         // let mut xored_ids: Vec<_> = Vec::new();
-        let local_peer = PeerInfoResult {
-            peerId: local_id
-        };
+        let local_peer = PeerInfoResult { peerId: local_id };
         peers.push(local_peer);
         let mut psk_generator = String::new();
         let mut psk_generator_xored = String::new();
@@ -274,16 +274,20 @@ impl<T: Config> Pallet<T> {
 
             let mut xored_p_id_vec = Vec::new();
             for (i, x) in entropy.chars().enumerate() {
-                let p_n: i32 = p_id_bin_trim.chars().nth(i).unwrap().to_string().parse()
+                let p_n: i32 = p_id_bin_trim
+                    .chars()
+                    .nth(i)
+                    .unwrap()
+                    .to_string()
+                    .parse()
                     .map_err(|e| {
                         log::error!("Peer bit error: {:?}", e);
                         <Error<T>>::ParseIntError
                     })?;
-                let e_n: i32 = x.clone().to_string().parse()
-                    .map_err(|e| {
-                        log::error!("Entropy bit error: {:?}", e);
-                        <Error<T>>::ParseIntError
-                    })?;
+                let e_n: i32 = x.clone().to_string().parse().map_err(|e| {
+                    log::error!("Entropy bit error: {:?}", e);
+                    <Error<T>>::ParseIntError
+                })?;
                 xored_p_id_vec.push((p_n ^ e_n).to_string());
             }
             let xored_p_id = xored_p_id_vec.join("");
@@ -291,14 +295,17 @@ impl<T: Config> Pallet<T> {
                 psk_generator = peer.peerId;
                 psk_generator_xored = xored_p_id;
             } else {
-                let psk_gen_xor_slice = &psk_generator_xored[(&psk_generator_xored.len() - 32)..psk_generator_xored.len()];
+                let psk_gen_xor_slice = &psk_generator_xored
+                    [(&psk_generator_xored.len() - 32)..psk_generator_xored.len()];
                 let xor_pid_slice = &xored_p_id[(&xored_p_id.len() - 32)..xored_p_id.len()];
-                let psk_gen_xor_intval = isize::from_str_radix(&psk_gen_xor_slice, 2).expect("psk_generator_xored_intval parsing failed");
-                let xored_p_id_intval = isize::from_str_radix(&xor_pid_slice, 2).expect("xored_p_id_intval parsing failed");
+                let psk_gen_xor_intval = isize::from_str_radix(&psk_gen_xor_slice, 2)
+                    .expect("psk_generator_xored_intval parsing failed");
+                let xored_p_id_intval = isize::from_str_radix(&xor_pid_slice, 2)
+                    .expect("xored_p_id_intval parsing failed");
                 if xored_p_id_intval > psk_gen_xor_intval {
                     psk_generator = peer.peerId;
                     psk_generator_xored = xored_p_id;
-        }
+                }
             }
         }
         // log::info!("Xored p_ids: {:#?}", xored_ids);
