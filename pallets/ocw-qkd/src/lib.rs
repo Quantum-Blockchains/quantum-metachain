@@ -120,7 +120,7 @@ pub mod pallet {
     impl<T: Config> Pallet<T> {
         #[pallet::weight(0)]
         pub fn generate_entropy(origin: OriginFor<T>) -> DispatchResult {
-            let _entropy: (dyn Output, dyn BlockNumber) = Randomness::random(&b"my context"[..]);
+            let (_entropy, _) = T::Randomness::random(&b"my context"[..]);
             Ok(())
         }
     }
