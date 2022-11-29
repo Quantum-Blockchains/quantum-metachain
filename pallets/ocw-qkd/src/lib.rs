@@ -36,7 +36,7 @@ pub struct LocalPeeridResponse {
 
 #[frame_support::pallet]
 pub mod pallet {
-    use frame_support::{pallet_prelude::*, traits::Randomness};
+    use frame_support::{pallet_prelude::*, traits::Randomness, dispatch::{DispatchResult, Output}};
     use frame_system::pallet_prelude::*;
     use sp_runtime::offchain::storage::StorageValueRef;
 
@@ -50,6 +50,7 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
+    #[pallet::generate_store(pub(super) trait Store)]
     #[pallet::without_storage_info]
     pub struct Pallet<T>(PhantomData<T>);
 
@@ -116,7 +117,13 @@ pub mod pallet {
     }
 
     #[pallet::call]
-    impl<T: Config> Pallet<T> {}
+    impl<T: Config> Pallet<T> {
+        #[pallet::weight(0)]
+        pub fn generate_entropy(origin: OriginFor<T>) -> DispatchResult {
+            let _entropy: (dyn Output, dyn BlockNumber) = Randomness::random(&b"my context"[..]);
+            Ok(())
+        }
+    }
 
     #[pallet::event]
     pub enum Event<T: Config> {}
