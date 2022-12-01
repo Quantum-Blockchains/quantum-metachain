@@ -10,7 +10,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub use frame_support::{
     construct_runtime, parameter_types,
     traits::{
-        ConstU128, ConstU32, ConstU64, ConstU8, KeyOwnerProofSystem, Randomness, StorageInfo,
+        ConstU128, ConstU32, ConstU64, ConstU8, KeyOwnerProofSystem, Randomness, EnsureOrigin, StorageInfo,
     },
     weights::{
         constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
@@ -26,6 +26,7 @@ use pallet_grandpa::{
 };
 pub use pallet_timestamp::Call as TimestampCall;
 use pallet_transaction_payment::CurrencyAdapter;
+// use scale_info::Type;
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -269,6 +270,8 @@ impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
+    type ForceOrigin = frame_system::EnsureRoot<AccountId>;
+    // type ManagerOrigin = dyn EnsureOrigin<AccountId, Success = Type>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.

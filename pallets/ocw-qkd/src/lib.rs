@@ -36,7 +36,7 @@ pub struct LocalPeeridResponse {
 
 #[frame_support::pallet]
 pub mod pallet {
-    use frame_support::{pallet_prelude::*, traits::Randomness, dispatch::{DispatchResult, Output, EncodeLike}};
+    use frame_support::{pallet_prelude::*, traits::{Randomness, EnsureOrigin}, dispatch::{DispatchResult, Output}};
     use frame_system::pallet_prelude::*;
     use sp_runtime::offchain::storage::StorageValueRef;
 
@@ -47,15 +47,16 @@ pub mod pallet {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
+        type ForceOrigin: EnsureOrigin<Self::Origin>;
     }
 
     #[pallet::pallet]
-    #[pallet::without_storage_info]
+    // #[pallet::without_storage_info]
+    #[pallet::generate_store(pub(super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
 
-    // #[pallet::generate_store(pcub(super) trait Store)]
     #[pallet::storage]
-    type Entropy<T> = StorageValue<_, u32, ValueQuery>;
+	pub(crate) type Entropy<T: Config> = StorageValue<_, T::Hash, ValueQuery>;
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
@@ -92,14 +93,16 @@ pub mod pallet {
             // Mock entropy (256):
             let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
 
-            // Self::entropy_test();
-            Self::generate_entropy();
+            // Self::generate_entropy(Self::Origin);
 
             let storage_entropy = StorageValueRef::persistent(b"_entropy");
 
             let entropy = match storage_entropy.get::<T::Hash>() {
                 Ok(p) => match p {
-                    Some(e) => e,
+                    Some(e) => {
+                        log::info!("Entropy generated!!!");
+                        e
+                    },
                     None => {
                         log::error!("The entropy is not passed to the offchain worker.(none)");
                         return;
@@ -111,7 +114,10 @@ pub mod pallet {
                 }
             };
 
-            log::info!("Entropy: {:#?}", entropy);
+            let entropy_test = Entropy::<T>::get();
+            log::info!("Entropy {:#?}", entropy_test);
+
+            // log::info!("Entropy: {:#?}", entropy);
 
             let peers = match Self::fetch_n_parse_peers(rpc_port) {
                 Ok(peers) => peers,
@@ -142,14 +148,17 @@ pub mod pallet {
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {
-        #[pallet::weight(0)]
-        pub fn generate_entropy(origin: OriginFor<T>) -> DispatchResult {
+        #[pallet::weight(5)]
+        pub fn generate_entropy(
+            origin: OriginFor<T>,
+        ) -> DispatchResult {
+            T::ForceOrigin::ensure_origin(origin)?;
             let storage_entropy = StorageValueRef::persistent(b"_entropy");
             let (entropy, _) = T::Randomness::random(&b"my context"[..]);
             storage_entropy.set(&entropy);
             log::info!("Entropy: {:#?}", entropy);
-            // <Entropy<T>>::put(_entropy);
-            Self::deposit_event(Event::EntropyGenerated { entropy: entropy });
+            Entropy::<T>::put(&entropy);
+            Self::deposit_event(Event::<T>::EntropyGenerated { entropy: entropy });
             Ok(())
         }
     }
