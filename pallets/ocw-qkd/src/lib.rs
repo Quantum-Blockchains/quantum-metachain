@@ -3,17 +3,16 @@
 #[cfg(test)]
 mod tests;
 
-// use frame_support::traits::Randomness;
 use alloc::string::{String, ToString};
+use frame_support::traits::Randomness;
+use sp_core::Hasher;
 
 pub use pallet::*;
 use serde::{Deserialize, Serialize};
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
+use sp_runtime::traits::Get;
 use sp_std::vec::Vec;
-
-// use crate::Error::HttpFetchingError;
-// use crate::Error::CannotGenerateKeyFromEntropy;
 
 #[macro_use]
 extern crate alloc;
@@ -47,22 +46,23 @@ pub mod pallet {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
-        type ForceOrigin: EnsureOrigin<Self::Origin>;
+
+        // Max const value is u128 16 bytes, but entropy is u256 by default, hence we need to
+        // concat two 16 bytes long slices to get proper difficulty
+        #[pallet::constant]
+        type PskDifficulty1: Get<u128>;
+        #[pallet::constant]
+        type PskDifficulty2: Get<u128>;
     }
 
     #[pallet::pallet]
-    // #[pallet::without_storage_info]
     #[pallet::generate_store(pub(super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
 
-    #[pallet::storage]
-	pub(crate) type Entropy<T: Config> = StorageValue<_, T::Hash, ValueQuery>;
-
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> {
-        /// QKD offchain worker entry point.
-        fn offchain_worker(_block_number: T::BlockNumber) {
-            let storage_psk = StorageValueRef::persistent(b"pre-shared-key");
+        /// PSK offchain worker entry point.
+        fn offchain_worker(block_number: T::BlockNumber) {
             let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
             let rpc_port = match storage_rpc_port.get::<u16>() {
                 Ok(p) => match p {
@@ -77,49 +77,11 @@ pub mod pallet {
                     return;
                 }
             };
-            let new_psk = Self::generate_new_pre_shared_key();
 
-            storage_psk.set(&new_psk);
+            let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
+            log::info!("Entropy in block {:?}: {:?}", block_number, entropy);
 
-            match Self::send_request_save_new_psk(rpc_port) {
-                Ok(_) => {
-                    log::info!("The new pre-shared key is saved.");
-                }
-                Err(err) => {
-                    log::error!("Error: {:?}", err);
-                }
-            }
-
-            // Mock entropy (256):
-            let mock_entropy = String::from("1100110001110111101111010010011111011111010101101110110101010001001000100101110101110000011010100000010101000000111101001101000111000011110110111101000011100100001110001111110000010000110010011010000011001011101000100100011100111000011000110011001010110110");
-
-            // Self::generate_entropy(Self::Origin);
-
-            let storage_entropy = StorageValueRef::persistent(b"_entropy");
-
-            let entropy = match storage_entropy.get::<T::Hash>() {
-                Ok(p) => match p {
-                    Some(e) => {
-                        log::info!("Entropy generated!!!");
-                        e
-                    },
-                    None => {
-                        log::error!("The entropy is not passed to the offchain worker.(none)");
-                        return;
-                    }
-                },
-                Err(_err) => {
-                    log::error!("The entropy is not passed to the offchain worker.(err)");
-                    return;
-                }
-            };
-
-            let entropy_test = Entropy::<T>::get();
-            log::info!("Entropy {:#?}", entropy_test);
-
-            // log::info!("Entropy: {:#?}", entropy);
-
-            let peers = match Self::fetch_n_parse_peers(rpc_port) {
+            let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
                 Ok(peers) => peers,
                 Err(_err) => {
                     log::error!("Failed to retrieve peers");
@@ -127,93 +89,32 @@ pub mod pallet {
                 }
             };
 
-            let local_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
+            let local_peer_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
                 Ok(id) => id,
                 Err(_err) => {
-                    log::error!("Failed to retrieve local peerid");
+                    log::error!("Failed to retrieve local peer id");
                     return;
                 }
             };
 
-            match Self::choose_psk_creator(mock_entropy, peers, local_id) {
-                Ok(p) => {
-                    log::info!("The psk creator has been chosen: {}", p);
-                }
-                Err(err) => {
-                    log::error!("Error: {:?}", err);
-                }
-            }
+            peer_ids.push(local_peer_id);
+            Self::choose_psk_creator(entropy, peer_ids);
         }
     }
 
     #[pallet::call]
-    impl<T: Config> Pallet<T> {
-        #[pallet::weight(5)]
-        pub fn generate_entropy(
-            origin: OriginFor<T>,
-        ) -> DispatchResult {
-            T::ForceOrigin::ensure_origin(origin)?;
-            let storage_entropy = StorageValueRef::persistent(b"_entropy");
-            let (entropy, _) = T::Randomness::random(&b"my context"[..]);
-            storage_entropy.set(&entropy);
-            log::info!("Entropy: {:#?}", entropy);
-            Entropy::<T>::put(&entropy);
-            Self::deposit_event(Event::<T>::EntropyGenerated { entropy: entropy });
-            Ok(())
-        }
-    }
+    impl<T: Config> Pallet<T> {}
 
     #[pallet::event]
-    #[pallet::generate_deposit(pub(super) fn deposit_event)]
-    pub enum Event<T: Config> {
-        EntropyGenerated { entropy: T::Hash },
-    }
+    pub enum Event<T: Config> {}
 
     #[pallet::error]
     pub enum Error<T> {
-        CannotGenerateKeyFromEntropy,
         HttpFetchingError,
-        ParseIntError,
     }
 }
 
 impl<T: Config> Pallet<T> {
-    // TODO generate ne pre-shared key
-    /// This function generates a new key.
-    fn generate_new_pre_shared_key() -> &'static [u8; 64] {
-        log::info!("A new pre-shared key is generated.");
-        b"28617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
-    }
-
-    /// This function calls the "psk_saveKey" RPC method, which writes a new key to the file.
-    fn send_request_save_new_psk(rpc_port: u16) -> Result<(), Error<T>> {
-        let url = format!("http://localhost:{}", rpc_port);
-
-        let mut vec_body: Vec<&[u8]> = Vec::new();
-        let data = b"{\"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"psk_saveKey\"}";
-        vec_body.push(data);
-
-        let request = Request::post(&url, vec_body);
-        let timeout = timestamp().add(Duration::from_millis(3000));
-
-        let pending = request
-            .add_header("Content-Type", "application/json")
-            .deadline(timeout)
-            .send()
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
-
-        let response = pending
-            .try_wait(timeout)
-            .map_err(|_| <Error<T>>::HttpFetchingError)?
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
-
-        if response.code != 200 {
-            log::error!("Unexpected http request status code: {}", response.code);
-            return Err(<Error<T>>::HttpFetchingError);
-        }
-        Ok(())
-    }
-
     fn fetch_peers(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
         let url = format!("http://localhost:{}", rpc_port);
 
@@ -243,7 +144,7 @@ impl<T: Config> Pallet<T> {
         Ok(response.body().collect::<Vec<u8>>())
     }
 
-    fn fetch_n_parse_peers(rpc_port: u16) -> Result<Vec<PeerInfoResult>, Error<T>> {
+    fn fetch_n_parse_peers(rpc_port: u16) -> Result<Vec<String>, Error<T>> {
         let resp_bytes = Self::fetch_peers(rpc_port).map_err(|e| {
             log::error!("fetch_peers error: {:?}", e);
             <Error<T>>::HttpFetchingError
@@ -255,7 +156,9 @@ impl<T: Config> Pallet<T> {
                 <Error<T>>::HttpFetchingError
             })?;
 
-        Ok(json_res.result)
+        Ok(json_res.result.iter()
+            .map(|peer| peer.peer_id.to_string())
+            .collect())
     }
 
     fn fetch_local_peerid(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
@@ -303,62 +206,30 @@ impl<T: Config> Pallet<T> {
     }
 
     fn choose_psk_creator(
-        entropy: String,
-        mut peers: Vec<PeerInfoResult>,
-        local_id: String,
-    ) -> Result<String, Error<T>> {
-        // log::info!("Entropy: {}", entropy);
-        // let mut xored_ids: Vec<_> = Vec::new();
-        let local_peer = PeerInfoResult { peer_id: local_id };
-        peers.push(local_peer);
-        let mut psk_generator = String::new();
-        let mut psk_generator_xored = String::new();
-        for peer in peers {
-            // Peer id conversion to binary
-            let mut p_id_bin = String::new();
-            for character in peer.peer_id.clone().into_bytes() {
-                p_id_bin += &format!("0{:b} ", character);
-            }
-            let p_id_bin_trim: String = p_id_bin.chars().filter(|c| !c.is_whitespace()).collect();
+        entropy: T::Hash,
+        mut peer_ids: Vec<String>,
+    ) -> Option<String> {
+        let mut chosen_peers = vec![];
 
-            let mut xored_p_id_vec = Vec::new();
-            for (i, x) in entropy.chars().enumerate() {
-                let p_n: i32 = p_id_bin_trim
-                    .chars()
-                    .nth(i)
-                    .unwrap()
-                    .to_string()
-                    .parse()
-                    .map_err(|e| {
-                        log::error!("Peer bit error: {:?}", e);
-                        <Error<T>>::ParseIntError
-                    })?;
-                let e_n: i32 = x.clone().to_string().parse().map_err(|e| {
-                    log::error!("Entropy bit error: {:?}", e);
-                    <Error<T>>::ParseIntError
-                })?;
-                xored_p_id_vec.push((p_n ^ e_n).to_string());
+        for peer_id in peer_ids {
+            let xored_peer_id_hash = entropy ^ (T::Hashing::hash(peer_id.as_bytes()));
+            let xored_peer_id_hash_bytes = <[u8; 32]>::try_from(xored_peer_id_hash.as_ref())
+                .expect("Hash should be 32 bytes long");
+            let difficulty_1_bytes: [u8; 16] = T::PskDifficulty1::get().to_le_bytes();
+            let difficulty_2_bytes: [u8; 16] = T::PskDifficulty2::get().to_le_bytes();
+            let difficulty_bytes_extended = <[u8; 32]>::try_from([difficulty_1_bytes, difficulty_2_bytes].concat().as_ref())
+                .expect("Difficulty should be 32 bytes long");
+
+            if xored_peer_id_hash_bytes.gt(&difficulty_bytes_extended) {
+                chosen_peers.push(peer_id);
             }
-            let xored_p_id = xored_p_id_vec.join("");
-            if psk_generator.clone().is_empty() || psk_generator_xored.clone().is_empty() {
-                psk_generator = peer.peer_id;
-                psk_generator_xored = xored_p_id;
-            } else {
-                let psk_gen_xor_slice = &psk_generator_xored
-                    [(&psk_generator_xored.len() - 32)..psk_generator_xored.len()];
-                let xor_pid_slice = &xored_p_id[(&xored_p_id.len() - 32)..xored_p_id.len()];
-                let psk_gen_xor_intval = isize::from_str_radix(psk_gen_xor_slice, 2)
-                    .expect("psk_generator_xored_intval parsing failed");
-                let xored_p_id_intval = isize::from_str_radix(xor_pid_slice, 2)
-                    .expect("xored_p_id_intval parsing failed");
-                if xored_p_id_intval > psk_gen_xor_intval {
-                    psk_generator = peer.peer_id;
-                    psk_generator_xored = xored_p_id;
-                }
-            }
+        };
+
+        log::info!("Chosen peers num: {}", chosen_peers.len());
+        match chosen_peers.len() {
+            0 => None,
+            1 => Some(chosen_peers.first().unwrap().to_string()),
+            _ => None
         }
-        // log::info!("Xored p_ids: {:#?}", xored_ids);
-
-        Ok(psk_generator)
     }
 }

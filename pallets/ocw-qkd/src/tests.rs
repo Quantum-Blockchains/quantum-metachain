@@ -8,6 +8,8 @@ use sp_runtime::{
     testing::Header,
     traits::{BlakeTwo256, IdentityLookup, Verify},
 };
+use sp_runtime::generic::BlockId::Hash;
+use sp_runtime::traits::ConstU128;
 
 use crate as ocw_qkd;
 use crate::*;
@@ -67,4 +69,56 @@ impl Config for Test {
     type Event = Event;
     type Call = Call;
     type Randomness = TestRandomness<Self>;
+    type PskDifficulty1 = ConstU128<1000000u128>;
+    type PskDifficulty2 = ConstU128<{ u128::MAX }>;
+}
+
+#[test]
+fn psk_creator_is_chosen_when_one_peer_pass_the_difficulty() {
+    sp_io::TestExternalities::default().execute_with(|| {
+        let entropy = H256::from_low_u64_be(1298474330019282);
+        let peers = vec![
+            "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
+            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
+        ];
+
+        let result = OcwQkd::choose_psk_creator(entropy, peers);
+
+        assert!(result.is_some());
+        assert_eq!(result.unwrap(), "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string());
+    });
+}
+
+#[test]
+fn creator_is_not_chosen_when_2_peers_pass_the_difficulty() {
+    sp_io::TestExternalities::default().execute_with(|| {
+        let entropy = H256::from_low_u64_be(1298474330019282);
+        let peers = vec![
+            "12D3KooWEh8KPSuGWdSNivtffFQEy1WziYdrtQXpktjPfHqzr5rp".to_string(),
+            "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
+            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
+        ];
+
+        let result = OcwQkd::choose_psk_creator(entropy, peers);
+
+        // In this case 2 of the peers are qualified to be psk creator,
+        // therefore result is ignored and None is returned
+        assert!(result.is_none());
+    });
+}
+
+#[test]
+fn creator_is_not_chosen_when_because_none_of_them_pass_the_difficulty() {
+    sp_io::TestExternalities::default().execute_with(|| {
+        let entropy = H256::from_low_u64_be(1298474330019282);
+        let peers = vec![
+            "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
+        ];
+
+        let result = OcwQkd::choose_psk_creator(entropy, peers);
+
+        // In this case peer didn't pass the difficulty,
+        // therefore result is ignored and None is returned
+        assert!(result.is_none());
+    });
 }

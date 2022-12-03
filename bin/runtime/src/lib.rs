@@ -270,8 +270,8 @@ impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
-    type ForceOrigin = frame_system::EnsureRoot<AccountId>;
-    // type ManagerOrigin = dyn EnsureOrigin<AccountId, Success = Type>;
+    type PskDifficulty1 = ConstU128<200u128>;
+    type PskDifficulty2 = ConstU128<{ u128::MAX }>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
