@@ -1,4 +1,13 @@
+# IDE
 .idea/
 .vscode/
+
+# Node
 target/
-config/p2p/config.toml
+
+# Runner
+.env
+venv/
+
+# Other
+psk

@@ -99,7 +99,6 @@ impl PskApiServer for Psk {
 
         if !addrs.is_empty() {
             for item in &addrs {
-                println!("kostia");
                 if item.peer_id == _peer_id {
                     qkd_url.push_str("http://");
                     qkd_url.push_str(&item.host.to_string());
@@ -112,7 +111,7 @@ impl PskApiServer for Psk {
 
         if qkd_url.is_empty() {
             return Err(jsonrpsee::core::error::Error::Custom(
-                "The provided peer id doers not have a qkd address configured.".to_string(),
+                "The provided peer id does not have a qkd address configured.".to_string(),
             ));
         }
 
