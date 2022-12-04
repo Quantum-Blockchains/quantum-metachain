@@ -36,7 +36,7 @@ pub struct LocalPeerIdResponse {
 #[derive(Deserialize, Serialize, Debug)]
 struct PskRotationRequest {
     peer_id: String,
-    is_local_peer: bool
+    is_local_peer: bool,
 }
 
 #[frame_support::pallet]
@@ -62,7 +62,7 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
-    #[pallet::generate_store(pub(super) trait Store)]
+    #[pallet::generate_store(pub (super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::hooks]
@@ -119,30 +119,34 @@ pub mod pallet {
             peer_ids.push(local_peer_id.to_string());
             match Self::choose_psk_creator(entropy, peer_ids) {
                 Some(psk_creator) => {
-
                     let request = PskRotationRequest {
                         peer_id: psk_creator.to_string(),
-                        is_local_peer: psk_creator == local_peer_id
+                        is_local_peer: psk_creator == local_peer_id,
                     };
-                    log::info!("chosen psk creator: {:?}", request)
-
-                    // TODO send request to runner
+                    log::info!("chosen psk creator: {:?}", request);
+                    match Self::send_psk_rotation_request(runner_port, request) {
+                        Ok(id) => log::info!("Psk rotation request sent"),
+                        Err(_err) => {
+                            log::error!("Failed to send psk rotation request");
+                            return;
+                        }
+                    };
                 },
                 None => log::info!("Psk creator not chosen in block {:?}", block_number)
-            }
         }
     }
+}
 
-    #[pallet::call]
-    impl<T: Config> Pallet<T> {}
+#[pallet::call]
+impl<T: Config> Pallet<T> {}
 
-    #[pallet::event]
-    pub enum Event<T: Config> {}
+#[pallet::event]
+pub enum Event<T: Config> {}
 
-    #[pallet::error]
-    pub enum Error<T> {
-        HttpFetchingError,
-    }
+#[pallet::error]
+pub enum Error<T> {
+    HttpFetchingError,
+}
 }
 
 impl<T: Config> Pallet<T> {
@@ -237,7 +241,7 @@ impl<T: Config> Pallet<T> {
     }
 
     fn send_psk_rotation_request(runner_port: u16, request_body: PskRotationRequest) -> Result<(), Error<T>> {
-        let url = format!("http://localhost:{}", runner_port);
+        let url = format!("http://localhost:{}/psk", runner_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
         let data = serde_json::to_string(&request_body).unwrap();
