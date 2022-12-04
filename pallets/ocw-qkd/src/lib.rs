@@ -29,8 +29,14 @@ pub struct PeerInfoResult {
 }
 
 #[derive(Deserialize)]
-pub struct LocalPeeridResponse {
+pub struct LocalPeerIdResponse {
     pub result: String,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+struct PskRotationRequest {
+    peer_id: String,
+    is_local_peer: bool
 }
 
 #[frame_support::pallet]
@@ -72,8 +78,24 @@ pub mod pallet {
                         return;
                     }
                 },
-                Err(_err) => {
-                    log::error!("The RPC port is not passed to the offchain worker.");
+                Err(err) => {
+                    log::error!("Error occurred while fetching RPC port from storage. {:?}", err);
+                    return;
+                }
+            };
+
+            // TODO pass runner port from config to storage
+            let storage_runner_port = StorageValueRef::persistent(b"runner-port");
+            let runner_port = match storage_runner_port.get::<u16>() {
+                Ok(p) => match p {
+                    Some(port) => port,
+                    None => {
+                        log::error!("The Runner port is not passed to the offchain worker.");
+                        return;
+                    }
+                },
+                Err(err) => {
+                    log::error!("Error occurred while fetching runner port from storage. {:?}", err);
                     return;
                 }
             };
@@ -97,8 +119,20 @@ pub mod pallet {
                 }
             };
 
-            peer_ids.push(local_peer_id);
-            Self::choose_psk_creator(entropy, peer_ids);
+            peer_ids.push(local_peer_id.to_string());
+            match Self::choose_psk_creator(entropy, peer_ids) {
+                Some(psk_creator) => {
+
+                    let request = PskRotationRequest {
+                        peer_id: psk_creator.to_string(),
+                        is_local_peer: psk_creator == local_peer_id
+                    };
+                    log::info!("chosen psk creator: {:?}", request)
+
+                    // TODO send request to runner
+                },
+                None => log::info!("Psk creator not chosen in block {:?}", block_number)
+            }
         }
     }
 
@@ -196,13 +230,42 @@ impl<T: Config> Pallet<T> {
             <Error<T>>::HttpFetchingError
         })?;
 
-        let json_res: LocalPeeridResponse =
+        let json_res: LocalPeerIdResponse =
             serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
                 log::error!("Parse local peerid error: {:?}", e);
                 <Error<T>>::HttpFetchingError
             })?;
 
         Ok(json_res.result)
+    }
+
+    fn send_psk_rotation_request(runner_port: u16, request_body: PskRotationRequest) -> Result<(), Error<T>> {
+        let url = format!("http://localhost:{}", runner_port);
+
+        let mut vec_body: Vec<&[u8]> = Vec::new();
+        let data = serde_json::to_string(&request_body).unwrap();
+        vec_body.push(data.as_bytes());
+
+        let request = Request::post(&url, vec_body);
+        let timeout = timestamp().add(Duration::from_millis(3000));
+
+        let pending = request
+            .add_header("Content-Type", "application/json")
+            .deadline(timeout)
+            .send()
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        let response = pending
+            .try_wait(timeout)
+            .map_err(|_| <Error<T>>::HttpFetchingError)?
+            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+
+        if response.code != 200 {
+            log::error!("Unexpected http request status code: {}", response.code);
+            return Err(<Error<T>>::HttpFetchingError);
+        }
+
+        Ok(())
     }
 
     fn choose_psk_creator(

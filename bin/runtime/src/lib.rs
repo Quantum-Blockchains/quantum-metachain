@@ -270,7 +270,7 @@ impl ocw_qkd::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
-    type PskDifficulty1 = ConstU128<200u128>;
+    type PskDifficulty1 = ConstU128<255u128>;
     type PskDifficulty2 = ConstU128<{ u128::MAX }>;
 }
 
