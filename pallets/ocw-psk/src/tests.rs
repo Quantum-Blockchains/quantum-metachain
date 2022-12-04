@@ -11,7 +11,7 @@ use sp_runtime::{
 use sp_runtime::generic::BlockId::Hash;
 use sp_runtime::traits::ConstU128;
 
-use crate as ocw_qkd;
+use crate as ocw_psk;
 use crate::*;
 
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
@@ -24,7 +24,7 @@ frame_support::construct_runtime!(
         UncheckedExtrinsic = UncheckedExtrinsic,
     {
         System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
-        OcwQkd: ocw_qkd::{Pallet, Call, Event<T>},
+        OcwPsk: ocw_psk::{Pallet, Call, Event<T>},
     }
 );
 
@@ -82,7 +82,7 @@ fn psk_creator_is_chosen_when_one_peer_pass_the_difficulty() {
             "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
         ];
 
-        let result = OcwQkd::choose_psk_creator(entropy, peers);
+        let result = OcwPsk::choose_psk_creator(entropy, peers);
 
         assert!(result.is_some());
         assert_eq!(result.unwrap(), "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string());
@@ -99,7 +99,7 @@ fn creator_is_not_chosen_when_2_peers_pass_the_difficulty() {
             "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
         ];
 
-        let result = OcwQkd::choose_psk_creator(entropy, peers);
+        let result = OcwPsk::choose_psk_creator(entropy, peers);
 
         // In this case 2 of the peers are qualified to be psk creator,
         // therefore result is ignored and None is returned
@@ -115,7 +115,7 @@ fn creator_is_not_chosen_when_because_none_of_them_pass_the_difficulty() {
             "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
         ];
 
-        let result = OcwQkd::choose_psk_creator(entropy, peers);
+        let result = OcwPsk::choose_psk_creator(entropy, peers);
 
         // In this case peer didn't pass the difficulty,
         // therefore result is ignored and None is returned

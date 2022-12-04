@@ -89,10 +89,7 @@ pub mod pallet {
             let runner_port = match storage_runner_port.get::<u16>() {
                 Ok(p) => match p {
                     Some(port) => port,
-                    None => {
-                        log::error!("The Runner port is not passed to the offchain worker.");
-                        return;
-                    }
+                    None => 5001
                 },
                 Err(err) => {
                     log::error!("Error occurred while fetching runner port from storage. {:?}", err);

@@ -4152,7 +4152,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ocw-qkd"
+name = "ocw-psk"
 version = "0.0.1"
 dependencies = [
  "frame-support",
@@ -5011,7 +5011,7 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
  "hex-literal",
- "ocw-qkd",
+ "ocw-psk",
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
