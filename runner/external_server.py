@@ -15,24 +15,20 @@ def psk_get_key():
     psk_key = open(settings.PSK_FILE_PATH).read()
     body = request.get_json()
     peer_id = body["peer_id"]
-    logging.info(f"started request")
 
     qkd_addr = str(settings.QKD_ADDR).split(",")
     qkd_url = ""
     cfg_peer_id = ""
     for addr in qkd_addr:
         split_addr = str(addr).split("/")
-        logging.info(f"split address: {split_addr} ")
         cfg_peer_id = split_addr[len(split_addr)-1]
         if peer_id == cfg_peer_id:
-            logging.info(f"matched {peer_id} peer!")
             cfg_peer_id = peer_id
             qkd_url += "http://"
             host_with_path = split_addr[2:len(split_addr)-1]
             for part in host_with_path:
                 qkd_url += part + "/"
             qkd_url += "enc_keys?size=256"
-            logging.info(f"Resulting QKD URL: {qkd_url}")
 
     if cfg_peer_id == "" or qkd_url == "":
         logging.info(f"{peer_id} not found - this peer is not configured")
@@ -42,8 +38,6 @@ def psk_get_key():
     keys = qkd_resp["keys"]
     key_id = keys["key_ID"]
     qkd_key = keys["key"]
-
-    logging.info(f"psk key: {psk_key}")
 
     xored = xor(psk_key, qkd_key)
 
