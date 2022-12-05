@@ -10,7 +10,8 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub use frame_support::{
     construct_runtime, parameter_types,
     traits::{
-        ConstU128, ConstU32, ConstU64, ConstU8, KeyOwnerProofSystem, Randomness, EnsureOrigin, StorageInfo,
+        ConstU128, ConstU32, ConstU64, ConstU8, EnsureOrigin, KeyOwnerProofSystem, Randomness,
+        StorageInfo,
     },
     weights::{
         constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},

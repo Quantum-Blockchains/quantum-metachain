@@ -4,14 +4,15 @@
 mod tests;
 
 use alloc::string::{String, ToString};
-use frame_support::traits::Randomness;
-use sp_core::Hasher;
 
 pub use pallet::*;
 use serde::{Deserialize, Serialize};
+use sp_core::Hasher;
 use sp_io::offchain::timestamp;
-use sp_runtime::offchain::{http::Request, Duration};
-use sp_runtime::traits::Get;
+use sp_runtime::{
+    offchain::{http::Request, Duration},
+    traits::Get,
+};
 use sp_std::vec::Vec;
 
 #[macro_use]
@@ -41,7 +42,7 @@ struct PskRotationRequest {
 
 #[frame_support::pallet]
 pub mod pallet {
-    use frame_support::{pallet_prelude::*, traits::{Randomness, EnsureOrigin}, dispatch::{DispatchResult, Output}};
+    use frame_support::{pallet_prelude::*, traits::Randomness};
     use frame_system::pallet_prelude::*;
     use sp_runtime::offchain::storage::StorageValueRef;
 
@@ -79,7 +80,10 @@ pub mod pallet {
                     }
                 },
                 Err(err) => {
-                    log::error!("Error occurred while fetching RPC port from storage. {:?}", err);
+                    log::error!(
+                        "Error occurred while fetching RPC port from storage. {:?}",
+                        err
+                    );
                     return;
                 }
             };
@@ -87,31 +91,31 @@ pub mod pallet {
             // TODO pass runner port from config to storage
             let storage_runner_port = StorageValueRef::persistent(b"runner-port");
             let runner_port = match storage_runner_port.get::<u16>() {
-                Ok(p) => match p {
-                    Some(port) => port,
-                    None => 5001
-                },
+                Ok(p) => p.unwrap_or(5001),
                 Err(err) => {
-                    log::error!("Error occurred while fetching runner port from storage. {:?}", err);
+                    log::error!(
+                        "Error occurred while fetching runner port from storage. {:?}",
+                        err
+                    );
                     return;
                 }
             };
 
             let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-            log::info!("Entropy in block {:?}: {:?}", block_number, entropy);
+            log::debug!("Entropy in block {:?}: {:?}", block_number, entropy);
 
             let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
                 Ok(peers) => peers,
-                Err(_err) => {
-                    log::error!("Failed to retrieve peers");
+                Err(err) => {
+                    log::error!("Failed to retrieve peers. {:?}", err);
                     return;
                 }
             };
 
             let local_peer_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
                 Ok(id) => id,
-                Err(_err) => {
-                    log::error!("Failed to retrieve local peer id");
+                Err(err) => {
+                    log::error!("Failed to retrieve local peer id. {:?}", err);
                     return;
                 }
             };
@@ -123,30 +127,27 @@ pub mod pallet {
                         peer_id: psk_creator.to_string(),
                         is_local_peer: psk_creator == local_peer_id,
                     };
-                    log::info!("chosen psk creator: {:?}", request);
+                    log::debug!("chosen psk creator: {:?}", request);
                     match Self::send_psk_rotation_request(runner_port, request) {
-                        Ok(id) => log::info!("Psk rotation request sent"),
-                        Err(_err) => {
-                            log::error!("Failed to send psk rotation request");
-                            return;
-                        }
+                        Ok(()) => log::info!("Psk rotation request sent"),
+                        Err(err) => log::error!("Failed to send psk rotation request. {:?}", err),
                     };
-                },
-                None => log::info!("Psk creator not chosen in block {:?}", block_number)
+                }
+                None => log::info!("Psk creator not chosen in block {:?}", block_number),
+            }
         }
     }
-}
 
-#[pallet::call]
-impl<T: Config> Pallet<T> {}
+    #[pallet::call]
+    impl<T: Config> Pallet<T> {}
 
-#[pallet::event]
-pub enum Event<T: Config> {}
+    #[pallet::event]
+    pub enum Event<T: Config> {}
 
-#[pallet::error]
-pub enum Error<T> {
-    HttpFetchingError,
-}
+    #[pallet::error]
+    pub enum Error<T> {
+        HttpFetchingError,
+    }
 }
 
 impl<T: Config> Pallet<T> {
@@ -191,7 +192,9 @@ impl<T: Config> Pallet<T> {
                 <Error<T>>::HttpFetchingError
             })?;
 
-        Ok(json_res.result.iter()
+        Ok(json_res
+            .result
+            .iter()
             .map(|peer| peer.peer_id.to_string())
             .collect())
     }
@@ -240,7 +243,10 @@ impl<T: Config> Pallet<T> {
         Ok(json_res.result)
     }
 
-    fn send_psk_rotation_request(runner_port: u16, request_body: PskRotationRequest) -> Result<(), Error<T>> {
+    fn send_psk_rotation_request(
+        runner_port: u16,
+        request_body: PskRotationRequest,
+    ) -> Result<(), Error<T>> {
         let url = format!("http://localhost:{}/psk", runner_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
@@ -269,10 +275,7 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    fn choose_psk_creator(
-        entropy: T::Hash,
-        mut peer_ids: Vec<String>,
-    ) -> Option<String> {
+    fn choose_psk_creator(entropy: T::Hash, peer_ids: Vec<String>) -> Option<String> {
         let mut chosen_peers = vec![];
 
         for peer_id in peer_ids {
@@ -281,19 +284,20 @@ impl<T: Config> Pallet<T> {
                 .expect("Hash should be 32 bytes long");
             let difficulty_1_bytes: [u8; 16] = T::PskDifficulty1::get().to_le_bytes();
             let difficulty_2_bytes: [u8; 16] = T::PskDifficulty2::get().to_le_bytes();
-            let difficulty_bytes_extended = <[u8; 32]>::try_from([difficulty_1_bytes, difficulty_2_bytes].concat().as_ref())
-                .expect("Difficulty should be 32 bytes long");
+            let difficulty_bytes_extended =
+                <[u8; 32]>::try_from([difficulty_1_bytes, difficulty_2_bytes].concat().as_ref())
+                    .expect("Difficulty should be 32 bytes long");
 
             if xored_peer_id_hash_bytes.gt(&difficulty_bytes_extended) {
                 chosen_peers.push(peer_id);
             }
-        };
+        }
 
         log::info!("Chosen peers num: {}", chosen_peers.len());
         match chosen_peers.len() {
             0 => None,
             1 => Some(chosen_peers.first().unwrap().to_string()),
-            _ => None
+            _ => None,
         }
     }
 }

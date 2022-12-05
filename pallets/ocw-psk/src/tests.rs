@@ -5,11 +5,10 @@ use frame_support::{
 use frame_support_test::TestRandomness;
 use sp_core::{sr25519::Signature, H256};
 use sp_runtime::{
+    generic::BlockId::Hash,
     testing::Header,
-    traits::{BlakeTwo256, IdentityLookup, Verify},
+    traits::{BlakeTwo256, ConstU128, IdentityLookup, Verify},
 };
-use sp_runtime::generic::BlockId::Hash;
-use sp_runtime::traits::ConstU128;
 
 use crate as ocw_psk;
 use crate::*;
@@ -79,13 +78,16 @@ fn psk_creator_is_chosen_when_one_peer_pass_the_difficulty() {
         let entropy = H256::from_low_u64_be(1298474330019282);
         let peers = vec![
             "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
-            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
+            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string(),
         ];
 
         let result = OcwPsk::choose_psk_creator(entropy, peers);
 
         assert!(result.is_some());
-        assert_eq!(result.unwrap(), "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string());
+        assert_eq!(
+            result.unwrap(),
+            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
+        );
     });
 }
 
@@ -96,7 +98,7 @@ fn creator_is_not_chosen_when_2_peers_pass_the_difficulty() {
         let peers = vec![
             "12D3KooWEh8KPSuGWdSNivtffFQEy1WziYdrtQXpktjPfHqzr5rp".to_string(),
             "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
-            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string()
+            "12D3KooWHg3Xq65A8MpywPGsTgLhHQqfo9kBhibXouSzgJzCmhic".to_string(),
         ];
 
         let result = OcwPsk::choose_psk_creator(entropy, peers);
@@ -111,9 +113,7 @@ fn creator_is_not_chosen_when_2_peers_pass_the_difficulty() {
 fn creator_is_not_chosen_when_because_none_of_them_pass_the_difficulty() {
     sp_io::TestExternalities::default().execute_with(|| {
         let entropy = H256::from_low_u64_be(1298474330019282);
-        let peers = vec![
-            "12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string(),
-        ];
+        let peers = vec!["12D3KooWQijTyPBAQcqZeSD1fh3Ep8iW6ZAogEwUwcAKgSouyusV".to_string()];
 
         let result = OcwPsk::choose_psk_creator(entropy, peers);
 
