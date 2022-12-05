@@ -2,6 +2,6 @@
 members = [
 	"bin/node",
 	"bin/runtime",
-	"pallets/ocw-qkd",
+    "pallets/ocw-psk",
 ]
 

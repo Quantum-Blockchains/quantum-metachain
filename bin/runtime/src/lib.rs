@@ -10,7 +10,8 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub use frame_support::{
     construct_runtime, parameter_types,
     traits::{
-        ConstU128, ConstU32, ConstU64, ConstU8, KeyOwnerProofSystem, Randomness, StorageInfo,
+        ConstU128, ConstU32, ConstU64, ConstU8, EnsureOrigin, KeyOwnerProofSystem, Randomness,
+        StorageInfo,
     },
     weights::{
         constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
@@ -19,13 +20,14 @@ pub use frame_support::{
     StorageValue,
 };
 pub use frame_system::Call as SystemCall;
-pub use ocw_qkd::{self, Call as OcwQkdCall};
+pub use ocw_psk::{self, Call as OcwPskCall};
 pub use pallet_balances::Call as BalancesCall;
 use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
 pub use pallet_timestamp::Call as TimestampCall;
 use pallet_transaction_payment::CurrencyAdapter;
+// use scale_info::Type;
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -265,10 +267,12 @@ impl pallet_sudo::Config for Runtime {
     type Call = Call;
 }
 
-impl ocw_qkd::Config for Runtime {
+impl ocw_psk::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
+    type PskDifficulty1 = ConstU128<255u128>;
+    type PskDifficulty2 = ConstU128<{ u128::MAX }>;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -288,7 +292,7 @@ construct_runtime!(
         TransactionPayment: pallet_transaction_payment,
         Sudo: pallet_sudo,
         // QMC pallets
-        OcwQkd: ocw_qkd,
+        OcwPsk: ocw_psk,
     }
 );
 
