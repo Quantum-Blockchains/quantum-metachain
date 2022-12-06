@@ -1,24 +1,29 @@
 from flask import Flask, request, make_response
 
 import node
+import logging
 import psk_file
+from qrng import get_psk
 
 local_server = Flask(__name__)
 
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 @local_server.route("/psk", methods=['POST'])
-def save_pre_shared_key():
+def rotate_pre_shared_key():
+    logging.info("Rotating pre-shared key...")
     body = request.get_json()
-    key = body["psk"]
+    is_local_peer = body["is_local_peer"]
 
-    if is_valid_hex(key):
+    if is_local_peer:
+        logging.info("Calling QRNG Api to get new PSK ...")
+        key = get_psk()
+        logging.info(key)
         psk_file.create(key)
+    else:
+        # TODO call other nodes, qkd, and verify psk
+        pass
 
-    # TODO if psk not included in body, call other nodes, qkd, and verify psk
     node.node_service.current_node.restart()
 
     return make_response()
-
-
-def is_valid_hex(psk):
-    return psk and int(psk, 16) and len(psk) == 64
