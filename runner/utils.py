@@ -11,3 +11,7 @@ def xor(s1: str, s2: str):
     """
     result = int(s1, base=16) ^ int(s2, base=16)
     return hex(result)
+
+
+def to_hex(s):
+    return int(s, base=16)

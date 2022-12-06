@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, Response
 from config import settings
+from utils import base64_to_hex, to_hex, xor
 
 import base64
 import logging
@@ -49,32 +50,13 @@ def psk_get_key():
     key = qkd_resp["keys"][0]
     key_id = key["key_ID"]
     qkd_key = key["key"]
-    logging.info(f"KEY: {qkd_key}")
 
-    base64_message = qkd_key
-    base64_bytes = base64_message.encode('ascii')
-    message_bytes = base64.b64decode(base64_bytes)
-    message = message_bytes.decode('ascii')
+    decoded_qkd_key = base64_to_hex(qkd_key)
 
-    logging.info(f"MESSAGE: {message}")
-
-    xored_psk = xor_two_str(psk_key, message)
+    xored_psk = xor(psk_key, decoded_qkd_key)
 
     return jsonify({
         "key": xored_psk,
         "key_id": key_id
     })
 
-
-def to_hex(s):
-    return int(s, base=16)
-
-
-def xor_two_str(s1, s2):
-    """
-    xor_two_str accepts two strings as input, converts them to bytes and perform XOR operation.
-    """
-    a = to_hex(s1)
-    b = to_hex(s2)
-    c = a ^ b
-    return hex(c)
