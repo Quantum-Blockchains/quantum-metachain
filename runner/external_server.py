@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify, Response
 from config import settings
 
-import requests
+import base64
 import logging
 import psk_file
+import requests
 
 external_server = Flask(__name__)
 
@@ -43,12 +44,21 @@ def psk_get_key():
         logging.error(f"{peer_id} not found - this peer is not configured")
         return Response("{'error': 'Peer not found'}", status=404, mimetype="application/json")
 
+    logging.info(f"{qkd_url} - URL")
     qkd_resp = requests.get(qkd_url).json()
-    keys = qkd_resp["keys"]
-    key_id = keys["key_ID"]
-    qkd_key = keys["key"]
+    key = qkd_resp["keys"][0]
+    key_id = key["key_ID"]
+    qkd_key = key["key"]
+    logging.info(f"KEY: {qkd_key}")
 
-    xored_psk = xor_two_str(psk_key, qkd_key)
+    base64_message = qkd_key
+    base64_bytes = base64_message.encode('ascii')
+    message_bytes = base64.b64decode(base64_bytes)
+    message = message_bytes.decode('ascii')
+
+    logging.info(f"MESSAGE: {message}")
+
+    xored_psk = xor_two_str(psk_key, message)
 
     return jsonify({
         "key": xored_psk,
