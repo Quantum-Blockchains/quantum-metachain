@@ -13,13 +13,13 @@ external_server = Flask(__name__)
 def psk_get_key():
     if not psk_file.exists():
         logging.error("Couldn't find psk file")
-        return Response("{'error': 'Couldn't find psk file'}", status=422, mimetype="application/json")
+        return Response("{'error': 'Couldnt find psk file'}", status=422, mimetype="application/json")
 
     try:
         file = open(settings.PSK_FILE_PATH)
     except OSError:
         logging.error("Couldn't open psk file")
-        return Response("{'error': 'Couldn't open psk file'}", status=500, mimetype="application/json")
+        return Response("{'error': 'Couldnt open psk file'}", status=500, mimetype="application/json")
 
     psk_key = file.read()
 
@@ -74,4 +74,7 @@ def xor_two_str(s1, s2):
     """
     xor_two_str accepts two strings as input, converts them to bytes and perform XOR operation.
     """
-    return hex(to_hex(s1) ^ to_hex(s2))
+    a = to_hex(s1)
+    b = to_hex(s2)
+    c = a ^ b
+    return hex(c)
