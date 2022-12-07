@@ -6,9 +6,9 @@
 target/
 
 # Runner
-.env
+config.json
 venv/
+__pycache__
 
 # Other
 psk
-runner/__pycache__
