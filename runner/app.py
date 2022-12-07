@@ -8,7 +8,7 @@ from config import config
 from local_server import local_server
 from external_server import external_server
 from node import Node, NodeService
-from runner.psk import fetch_from_peers
+from psk import fetch_from_peers
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
