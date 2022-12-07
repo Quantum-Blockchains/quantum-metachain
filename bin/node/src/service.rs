@@ -244,6 +244,11 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
         }
     };
 
+    let runner_port = config.runner_port.unwrap().to_le_bytes();
+    if let Some(mut storage) = backend.offchain_storage() {
+        storage.set(STORAGE_PREFIX, b"runner-port", &runner_port);
+    };
+
     let rpc_address = config.rpc_http.unwrap();
     let rpc_port = rpc_address.port().to_le_bytes();
     if let Some(mut storage) = backend.offchain_storage() {

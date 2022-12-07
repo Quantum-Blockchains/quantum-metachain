@@ -88,7 +88,6 @@ pub mod pallet {
                 }
             };
 
-            // TODO pass runner port from config to storage
             let storage_runner_port = StorageValueRef::persistent(b"runner-port");
             let runner_port = match storage_runner_port.get::<u16>() {
                 Ok(p) => p.unwrap_or(5001),
