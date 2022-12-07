@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, Response
 from config import settings
+from utils import base64_to_hex, to_hex, xor
 
-import requests
+import base64
 import logging
 import psk_file
+import requests
 
 external_server = Flask(__name__)
 
@@ -12,13 +14,13 @@ external_server = Flask(__name__)
 def psk_get_key():
     if not psk_file.exists():
         logging.error("Couldn't find psk file")
-        return Response("{'error': 'Couldn't find psk file'}", status=422, mimetype="application/json")
+        return Response("{'error': 'Couldnt find psk file'}", status=422, mimetype="application/json")
 
     try:
         file = open(settings.PSK_FILE_PATH)
     except OSError:
         logging.error("Couldn't open psk file")
-        return Response("{'error': 'Couldn't open psk file'}", status=500, mimetype="application/json")
+        return Response("{'error': 'Couldnt open psk file'}", status=500, mimetype="application/json")
 
     psk_key = file.read()
 
@@ -43,25 +45,18 @@ def psk_get_key():
         logging.error(f"{peer_id} not found - this peer is not configured")
         return Response("{'error': 'Peer not found'}", status=404, mimetype="application/json")
 
+    logging.info(f"{qkd_url} - URL")
     qkd_resp = requests.get(qkd_url).json()
-    keys = qkd_resp["keys"]
-    key_id = keys["key_ID"]
-    qkd_key = keys["key"]
+    key = qkd_resp["keys"][0]
+    key_id = key["key_ID"]
+    qkd_key = key["key"]
 
-    xored_psk = xor_two_str(psk_key, qkd_key)
+    decoded_qkd_key = base64_to_hex(qkd_key)
+
+    xored_psk = xor(psk_key, decoded_qkd_key)
 
     return jsonify({
         "key": xored_psk,
         "key_id": key_id
     })
 
-
-def to_hex(s):
-    return int(s, base=16)
-
-
-def xor_two_str(s1, s2):
-    """
-    xor_two_str accepts two strings as input, converts them to bytes and perform XOR operation.
-    """
-    return hex(to_hex(s1) ^ to_hex(s2))
