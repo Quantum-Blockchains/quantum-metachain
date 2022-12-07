@@ -8,6 +8,7 @@ from config import config
 from local_server import local_server
 from external_server import external_server
 from node import Node, NodeService
+from runner.psk import fetch_from_peers
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -21,8 +22,8 @@ try:
     if psk_file.exists():
         node.node_service.current_node.start()
     else:
-        # TODO call other nodes for psk in a loop
-        pass
+        psk = fetch_from_peers()
+        psk_file.create(psk)
 
     external_thread = Thread(target=external_server.run, args=(None, config["external_server_port"], False))
     logging.info("Starting external server...")
