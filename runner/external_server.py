@@ -1,3 +1,4 @@
+import json
 import logging
 
 from flask import Flask, jsonify, Response
@@ -18,11 +19,11 @@ def get_psk(peer_id):
     peer_config = config["peers"][peer_id]
     if peer_config is None:
         logging.error(f"{peer_id} not found - this peer is not configured")
-        return Response("{'error': 'Peer not found'}", status=404, mimetype="application/json")
+        return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
 
     if not psk_file.exists():
         logging.error("Couldn't find psk file")
-        return Response("{'error': 'Couldn't find psk file'}", status=404, mimetype="application/json")
+        return Response(json.dumps({"message": "Couldn't find psk file"}), status=404, mimetype="application/json")
 
     try:
         with open(abs_psk_file_path()) as file:
@@ -30,7 +31,7 @@ def get_psk(peer_id):
 
     except OSError:
         logging.error("Couldn't open psk file")
-        return Response("{'error': 'Couldn't open psk file'}", status=500, mimetype="application/json")
+        return Response(json.dumps({"message": "Couldn't open psk file"}), status=500, mimetype="application/json")
 
     key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
     xored_psk = xor(psk_key, qkd_key)

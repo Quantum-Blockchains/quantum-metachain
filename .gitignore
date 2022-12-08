@@ -4,6 +4,7 @@
 
 # Node
 target/
+.node-key
 
 # Runner
 config.json
