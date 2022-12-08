@@ -10,7 +10,7 @@ def exists():
 def create(psk):
     # Trim "0x" from psk
     if psk[:2] == "0x":
-        psk = psk[:2]
+        psk = psk[2:]
 
     with open(abs_psk_file_path(), 'w') as file:
         file.write(psk)
