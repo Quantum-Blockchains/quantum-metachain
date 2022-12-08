@@ -271,7 +271,7 @@ impl ocw_psk::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Randomness = RandomnessCollectiveFlip;
-    type PskDifficulty1 = ConstU128<200u128>;
+    type PskDifficulty1 = ConstU128<240u128>;
     type PskDifficulty2 = ConstU128<{ u128::MAX }>;
 }
 
