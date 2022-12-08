@@ -28,11 +28,10 @@ def fetch_from_peers():
 
             if get_psk_response.status_code != 200:
                 logging.error(get_psk_response.json()["message"])
-                continue
-
-            response_body = get_psk_response.json()
-            _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
-            psk = xor(response_body["key"], qkd_key)
+            else:
+                response_body = get_psk_response.json()
+                _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
+                psk = xor(response_body["key"], qkd_key)
 
     logging.debug(f"Fetched psk {psk}")
 
