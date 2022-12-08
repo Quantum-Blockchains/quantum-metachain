@@ -11,28 +11,27 @@ on:
       - main
 
 jobs:
-  runner-test-and-lint:
-    name: Run pytest and lint
-    build:
+  name: Run pytest and lint
+  build:
 
-      runs-on: ubuntu-latest
-      
-      steps:
-        - uses: actions/checkout@v3
-        - name: Set up Python 3.x
-          uses: actions/setup-python@v4
-          with:
-            python-version: '3.x'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
 
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-        - name: Lint with flake8
-          run: |
-            flake8 --ignore=E501 .
+      - name: Lint with flake8
+        run: |
+          flake8 --ignore=E501 .
 
-        - name: Test with pytest
-          run: |
-            pytest
+      - name: Test with pytest
+        run: |
+          pytest
