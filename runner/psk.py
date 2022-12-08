@@ -19,12 +19,22 @@ def fetch_from_qrng():
 def fetch_from_peers():
     logging.info("Fetching PSK from other peers...")
     peers = config["peers"]
-    for peer_id, peer in peers.items():
-        get_psk_url = f"{peer['server_addr']}/peer/{peer_id}/psk"
-        get_psk_response = requests.get(get_psk_url).json()
-        _, qkd_key = get_dec_key(peer["qkd_addr"], get_psk_response["key_id"])
-        psk = xor(get_psk_response["key"], qkd_key)
-        logging.debug(f"Fetched psk {psk}")
 
-        # TODO fetch psk from all peers in config, compare, verify and choose a valid one (TBD)
-        return psk
+    psk = None
+    while not psk:
+        for peer_id, peer in peers.items():
+            get_psk_url = f"{peer['server_addr']}/peer/{config['local_peer_id']}/psk"
+            get_psk_response = requests.get(get_psk_url)
+
+            if get_psk_response.status_code != 200:
+                logging.error(get_psk_response.json()["message"])
+                continue
+
+            response_body = get_psk_response.json()
+            _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
+            psk = xor(response_body["key"], qkd_key)
+
+    logging.debug(f"Fetched psk {psk}")
+
+    # TODO fetch psk from all peers in config, compare, verify and choose a valid one (TBD)
+    return psk

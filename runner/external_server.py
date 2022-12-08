@@ -3,7 +3,7 @@ import logging
 from flask import Flask, jsonify, Response
 
 import psk_file
-from config import config
+from config import config, abs_psk_file_path
 from qkd import get_enc_key
 from utils import xor
 
@@ -25,7 +25,7 @@ def get_psk(peer_id):
         return Response("{'error': 'Couldn't find psk file'}", status=404, mimetype="application/json")
 
     try:
-        with open(config["psk_file_path"]) as file:
+        with open(abs_psk_file_path()) as file:
             psk_key = file.read()
 
     except OSError:

@@ -1,12 +1,12 @@
 from os import path
 
-from config import config
+from config import abs_psk_file_path
 
 
 def exists():
-    return path.exists(config["psk_file_path"])
+    return path.exists(abs_psk_file_path())
 
 
 def create(psk):
-    with open(config["psk_file_path"], 'w') as file:
+    with open(abs_psk_file_path(), 'w') as file:
         file.write(psk)
