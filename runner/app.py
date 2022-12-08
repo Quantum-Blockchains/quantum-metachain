@@ -1,6 +1,5 @@
 import logging
 import sys
-import subprocess
 
 import node
 import psk_file
@@ -29,7 +28,7 @@ try:
     logging.info("Starting external server...")
     external_thread.start()
 
-    logging.info(f"Starting local server...")
+    logging.info("Starting local server...")
     local_server.run(port=settings.LOCAL_SERVER_PORT)
 
 except Exception as e:
@@ -37,4 +36,3 @@ except Exception as e:
 finally:
     logging.info("Closing QMC processes...")
     node.node_service.current_node.terminate()
-

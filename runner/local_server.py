@@ -9,6 +9,7 @@ local_server = Flask(__name__)
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
+
 @local_server.route("/psk", methods=['POST'])
 def rotate_pre_shared_key():
     logging.info("Rotating pre-shared key...")

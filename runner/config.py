@@ -7,11 +7,11 @@ ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 ENV_PATH = path.join(ROOT_DIR, ".env")
 
 defaults = {
-   "LOCAL_SERVER_PORT": 5001,
-   "EXTERNAL_SERVER_PORT": 5002,
-   "KEY_ROTATION_TIME": 600,
-   "PSK_FILE_PATH": f"{ROOT_DIR}/psk",
-   "QRNG_API_KEY": ""
+    "LOCAL_SERVER_PORT": 5001,
+    "EXTERNAL_SERVER_PORT": 5002,
+    "KEY_ROTATION_TIME": 600,
+    "PSK_FILE_PATH": f"{ROOT_DIR}/psk",
+    "QRNG_API_KEY": ""
 }
 
 

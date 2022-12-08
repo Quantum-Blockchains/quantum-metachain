@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify, Response
 from config import settings
-from utils import base64_to_hex, to_hex, xor
+from utils import base64_to_hex, xor
 
-import base64
 import logging
 import psk_file
 import requests
@@ -59,4 +58,3 @@ def psk_get_key():
         "key": xored_psk,
         "key_id": key_id
     })
-
