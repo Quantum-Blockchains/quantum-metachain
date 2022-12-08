@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 from utils import base64_to_hex
@@ -18,6 +20,7 @@ def get_dec_key(url, key_id):
 
 
 def _unwrap_response(response):
+    logging.debug(f"QKD response: {response}")
     key = response["keys"][0]
     key_id = key["key_ID"]
     qkd_key = key["key"]
