@@ -11,9 +11,8 @@ on:
       - main
 
 jobs:
-  name: Run pytest and lint
-  build:
-
+  check-runner-and-lint:
+    name: Run pytest and linter
     runs-on: ubuntu-latest
     
     steps:
