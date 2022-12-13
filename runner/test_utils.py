@@ -1,3 +1,5 @@
+import pytest
+
 from utils import xor, base64_to_hex
 
 
@@ -13,4 +15,17 @@ def test_xor():
     result = xor(s1, s2)
 
     assert result == "0x88f15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
+    assert xor(s1, result) == s2
+
+
+# TODO fix this test
+@pytest.mark.skip()
+def test_xor_does_not_trim_value():
+    s1 = "0x000000000000000000000000000000000000000000000000000000000000000"
+    s2 = "0x000000000000000000000000000000000000000000000000000000000000000"
+
+    result = xor(s1, s2)
+
+    # TODO fix this test
+    assert result == "0x000000000000000000000000000000000000000000000000000000000000000"
     assert xor(s1, result) == s2
