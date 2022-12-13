@@ -16,6 +16,8 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 startup_args = sys.argv[1:]
 startup_args.append("--psk-file")
 startup_args.append(config['psk_file_path'])
+startup_args.append("--node-key-file")
+startup_args.append(config['node_key_file_path'])
 node.node_service = NodeService(Node(startup_args))
 
 try:
