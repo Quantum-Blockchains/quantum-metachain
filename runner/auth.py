@@ -13,3 +13,4 @@ def sign(file_abs_path):
         logging.error(str(e))
 
     return signed_file
+    
