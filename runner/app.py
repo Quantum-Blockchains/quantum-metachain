@@ -21,7 +21,7 @@ startup_args.append(config['node_key_file_path'])
 node.node_service = NodeService(Node(startup_args))
 
 try:
-    logging.info(f"Starting QMC runner...")
+    logging.info("Starting QMC runner...")
     if not psk_file.exists():
         psk = fetch_from_peers()
         psk_file.create(psk)
@@ -35,7 +35,7 @@ try:
     logging.info("Starting external server...")
     external_thread.start()
 
-    logging.info(f"Starting local server...")
+    logging.info("Starting local server...")
     local_server.run(port=config["local_server_port"])
 
 except Exception as e:
