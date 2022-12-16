@@ -1,10 +1,12 @@
 import logging
+from time import sleep
 
 from flask import Flask, request, make_response
 
 import node
 import psk_file
 from psk import fetch_from_qrng, fetch_from_peers
+from config import config
 
 local_server = Flask(__name__)
 
@@ -18,6 +20,7 @@ def rotate_pre_shared_key():
     is_local_peer = body["is_local_peer"]
     psk = fetch_from_qrng() if is_local_peer else fetch_from_peers()
     psk_file.create(psk)
+    sleep(config["key_rotation_time"])
 
     node.node_service.current_node.restart()
 
