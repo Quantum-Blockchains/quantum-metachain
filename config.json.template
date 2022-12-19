@@ -2,6 +2,7 @@
   "local_server_port": 5001,
   "external_server_port": 5002,
   "psk_file_path": "/tmp/psk1",
+  "psk_sig_file_path": "/tmp/psk1_sig"
   "node_key_file_path": ".node_key",
   "qrng_api_key": "",
   "peers": {

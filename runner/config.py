@@ -15,3 +15,7 @@ def abs_psk_file_path():
 
 def abs_node_key_file_path():
     return f"{ROOT_DIR}/{config['node_key_file_path']}"
+
+
+def abs_psk_sig_file_path():
+    return f"{ROOT_DIR}/{config['psk_sig_file_path']}"
