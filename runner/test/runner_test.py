@@ -20,11 +20,11 @@ def start_test():
     con_bob = Config('runner/test/config/config_bob.json')
 
     logging.info("Starting Alice test node...")
-    node_service_alice = NodeService(Node(["python3", "runner/test_node.py", 'runner/test/config/config_alice.json']))
+    node_service_alice = NodeService(Node(["python3", "runner/node_test.py", 'runner/test/config/config_alice.json']))
     node_service_alice.current_node.start()
 
     logging.info("Starting Bob test node...")
-    node_service_bob = NodeService(Node(["python3", "runner/test_node.py", 'runner/test/config/config_bob.json']))
+    node_service_bob = NodeService(Node(["python3", "runner/node_test.py", 'runner/test/config/config_bob.json']))
     node_service_bob.current_node.start()
 
     try:
