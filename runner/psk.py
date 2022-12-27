@@ -1,23 +1,20 @@
 import logging
-from time import sleep
-
 import requests
-
-from config import config
 from qkd import get_dec_key
 from qrng import get_psk
 from utils import xor
 
 
-def fetch_from_qrng():
+def fetch_from_qrng(config):
     logging.info("Calling QRNG Api to get new PSK...")
-    psk = get_psk()
+    psk = get_psk(config)
     logging.debug(f"Generated psk: {psk}")
 
     return psk
 
 
-def fetch_from_peers():
+def fetch_from_peers(config):
+    # print(config)
     logging.info("Fetching PSK from other peers...")
     peers = config["peers"]
 

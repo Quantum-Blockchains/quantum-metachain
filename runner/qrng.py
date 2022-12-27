@@ -1,12 +1,8 @@
 import logging
-
 import requests
 from Crypto import Random
 
-from config import config
-
-
-def get_psk() -> str:
+def get_psk(config) -> str:
     url = f"https://qrng.qbck.io/{config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
     try:
         response = requests.get(url)
