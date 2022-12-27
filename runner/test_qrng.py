@@ -1,6 +1,8 @@
 from qrng import get_psk
 
-url = f"https://qrng.qbck.io/api_key/qbck/block/hex?size=1&length=32"
+
+url = "https://qrng.qbck.io/api_key/qbck/block/hex?size=1&length=32"
+
 
 def test_get_psk_from_qrng(requests_mock):
     expected_psk = "0xa9d6e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"

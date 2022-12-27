@@ -9,6 +9,7 @@ import psk_file
 import time
 import os
 
+
 def start_test():
     logging.info("Starting test...")
 
@@ -124,8 +125,8 @@ def start_test():
         else:
             logging.info("Test: ERROR")
 
+
 def send_psk_rotation_request(runner_port, peer_id, is_local):
-    url = "http://localhost:{port}/psk".format(port = runner_port)
+    url = "http://localhost:{port}/psk".format(port=runner_port)
     data = {'peer_id': peer_id, 'is_local_peer': is_local}
     requests.post(url, json=data)
-

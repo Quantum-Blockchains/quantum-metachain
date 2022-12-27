@@ -4,9 +4,12 @@ from flask import Flask, request, make_response
 import psk_file
 from psk import fetch_from_qrng, fetch_from_peers
 
+
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
+
 class LocalServerWrapper():
+
     def __init__(self, config, node_service, **configs):
         self.local_server = Flask(__name__)
         self.config = config

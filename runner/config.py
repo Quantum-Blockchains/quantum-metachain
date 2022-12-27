@@ -1,7 +1,9 @@
 import json
 from os import path
 
+
 class Config():
+
     def __init__(self, config_path):
         self.PROJECT_DIR = path.abspath(path.dirname(__file__))
         self.ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
@@ -11,4 +13,3 @@ class Config():
 
     def abs_psk_file_path(self):
         return f"{self.ROOT_DIR}/{self.config['psk_file_path']}"
-

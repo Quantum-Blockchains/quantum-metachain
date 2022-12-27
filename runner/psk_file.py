@@ -1,5 +1,6 @@
 from os import path
 
+
 def exists(config):
     return path.exists(config.abs_psk_file_path())
 

@@ -5,7 +5,9 @@ import psk_file
 from qkd import get_enc_key
 from utils import xor
 
+
 class ExternalServerWrapper():
+
     def __init__(self, config, **configs):
         self.external_server = Flask(__name__)
         self.config = config
