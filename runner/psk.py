@@ -6,6 +6,7 @@ from config import config
 from qkd import get_dec_key
 from qrng import get_psk
 from utils import xor
+from crypto import verify
 
 
 def fetch_from_qrng():
@@ -32,6 +33,10 @@ def fetch_from_peers():
                 response_body = get_psk_response.json()
                 _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
                 psk = xor(response_body["key"], qkd_key)
+                signature = response_body["signature"]
+                pub_key = bytes.fromhex(config["psk_creator_public_key"])
+                if not verify(psk, signature, pub_key):
+                    logging.error("Couldn't verify psk signature")
 
     logging.debug(f"Fetched psk {psk}")
 

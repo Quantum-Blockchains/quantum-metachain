@@ -3,6 +3,7 @@
   "external_server_port": 5002,
   "psk_file_path": "/tmp/psk1",
   "psk_sig_file_path": "/tmp/psk1_sig"
+  "psk_creator_pub_key": "da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e",
   "node_key_file_path": ".node_key",
   "qrng_api_key": "",
   "peers": {

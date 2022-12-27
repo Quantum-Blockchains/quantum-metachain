@@ -4,7 +4,7 @@ import logging
 from flask import Flask, jsonify, Response
 
 import psk_file
-from config import config, abs_psk_file_path
+from config import config, abs_psk_file_path, abs_psk_sig_file_path
 from qkd import get_enc_key
 from utils import xor
 
@@ -36,7 +36,16 @@ def get_psk(peer_id):
     key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
     xored_psk = xor(psk_key, qkd_key)
 
+    try:
+        with open(abs_psk_sig_file_path()) as file:
+            signature = file.read()
+
+    except OSError:
+        logging.error("Couldn't open psk signature file")
+        return Response(json.dumps({"message": "Couldn't open psk signature file"}), status=500, mimetype="application/json")
+
     return jsonify({
         "key": xored_psk,
-        "key_id": key_id
+        "key_id": key_id,
+        "signature": signature
     })
