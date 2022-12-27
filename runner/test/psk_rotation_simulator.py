@@ -20,11 +20,11 @@ def start_test():
     con_bob = Config('runner/test/config/config_bob.json')
 
     logging.info("Starting Alice test node...")
-    node_service_alice = NodeService(Node(["python3", "runner/node_test.py", 'runner/test/config/config_alice.json']))
+    node_service_alice = NodeService(Node(["python3", "runner/node_simulator.py", 'runner/test/config/config_alice.json']))
     node_service_alice.current_node.start()
 
     logging.info("Starting Bob test node...")
-    node_service_bob = NodeService(Node(["python3", "runner/node_test.py", 'runner/test/config/config_bob.json']))
+    node_service_bob = NodeService(Node(["python3", "runner/node_simulator.py", 'runner/test/config/config_bob.json']))
     node_service_bob.current_node.start()
 
     try:
@@ -52,6 +52,8 @@ def start_test():
         logging.info("Starting Bob local server...")
         local_thread_bob.daemon = True
         local_thread_bob.start()
+
+        time.sleep(5)
 
         thread_1 = Thread(target=send_psk_rotation_request, args=(con_alice.config["local_server_port"], con_alice.config["local_peer_id"], True))
         thread_2 = Thread(target=send_psk_rotation_request, args=(con_bob.config["local_server_port"], con_alice.config["local_peer_id"], False))

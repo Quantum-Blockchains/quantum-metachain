@@ -9,7 +9,7 @@ from external_server import ExternalServerWrapper
 from local_server import LocalServerWrapper
 from node import Node, NodeService
 from psk import fetch_from_peers
-from test import test_runner
+from test import psk_rotation_simulator
 from config import Config
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -17,7 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 startup_args = sys.argv[1:]
 
 if startup_args[0] == 'test':
-    test_runner.start_test()
+    psk_rotation_simulator.start_test()
 else:
     path_config = startup_args[0]
     config = Config(path_config)
