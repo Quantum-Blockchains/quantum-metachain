@@ -34,3 +34,7 @@ jobs:
       - name: Test with pytest
         run: |
           pytest
+
+      - name: Integration tests
+        run: |
+          python3 run runner/app.py test
