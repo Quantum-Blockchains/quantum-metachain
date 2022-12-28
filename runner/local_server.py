@@ -24,8 +24,8 @@ def rotate_pre_shared_key():
             node_key = file.read()
             signature = sign(psk, node_key)
 
-        with open(abs_psk_sig_file_path(), 'wb') as file:
-            file.write(signature)
+        with open(abs_psk_sig_file_path(), 'w') as file:
+            file.write(signature.hex())
 
     else:
         psk = fetch_from_peers()
