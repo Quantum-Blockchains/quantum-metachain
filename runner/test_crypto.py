@@ -21,23 +21,26 @@ def test_signature_flow_unsuccessful_when_pubkey_is_different():
 
     assert not verify(data, signature, bob_public_key)
 
+
 def test_verification_flow_successful():
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
-    public_key= bytes.fromhex("da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e")
+    public_key = bytes.fromhex("da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e")
     signature = bytes.fromhex("fae47d3f21430743df8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
-        
+
     assert verify(data, signature, public_key)
+
 
 def test_verification_flow_unsuccessful_when_pubkey_is_different():
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
-    public_key= bytes.fromhex("0000000000000000000000000000000000000000000000000000000000000000")
+    public_key = bytes.fromhex("0000000000000000000000000000000000000000000000000000000000000000")
     signature = bytes.fromhex("fae47d3f21430743df8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
-        
+
     assert not verify(data, signature, public_key)
+
 
 def test_verification_flow_unsuccessful_when_signature_is_different():
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
-    public_key= bytes.fromhex("da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e")
+    public_key = bytes.fromhex("da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e")
     signature = bytes.fromhex("abcded3f21430743af8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
-        
+
     assert not verify(data, signature, public_key)
