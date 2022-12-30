@@ -2,7 +2,7 @@
         "local_peer_id": "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV",
         "local_server_port": 5003,
         "external_server_port": 5004,
-        "psk_file_path": "/runner/test/tmp/psk_bob",
+        "psk_file_path": "runner/psk_bob",
         "key_rotation_time": 50,
         "qrng_api_key": "",
         "peers": {

@@ -1,13 +1,10 @@
-import sys
 import os
 import psk_file
 import time
-from config import Config
+from config import config
 
-config_path = sys.argv[1]
-config = Config(config_path)
 
-if psk_file.exists(config):
+if psk_file.exists():
     os.remove(config.abs_psk_file_path())
 
 while True:
