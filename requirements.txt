@@ -5,3 +5,4 @@ pytest~=7.2.0
 pycryptodome~=3.3.1
 flake8~=6.0.0
 cryptography~=38.0.4
+base58~=2.1.1
