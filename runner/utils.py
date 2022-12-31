@@ -1,4 +1,9 @@
-import base64
+import base58, base64
+
+
+def base58_to_hex(message: str):
+    pub_key = base58.b58decode(message).hex()
+    return f"{pub_key[12:]}"
 
 
 def base64_to_hex(message: str):

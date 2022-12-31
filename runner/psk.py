@@ -5,7 +5,7 @@ import requests
 from config import config
 from qkd import get_dec_key
 from qrng import get_psk
-from utils import xor
+from utils import xor, base58_to_hex
 from crypto import verify
 
 
@@ -17,13 +17,13 @@ def fetch_from_qrng():
     return psk
 
 
-def fetch_from_peers():
+def fetch_from_peers(peer_id):
     logging.info("Fetching PSK from other peers...")
     peers = config["peers"]
 
     psk = None
     while not psk:
-        for peer_id, peer in peers.items():
+        for p_id, peer in peers.items():
             get_psk_url = f"{peer['server_addr']}/peer/{config['local_peer_id']}/psk"
             get_psk_response = requests.get(get_psk_url)
 
@@ -34,9 +34,10 @@ def fetch_from_peers():
                 _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
                 psk = xor(response_body["key"], qkd_key)
                 signature = bytes.fromhex(response_body["signature"])
-                pub_key = bytes.fromhex(config["psk_creator_public_key"])
+                pub_key = bytes.fromhex(base58_to_hex(peer_id))
                 if not verify(psk, signature, pub_key):
                     logging.error("Couldn't verify psk signature")
+                    # TODO handle verification error
 
     logging.debug(f"Fetched psk {psk}")
 

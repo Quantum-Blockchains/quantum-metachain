@@ -18,6 +18,7 @@ def rotate_pre_shared_key():
     logging.info("Rotating pre-shared key...")
     body = request.get_json()
     is_local_peer = body["is_local_peer"]
+    peer_id = body["peer_id"]
     if is_local_peer:
         psk = fetch_from_qrng()
         with open(abs_node_key_file_path()) as file:
@@ -28,7 +29,7 @@ def rotate_pre_shared_key():
             file.write(signature.hex())
 
     else:
-        psk = fetch_from_peers()
+        psk = fetch_from_peers(peer_id)
 
     psk_file.create(psk)
 

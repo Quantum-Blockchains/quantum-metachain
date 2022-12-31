@@ -1,6 +1,12 @@
 import pytest
 
-from utils import xor, base64_to_hex
+from utils import xor, base64_to_hex, base58_to_hex
+
+
+def test_decode_base58():
+    result = bytes.fromhex(base58_to_hex("12D3KooWQ4b1BHDUUW8VbWSCrS4RcdtRL6C8VEVb9Ye59uRp63Y1"))
+    pub_key = bytes.fromhex("d3a842cd6b623801aaefd9784cb798c0931a8c8f2edb802b488094f187e10c06")
+    assert result == pub_key
 
 
 def test_decode_base64():
