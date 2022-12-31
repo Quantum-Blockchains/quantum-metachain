@@ -6,8 +6,8 @@ from config import config
 
 
 def get_psk():
-    url = f"https://qrng.qbck.io/{config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
     try:
+        url = f"https://qrng.qbck.io/{config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
         response = requests.get(url)
         response.raise_for_status()
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError):
