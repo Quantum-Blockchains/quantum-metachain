@@ -28,21 +28,15 @@ def get_psk(peer_id):
     try:
         with open(abs_psk_file_path()) as file:
             psk_key = file.read()
-
-    except OSError:
-        logging.error("Couldn't open psk file")
-        return Response(json.dumps({"message": "Couldn't open psk file"}), status=500, mimetype="application/json")
-
-    key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
-    xored_psk = xor(psk_key, qkd_key)
-
-    try:
         with open(abs_psk_sig_file_path()) as file:
             signature = file.read()
 
     except OSError:
-        logging.error("Couldn't open psk signature file")
-        return Response(json.dumps({"message": "Couldn't open psk signature file"}), status=500, mimetype="application/json")
+        logging.error("Invalid psk file")
+        return Response(json.dumps({"message": "Invalid psk file"}), status=500, mimetype="application/json")
+
+    key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
+    xored_psk = xor(psk_key, qkd_key)
 
     return jsonify({
         "key": xored_psk,
