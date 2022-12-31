@@ -1,4 +1,5 @@
-import base58, base64
+import base58
+import base64
 
 
 def base58_to_hex(message: str):
