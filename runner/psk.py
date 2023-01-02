@@ -37,7 +37,7 @@ def fetch_from_peers(peer_id):
                 pub_key = bytes.fromhex(base58_to_hex(peer_id))
                 if not verify(psk, signature, pub_key):
                     logging.error("Couldn't verify psk signature")
-                    # TODO handle verification error
+                    # TODO JEQB-199 handle verification error
 
     logging.debug(f"Fetched psk {psk}")
 
