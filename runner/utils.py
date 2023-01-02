@@ -4,6 +4,7 @@ import base64
 
 def base58_to_hex(message: str):
     pub_key = base58.b58decode(message).hex()
+    # pub_key[:12] is the Network ID
     return f"{pub_key[12:]}"
 
 
