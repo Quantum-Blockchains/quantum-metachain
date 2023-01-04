@@ -2,10 +2,10 @@ import base58
 import base64
 
 
-def base58_to_hex(message: str):
-    pub_key = base58.b58decode(message).hex()
-    # pub_key[:12] is the Network ID
-    return f"{pub_key[12:]}"
+def base58_to_hex(val: str):
+    hex = base58.b58decode(val).hex()
+    # hex[:12] is the Network ID
+    return f"{hex[12:]}"
 
 
 def base64_to_hex(message: str):
