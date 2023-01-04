@@ -56,7 +56,7 @@ def start_test():
             test = False
             raise ValueError("Alice and Bob's keys are different")
 
-        time.sleep(50)
+        time.sleep(70)
 
         send_psk_rotation_request(config_bob.config["local_server_port"], config_bob.config["local_peer_id"], True)
         send_psk_rotation_request(config_alice.config["local_server_port"], config_bob.config["local_peer_id"], False)
