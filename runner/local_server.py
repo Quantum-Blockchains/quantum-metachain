@@ -5,6 +5,7 @@ import psk_file
 from psk import fetch_from_qrng, fetch_from_peers
 from config import config
 import node
+from threading import Thread
 
 
 class LocalServerWrapper():
@@ -26,13 +27,17 @@ class LocalServerWrapper():
         self.local_server.run(None, config.config["local_server_port"], False)
 
     def rotate_pre_shared_key(self):
-        logging.info("Rotating pre-shared key...")
         body = request.get_json()
+        thread = Thread(target=self.fun, args=(body,))
+        thread.start()
+        return make_response()
+
+    def fun(self, body):
+        logging.info("Rotating pre-shared key...")
+        # body = request.get_json()
         is_local_peer = body["is_local_peer"]
         psk = fetch_from_qrng() if is_local_peer else fetch_from_peers()
         psk_file.create(psk)
         sleep(config.config["key_rotation_time"])
 
         node.node_service.current_node.restart()
-
-        return make_response()

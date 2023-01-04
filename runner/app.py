@@ -21,6 +21,8 @@ if startup_args[0] == 'test':
 else:
     startup_args.append("--psk-file")
     startup_args.append(config.config['psk_file_path'])
+    startup_args.append("--runner-port")
+    startup_args.append(str(config.config['local_server_port']))
     node.node_service = NodeService(Node(startup_args[2:]))
 
     try:
