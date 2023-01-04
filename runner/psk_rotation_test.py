@@ -28,6 +28,7 @@ def start_test():
     try:
 
         send_psk_rotation_request(config_alice.config["local_server_port"], config_alice.config["local_peer_id"], True)
+        time.sleep(5)
         send_psk_rotation_request(config_bob.config["local_server_port"], config_alice.config["local_peer_id"], False)
 
         psk_alice = None
@@ -59,6 +60,7 @@ def start_test():
         time.sleep(70)
 
         send_psk_rotation_request(config_bob.config["local_server_port"], config_bob.config["local_peer_id"], True)
+        time.sleep(5)
         send_psk_rotation_request(config_alice.config["local_server_port"], config_bob.config["local_peer_id"], False)
 
         timestamp = time.time()
