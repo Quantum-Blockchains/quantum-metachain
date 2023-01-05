@@ -23,7 +23,7 @@ def fetch_from_peers(peer_id):
 
     psk = None
     while not psk:
-        for peer in peers.items():
+        for peer in peers.values():
             get_psk_url = f"{peer['server_addr']}/peer/{config['local_peer_id']}/psk"
             get_psk_response = requests.get(get_psk_url)
 
