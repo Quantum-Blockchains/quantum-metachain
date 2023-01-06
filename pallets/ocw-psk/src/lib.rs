@@ -100,39 +100,62 @@ pub mod pallet {
                 }
             };
 
-            let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-            log::debug!("Entropy in block {:?}: {:?}", block_number, entropy);
-
-            let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
-                Ok(peers) => peers,
+            let storage_is_rotation_psk = StorageValueRef::persistent(b"is_rotation_psk");
+            let is_rotation_psk = match storage_is_rotation_psk.get::<bool>() {
+                Ok(p) => match p {
+                    Some(c) => c,
+                    None => {
+                        log::error!("The is_rotation_psk is not passed to the offchain worker.");
+                        return;
+                    }
+                },
                 Err(err) => {
-                    log::error!("Failed to retrieve peers. {:?}", err);
+                    log::error!(
+                        "Error occurred while fetching is_rotation_psk from storage. {:?}",
+                        err
+                    );
                     return;
                 }
             };
 
-            let local_peer_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
-                Ok(id) => id,
-                Err(err) => {
-                    log::error!("Failed to retrieve local peer id. {:?}", err);
-                    return;
-                }
-            };
+            if !is_rotation_psk {
+                let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
+                log::debug!("Entropy in block {:?}: {:?}", block_number, entropy);
 
-            peer_ids.push(local_peer_id.to_string());
-            match Self::choose_psk_creator(entropy, peer_ids) {
-                Some(psk_creator) => {
-                    let request = PskRotationRequest {
-                        peer_id: psk_creator.to_string(),
-                        is_local_peer: psk_creator == local_peer_id,
-                    };
-                    log::debug!("chosen psk creator: {:?}", request);
-                    match Self::send_psk_rotation_request(runner_port, request) {
-                        Ok(()) => log::info!("Psk rotation request sent"),
-                        Err(err) => log::error!("Failed to send psk rotation request. {:?}", err),
-                    };
+                let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
+                    Ok(peers) => peers,
+                    Err(err) => {
+                        log::error!("Failed to retrieve peers. {:?}", err);
+                        return;
+                    }
+                };
+
+                let local_peer_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
+                    Ok(id) => id,
+                    Err(err) => {
+                        log::error!("Failed to retrieve local peer id. {:?}", err);
+                        return;
+                    }
+                };
+
+                peer_ids.push(local_peer_id.to_string());
+                match Self::choose_psk_creator(entropy, peer_ids) {
+                    Some(psk_creator) => {
+                        let request = PskRotationRequest {
+                            peer_id: psk_creator.to_string(),
+                            is_local_peer: psk_creator == local_peer_id,
+                        };
+                        log::debug!("chosen psk creator: {:?}", request);
+                        match Self::send_psk_rotation_request(runner_port, request) {
+                            Ok(()) => {
+                                storage_is_rotation_psk.set(&true);
+                                log::info!("Psk rotation request sent")
+                            },
+                            Err(err) => log::error!("Failed to send psk rotation request. {:?}", err),
+                        };
+                    }
+                    None => log::info!("Psk creator not chosen in block {:?}", block_number),
                 }
-                None => log::info!("Psk creator not chosen in block {:?}", block_number),
             }
         }
     }
@@ -166,7 +189,7 @@ impl<T: Config> Pallet<T> {
             .send()
             .map_err(|_| <Error<T>>::HttpFetchingError)?;
 
-        let response = pending
+         let response = pending
             .try_wait(timeout)
             .map_err(|_| <Error<T>>::HttpFetchingError)?
             .map_err(|_| <Error<T>>::HttpFetchingError)?;

@@ -15,7 +15,7 @@ class Node:
         logging.info(f"QMC process ID: {process.pid}")
         self.process = process
 
-        sleep(5)
+        sleep(10)
         psk_file.remove()
 
     def restart(self):
@@ -25,7 +25,7 @@ class Node:
         logging.info(f"QMC process ID: {process.pid}")
         self.process = process
 
-        sleep(5)
+        sleep(10)
         psk_file.remove()
 
     def terminate(self):
