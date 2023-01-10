@@ -1,7 +1,5 @@
 import logging
 import subprocess
-from time import sleep
-import psk_file
 
 
 class Node:
