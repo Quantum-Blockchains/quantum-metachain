@@ -1,7 +1,7 @@
-from config import config
 from qrng import get_psk
+from config import config
 
-url = f"https://qrng.qbck.io/{config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
+url = f"https://qrng.qbck.io/{config.config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
 
 
 def test_get_psk_from_qrng(requests_mock):

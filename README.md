@@ -19,7 +19,7 @@ cargo build --release
 Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
 
 ```bash
-python3 runner/app.py ./target/release/qmc-node \
+python3 runner/app.py --config <config_path> ./target/release/qmc-node \
 --base-path /tmp/<node_name> \
 --chain ./quantumMetachainSpecRaw.json \
 --name <node_name> \
@@ -34,7 +34,7 @@ python3 runner/app.py ./target/release/qmc-node \
 For example:
 
 ```bash
-python3 runner/app.py ./target/release/qmc-node \
+python3 runner/app.py --config config.json ./target/release/qmc-node \
 --base-path /tmp/alice \
 --chain ./quantumMetachainSpecRaw.json \
 --name alice \
@@ -59,6 +59,12 @@ docker run -it quantum-metachain
 
 ```bash
 cargo test
+```
+
+### Key rotation testing
+
+```bash
+python3 runner/app.py test
 ```
 
 ## Documentation
