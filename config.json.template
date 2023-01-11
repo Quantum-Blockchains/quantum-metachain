@@ -4,6 +4,7 @@
   "psk_file_path": "/tmp/psk1",
   "psk_sig_file_path": "/tmp/psk1_sig"
   "node_key_file_path": ".node_key",
+  "key_rotation_time": 50,
   "qrng_api_key": "",
   "peers": {
     "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV": {

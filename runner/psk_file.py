@@ -1,10 +1,10 @@
 from os import path
-
-from config import abs_psk_file_path
+from config import config
+import os
 
 
 def exists():
-    return path.exists(abs_psk_file_path())
+    return path.exists(config.abs_psk_file_path())
 
 
 def create(psk):
@@ -12,5 +12,10 @@ def create(psk):
     if psk[:2] == "0x":
         psk = psk[2:]
 
-    with open(abs_psk_file_path(), 'w') as file:
+    with open(config.abs_psk_file_path(), 'w') as file:
         file.write(psk)
+
+
+def remove():
+    if exists():
+        os.remove(config.abs_psk_file_path())

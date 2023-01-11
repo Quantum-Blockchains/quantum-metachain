@@ -1,0 +1,16 @@
+{
+        "local_peer_id": "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV",
+        "local_server_port": 5003,
+        "external_server_port": 5004,
+        "psk_file_path": "runner/config/psk_bob",
+        "psk_sig_file_path": "runner/config/psk1_sig_bob",
+        "node_key_file_path": "runner/config/node_key_bob",
+        "key_rotation_time": 50,
+        "qrng_api_key": "",
+        "peers": {
+            "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdB": {
+                "qkd_addr": "http://212.244.177.99:9182/api/v1/keys/Alice1SAE",
+                "server_addr": "http://localhost:5002"
+            }
+        }
+    }
