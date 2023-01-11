@@ -24,6 +24,8 @@ else:
     startup_args.append(config.config['psk_file_path'])
     startup_args.append("--runner-port")
     startup_args.append(str(config.config['local_server_port']))
+    startup_args.append("--node-key-file")
+    startup_args.append(config.config['node_key_file_path'])
     node.node_service = NodeService(Node(startup_args[2:]))
 
     try:
