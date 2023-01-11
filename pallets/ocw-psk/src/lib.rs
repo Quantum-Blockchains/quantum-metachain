@@ -150,8 +150,10 @@ pub mod pallet {
                             Ok(()) => {
                                 storage_is_rotation_psk.set(&true);
                                 log::info!("Psk rotation request sent")
-                            },
-                            Err(err) => log::error!("Failed to send psk rotation request. {:?}", err),
+                            }
+                            Err(err) => {
+                                log::error!("Failed to send psk rotation request. {:?}", err)
+                            }
                         };
                     }
                     None => log::info!("Psk creator not chosen in block {:?}", block_number),
@@ -189,7 +191,7 @@ impl<T: Config> Pallet<T> {
             .send()
             .map_err(|_| <Error<T>>::HttpFetchingError)?;
 
-         let response = pending
+        let response = pending
             .try_wait(timeout)
             .map_err(|_| <Error<T>>::HttpFetchingError)?
             .map_err(|_| <Error<T>>::HttpFetchingError)?;

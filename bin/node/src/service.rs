@@ -255,7 +255,6 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
         storage.set(STORAGE_PREFIX, b"rpc-port", &rpc_port);
     };
 
-
     let is_rotation_psk = &[u8::from(false)];
     if let Some(mut storage) = backend.offchain_storage() {
         storage.set(STORAGE_PREFIX, b"is_rotation_psk", is_rotation_psk);
