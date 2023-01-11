@@ -31,7 +31,7 @@ jobs:
         run: |
           flake8 --ignore=E501 .
 
-      - name: Test with pytest
+      - name: Unit tests
         run: |
           pytest
 

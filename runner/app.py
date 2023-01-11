@@ -31,8 +31,6 @@ else:
             psk = fetch_from_peers()
             psk_file.create(psk)
 
-        # time.sleep(50)
-
         # Wait until psk file is created
         while not psk_file.exists():
             time.sleep(1)

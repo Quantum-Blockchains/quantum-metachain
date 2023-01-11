@@ -1,7 +1,5 @@
 import logging
 import subprocess
-from time import sleep
-import psk_file
 
 
 class Node:
@@ -15,18 +13,12 @@ class Node:
         logging.info(f"QMC process ID: {process.pid}")
         self.process = process
 
-        sleep(10)
-        psk_file.remove()
-
     def restart(self):
         logging.info("Restarting QMC node...")
         self.terminate()
         process = subprocess.Popen(self.startup_args)
         logging.info(f"QMC process ID: {process.pid}")
         self.process = process
-
-        sleep(10)
-        psk_file.remove()
 
     def terminate(self):
         logging.info("Terminating QMC node...")

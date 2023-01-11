@@ -7,49 +7,45 @@ from utils import xor
 from config import config
 
 
-class ExternalServerWrapper():
+class ExternalServerWrapper:
 
-    def __init__(self, **configs):
+    def __init__(self):
         self.external_server = Flask(__name__)
         logging.getLogger("werkzeug").setLevel("WARNING")
-        self.configs(**configs)
-        self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', self.get_psk, methods=['GET'])
+        self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', get_psk, methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=['GET'], *args, **kwargs):
         self.external_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
-    def configs(self, **configs):
-        for con, value in configs:
-            self.external_server.config[con.upper()] = value
-
     def run(self):
         self.external_server.run(None, config.config["external_server_port"], False)
 
-    # TODO add peer authorization
-    def get_psk(self, peer_id):
-        logging.info(f"Fetching psk for peer with id: {peer_id}...")
 
-        peer_config = config.config["peers"][peer_id]
-        if peer_config is None:
-            logging.debug(f"{peer_id} not found - this peer is not configured")
-            return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
+# TODO add peer authorizationS
+def get_psk(peer_id):
+    logging.info(f"Fetching psk for peer with id: {peer_id}...")
 
-        if not psk_file.exists():
-            logging.debug("Couldn't find psk file")
-            return Response(json.dumps({"message": "Couldn't find psk file"}), status=404, mimetype="application/json")
+    peer_config = config.config["peers"][peer_id]
+    if peer_config is None:
+        logging.debug(f"{peer_id} not found - this peer is not configured")
+        return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
 
-        try:
-            with open(config.abs_psk_file_path()) as file:
-                psk_key = file.read()
+    if not psk_file.exists():
+        logging.debug("Couldn't find psk file")
+        return Response(json.dumps({"message": "Couldn't find psk file"}), status=404, mimetype="application/json")
 
-        except OSError:
-            logging.debug("Couldn't open psk file")
-            return Response(json.dumps({"message": "Couldn't open psk file"}), status=500, mimetype="application/json")
+    try:
+        with open(config.abs_psk_file_path()) as file:
+            psk_key = file.read()
 
-        key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
-        xored_psk = xor(psk_key, qkd_key)
+    except OSError:
+        logging.debug("Couldn't open psk file")
+        return Response(json.dumps({"message": "Couldn't open psk file"}), status=500, mimetype="application/json")
 
-        return jsonify({
-            "key": xored_psk,
-            "key_id": key_id
-        })
+    key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
+    xored_psk = xor(psk_key, qkd_key)
+
+    return jsonify({
+        "key": xored_psk,
+        "key_id": key_id
+    })
