@@ -2,6 +2,7 @@ import logging
 import sys
 import time
 from threading import Thread
+
 import node
 import psk_file
 from external_server import ExternalServerWrapper

@@ -4,7 +4,6 @@
 
 # Node
 target/
-.node-key
 
 # Runner
 config.json
@@ -13,3 +12,4 @@ __pycache__
 
 # Other
 psk
+.node_key
