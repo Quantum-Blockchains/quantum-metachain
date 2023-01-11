@@ -31,8 +31,6 @@ def start_test():
         time.sleep(5)
         send_psk_rotation_request(config_bob.config["local_server_port"], config_alice.config["local_peer_id"], False)
 
-        psk_alice = None
-        psk_bob = None
         timestamp = time.time()
 
         while not path.exists(config_alice.abs_psk_file_path()):
@@ -55,6 +53,7 @@ def start_test():
 
         if psk_bob != psk_alice:
             test = False
+            logging.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
         time.sleep(70)
@@ -85,6 +84,7 @@ def start_test():
 
         if psk_alice != psk_bob:
             test = False
+            logging.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
         test = True
@@ -106,6 +106,6 @@ def start_test():
 
 
 def send_psk_rotation_request(runner_port, peer_id, is_local):
-    url = "http://localhost:{port}/psk".format(port=runner_port)
+    url = f"http://localhost:{runner_port}/psk"
     data = {'peer_id': peer_id, 'is_local_peer': is_local}
     requests.post(url, json=data)
