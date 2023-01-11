@@ -35,13 +35,11 @@ class Config:
     def abs_psk_file_path(self):
         return f"{ROOT_DIR}/{self.config['psk_file_path']}"
 
+    def abs_node_key_file_path(self):
+        return f"{ROOT_DIR}/{self.config['node_key_file_path']}"
 
-def abs_node_key_file_path():
-    return f"{ROOT_DIR}/{config.config['node_key_file_path']}"
-
-
-def abs_psk_sig_file_path():
-    return f"{ROOT_DIR}/{config.config['psk_sig_file_path']}"
+    def abs_psk_sig_file_path(self):
+        return f"{ROOT_DIR}/{self.config['psk_sig_file_path']}"
 
 
 if len(sys.argv) < 2:

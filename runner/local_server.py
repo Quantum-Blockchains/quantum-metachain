@@ -2,7 +2,6 @@ import logging
 from time import sleep
 from flask import Flask, request, make_response
 import psk_file
-from config import abs_node_key_file_path, abs_psk_sig_file_path
 from crypto import sign
 from psk import fetch_from_qrng, fetch_from_peers
 from config import config
@@ -36,11 +35,11 @@ def rotate_pre_shared_key(body):
     is_local_peer = body["is_local_peer"]
     if is_local_peer:
         psk = fetch_from_qrng()
-        with open(abs_node_key_file_path()) as file:
+        with open(config.abs_node_key_file_path()) as file:
             node_key = file.read()
             signature = sign(psk, node_key)
 
-        with open(abs_psk_sig_file_path(), 'wb') as file:
+        with open(config.abs_psk_sig_file_path(), 'wb') as file:
             file.write(signature)
 
     else:

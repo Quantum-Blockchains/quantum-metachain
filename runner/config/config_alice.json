@@ -2,9 +2,9 @@
         "local_peer_id": "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdB",
         "local_server_port": 5001,
         "external_server_port": 5002,
-        "psk_file_path": "runner/psk_alice",
-        "psk_sig_file_path": "/tmp/psk1_sig_alice",
-        "node_key_file_path": ".node_key_alice",
+        "psk_file_path": "runner/config/psk_alice",
+        "psk_sig_file_path": "runner/config/psk1_sig_alice",
+        "node_key_file_path": "runner/config/node_key_alice",
         "key_rotation_time": 50,
         "qrng_api_key": "",
         "peers": {
