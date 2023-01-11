@@ -21,7 +21,7 @@ default_config = {
 }
 
 
-class Config():
+class Config:
 
     def __init__(self, config_path=None):
         if config_path is None:
@@ -33,6 +33,12 @@ class Config():
     def abs_psk_file_path(self):
         return f"{ROOT_DIR}/{self.config['psk_file_path']}"
 
+    def abs_node_key_file_path(self):
+        return f"{ROOT_DIR}/{self.config['node_key_file_path']}"
+
+    def abs_psk_sig_file_path(self):
+        return f"{ROOT_DIR}/{self.config['psk_sig_file_path']}"
+
 
 if len(sys.argv) < 2:
     config = Config()
@@ -41,3 +47,6 @@ elif sys.argv[1] != '--config':
 else:
     config_path = sys.argv[2]
     config = Config(config_path)
+
+
+
