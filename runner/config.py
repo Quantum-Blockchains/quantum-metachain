@@ -10,6 +10,8 @@ default_config = {
     "local_server_port": 5001,
     "external_server_port": 5002,
     "psk_file_path": "/tmp/psk1",
+    "psk_sig_file_path": "/tmp/psk1_sig",
+    "node_key_file_path": ".node_key",
     "key_rotation_time": 50,
     "qrng_api_key": "api_key",
     "peers": {
@@ -49,6 +51,3 @@ elif sys.argv[1] != '--config':
 else:
     config_path = sys.argv[2]
     config = Config(config_path)
-
-
-
