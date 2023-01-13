@@ -2,7 +2,7 @@ import json
 import logging
 from flask import Flask, jsonify, Response
 import psk_file
-from config import config, abs_psk_file_path, abs_psk_sig_file_path
+from config import config
 from qkd import get_enc_key
 from utils import xor
 
