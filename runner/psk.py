@@ -2,8 +2,8 @@ import logging
 import requests
 from qkd import get_dec_key
 from qrng import get_psk
-from utils import xor, base58_to_hex
-from crypto import verify
+from utils import xor
+from crypto import verify, to_public_from_peerid
 from config import config
 
 
@@ -32,8 +32,7 @@ def fetch_from_peers(peer_id):
                 _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
                 psk = xor(response_body["key"], qkd_key)
                 signature = bytes.fromhex(response_body["signature"])
-                pub_key = bytes.fromhex(base58_to_hex(peer_id))
-                if not verify(psk, signature, pub_key):
+                if not verify(psk, signature, to_public_from_peerid(peer_id)):
                     logging.error("Couldn't verify psk signature")
                     # TODO JEQB-199 handle verification error
 

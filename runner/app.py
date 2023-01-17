@@ -30,7 +30,8 @@ else:
     try:
         logging.info("Starting QMC runner...")
         if not psk_file.exists():
-            psk = fetch_from_peers()
+            # peer id ?
+            psk = fetch_from_peers("12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc")
             psk_file.create(psk)
 
         # Wait until psk file is created
