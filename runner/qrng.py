@@ -11,7 +11,7 @@ def get_psk() -> str:
         response.raise_for_status()
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError):
         logging.warning("Failed to get key from QRNG: Proceeding to fallback random psk...")
-        return f"0x{Random.get_random_bytes(32).hex()}"
+        return f"{Random.get_random_bytes(32).hex()}"
     else:
         data = response.json()
         return data['data']['result'][0]

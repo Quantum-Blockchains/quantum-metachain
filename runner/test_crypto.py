@@ -37,10 +37,10 @@ def test_verification_flow_successful():
 
 
 def test_verification_flow_successful_alice():
-    data = "4fee5778d20391de7560fb5d13b1f2771be64ea3593a9fff4ef50412fe67e077"
+    data = "6b9f9e7894a37b0e85702ff5c5824dcd43a64ea6ad831553b532901c9b1d74dd"
     private_key = "ccaa338f88c037721be481400e59b255431fff0bc4440807085c84bb4848d786"
     public_key = to_public(private_key)
-    signature = bytes.fromhex("4dbc9a0e938ed12db36e115248ad713e1bad420a2c6d17bf091b367e2fcba2e9e410ccbef051f5607b776325a88aa1bc2ba13b8fdd3484ca5fae47fd18fd4e01")
+    signature = bytes.fromhex("5f199510cb8a80ca2cc3364a3e742982d45b5fd172582e6a5f93042b0add86484921dcd66a137be3e5737252f0fdc88571852f94731b2ca99bae37ea5118480d")
     test_signature = sign(data, private_key)
 
     assert verify(data, signature, public_key)
