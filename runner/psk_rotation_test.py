@@ -40,6 +40,10 @@ def start_test():
         with open(config_alice.abs_node_key_file_path(), 'r') as file:
             priv_key_alice = file.read()
 
+        logging.info(f"psk_alice: {psk_alice}")
+        logging.info(f"psk_sig_alice: {sig_alice}")
+        logging.info(f"node_key_alice: {priv_key_alice}")
+
             if not verify(psk_alice, bytes.fromhex(sig_alice), to_public(priv_key_alice)):
                 test = False
                 raise ValueError("Alice psk signing failed.")
