@@ -9,7 +9,6 @@ from os import path
 
 
 def start_test():
-
     logging.info("Starting test...")
 
     test = False
@@ -33,16 +32,12 @@ def start_test():
 
         with open(config_alice.abs_psk_file_path(), 'r') as file:
             psk_alice = file.read()
-                
+
         with open(config_alice.abs_psk_sig_file_path(), 'r') as file:
             sig_alice = file.read()
 
         with open(config_alice.abs_node_key_file_path(), 'r') as file:
             priv_key_alice = file.read()
-
-        logging.info(f"psk_alice: {psk_alice}")
-        logging.info(f"psk_sig_alice: {sig_alice}")
-        logging.info(f"node_key_alice: {priv_key_alice}")
 
             if not verify(psk_alice, bytes.fromhex(sig_alice), to_public(priv_key_alice)):
                 test = False
@@ -59,7 +54,6 @@ def start_test():
                 test = False
                 raise ValueError("Alice did not generate a psk within a minute.")
             time.sleep(1)
-
 
         while not path.exists(config_bob.abs_psk_file_path()):
             if time.time() - timestamp > 60:
@@ -103,6 +97,9 @@ def start_test():
                 test = False
                 raise ValueError("Alice didn't get the psk within a minute.")
             time.sleep(1)
+
+        with open(config_alice.abs_psk_file_path(), 'r') as file:
+            psk_alice = file.read()
 
         if psk_alice != psk_bob:
             test = False
