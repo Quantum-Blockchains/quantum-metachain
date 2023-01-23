@@ -1,8 +1,6 @@
 from qrng import get_psk
-from flask import jsonify
+from psk import fetch_from_peers
 from config import config
-from qkd import get_dec_key
-from utils import xor
 
 url = f"https://qrng.qbck.io/{config.config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
 
@@ -33,20 +31,25 @@ def test_get_psk_from_random(requests_mock):
 
 
 def test_get_psk_from_peers(requests_mock):
-    expected_psk = "112fc0779ed82aad9fa668915d1f3eb89fa4a574fba346ff8004289f104d2279"
+    expected_psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
     alice_server_addr = "http://localhost:5002"
     alice_qkd_addr = "http://212.244.177.99:9182/api/v1/keys/Alice1SAE"
     bob_peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
-    peers_response = jsonify({
-        "key": "0xbfc0991833c92497707ba7712678fc5b4e1443c5a5dc190a279a7cc84f16472b",
-        "key_id": "80a2370f-e4da-490f-88a2-29281375255d",
-        "signature": "35fdd5dfb8f0eeb3eebfa3eb26f98771854320f0651dc5f423457880904a0c66ceb5d8a55abef4ca946a919d3b8435481e4d1088daac4c0cc30b07fb2e29db0e"
-    })
+    peers_response = {
+        "key": "0x1f1205c6a4ac0e3ff341ad6ea8f2945d5fedbd86e1301e6f146e7358feaf5b02",
+        "key_id": "ed1185e5-6223-415f-95fd-6364dcb2df32",
+        "signature": "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
+    }
+    qkd_reponse = {"keys": [{
+        "key_ID": "ed1185e5-6223-415f-95fd-6364dcb2df32",
+        "key": "LH8sve7mz7ifkzjgmu/jdVtdjkDbMynHmrId09b2Xd0="
+    }]}
+
     get_psk_url = f"{alice_server_addr}/peer/{bob_peer_id}/psk"
 
-    get_psk_response = requests_mock.get(get_psk_url, json=peers_response)
-    response_body = get_psk_response.json()
-    _, qkd_key = get_dec_key(alice_qkd_addr, response_body["key_id"])
-    result = xor(response_body["key"], qkd_key)
+    requests_mock.get(get_psk_url, json=peers_response)
+    requests_mock.get(f"{alice_qkd_addr}/dec_keys?key_ID=ed1185e5-6223-415f-95fd-6364dcb2df32", json=qkd_reponse)
 
-    assert result == expected_psk
+    result = fetch_from_peers("12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc")
+
+    assert result[2:] == expected_psk

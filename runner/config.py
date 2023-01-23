@@ -7,8 +7,9 @@ ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 ENV_PATH = path.join(ROOT_DIR, ".env")
 
 default_config = {
-    "local_server_port": 5001,
-    "external_server_port": 5002,
+    "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
+    "local_server_port": 5003,
+    "external_server_port": 5004,
     "psk_file_path": "/tmp/psk1",
     "psk_sig_file_path": "/tmp/psk1_sig",
     "node_key_file_path": ".node_key",
@@ -16,8 +17,8 @@ default_config = {
     "qrng_api_key": "api_key",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-            "qkd_addr": "http://localhost:9182/api/v1/keys/Alice1SAE/",
-            "server_addr": "http://localhost:5004"
+            "qkd_addr": "http://212.244.177.99:9182/api/v1/keys/Alice1SAE",
+            "server_addr": "http://localhost:5002"
         }
     }
 }
