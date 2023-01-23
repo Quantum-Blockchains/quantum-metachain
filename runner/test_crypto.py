@@ -7,6 +7,7 @@ def test_public_key_conversion():
 
     assert to_public(private_key) == to_public_from_peerid(peer_id)
 
+
 def test_signature_flow_successful():
     private_key = "168bcc3789d741afc6e3f422f03da05fd4877e3e5518681758043ed7734967e9"
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7"
