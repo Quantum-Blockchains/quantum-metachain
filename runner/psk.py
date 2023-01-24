@@ -4,6 +4,7 @@ from qkd import get_dec_key
 from qrng import get_psk
 from utils import xor
 from crypto import verify, to_public_from_peerid
+from cryptography.exceptions import InvalidSignature
 from config import config
 
 
@@ -31,10 +32,13 @@ def fetch_from_peers(peer_id):
                 response_body = get_psk_response.json()
                 _, qkd_key = get_dec_key(peer["qkd_addr"], response_body["key_id"])
                 psk = xor(response_body["key"], qkd_key)
+                if psk[:2] == "0x":
+                    psk = psk[2:]
                 signature = bytes.fromhex(response_body["signature"])
                 if not verify(psk, signature, to_public_from_peerid(peer_id)):
                     logging.error("Couldn't verify psk signature")
                     # TODO JEQB-199 handle verification error
+                    raise InvalidSignature
 
     logging.debug(f"Fetched psk {psk}")
 

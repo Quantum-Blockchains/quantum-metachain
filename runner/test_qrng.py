@@ -33,7 +33,7 @@ def test_get_psk_from_random(requests_mock):
 def test_get_psk_from_peers(requests_mock):
     expected_psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
     alice_server_addr = "http://localhost:5002"
-    alice_qkd_addr = "http://212.244.177.99:9182/api/v1/keys/Alice1SAE"
+    alice_qkd_addr = "http://localhost:9182/api/v1/keys/Alice1SAE"
     bob_peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     peers_response = {
         "key": "0x1f1205c6a4ac0e3ff341ad6ea8f2945d5fedbd86e1301e6f146e7358feaf5b02",
@@ -52,4 +52,4 @@ def test_get_psk_from_peers(requests_mock):
 
     result = fetch_from_peers("12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc")
 
-    assert result[2:] == expected_psk
+    assert result == expected_psk
