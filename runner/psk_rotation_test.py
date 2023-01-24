@@ -1,27 +1,27 @@
-import logging
 from config import Config
 import requests
 import time
 import os
 import subprocess
 from os import path
+from utils import log
 
 
 def start_test():
 
-    logging.info("Starting test...")
+    log.info("Starting test...")
 
     test = False
 
-    config_alice = Config('runner/config/config_alice.json')
+    config_alice = Config('runner/test/tmp/alice/config.json')
 
-    config_bob = Config('runner/config/config_bob.json')
+    config_bob = Config('runner/test/tmp/bob/config.json')
 
     process_alice = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/config/config_alice.json", "ALICE"])
+        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/alice/config.json", "ALICE"])
 
     process_bob = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/config/config_bob.json", "BOB"])
+        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/bob/config.json", "BOB"])
 
     time.sleep(10)
 
@@ -53,7 +53,7 @@ def start_test():
 
         if psk_bob != psk_alice:
             test = False
-            logging.error(f"{psk_alice} =! {psk_bob}")
+            log.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
         time.sleep(70)
@@ -84,13 +84,13 @@ def start_test():
 
         if psk_alice != psk_bob:
             test = False
-            logging.error(f"{psk_alice} =! {psk_bob}")
+            log.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
         test = True
 
     except Exception as e:
-        logging.error("ERROR: " + str(e))
+        log.error("ERROR: " + str(e))
     finally:
         process_alice.terminate()
         process_bob.terminate()
@@ -98,11 +98,11 @@ def start_test():
             os.remove(config_alice.abs_psk_file_path())
         if path.exists(config_bob.abs_psk_file_path()):
             os.remove(config_bob.abs_psk_file_path())
-        logging.info("Closing QMC processes...")
+        log.info("Closing QMC processes...")
         if test:
-            logging.info("Test: Successfully")
+            log.info("Test: Successfully")
         else:
-            logging.info("Test: Not successfully")
+            log.info("Test: Not successfully")
 
 
 def send_psk_rotation_request(runner_port, peer_id, is_local):
