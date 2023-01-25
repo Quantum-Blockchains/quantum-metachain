@@ -1,11 +1,10 @@
 from config import Config
-from crypto import verify, to_public, to_public_from_peerid
+from utils import log, verify, to_public, to_public_from_peerid
 import requests
 import time
 import os
 import subprocess
 from os import path
-from utils import log
 
 
 def start_test():
@@ -14,15 +13,15 @@ def start_test():
 
     test = False
 
-    config_alice = Config('runner/test/tmp/alice/config.json')
+    config_alice = Config('runner/test/tmp/alice/config_alice.json')
 
-    config_bob = Config('runner/test/tmp/bob/config.json')
+    config_bob = Config('runner/test/tmp/bob/config_bob.json')
 
     process_alice = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/alice/config.json", "ALICE"])
+        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/alice/config_alice.json", "ALICE"])
 
     process_bob = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/bob/config.json", "BOB"])
+        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/bob/config_bob.json", "BOB"])
 
     time.sleep(10)
 
@@ -44,7 +43,7 @@ def start_test():
                 test = False
                 raise ValueError("Alice psk signing failed.")
             else:
-                logging.info("Alice signing successful")
+                log.info("Alice signing successful")
 
         send_psk_rotation_request(config_bob.config["local_server_port"], config_alice.config["local_peer_id"], False)
 
@@ -74,7 +73,7 @@ def start_test():
             test = False
             raise ValueError("Bob psk verification failed.")
         else:
-            logging.info("Bob psk verification successful")
+            log.info("Bob psk verification successful")
 
         time.sleep(70)
 

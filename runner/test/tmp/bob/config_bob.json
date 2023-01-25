@@ -2,9 +2,9 @@
         "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
         "local_server_port": 5003,
         "external_server_port": 5004,
-        "psk_file_path": "runner/config/psk_bob",
-        "psk_sig_file_path": "runner/config/psk_sig_bob",
-        "node_key_file_path": "runner/config/node_key_bob",
+        "psk_file_path": "runner/test/tmp/bob/psk",
+        "psk_sig_file_path": "runner/test/tmp/bob/psk_sig",
+        "node_key_file_path": "runner/test/tmp/bob/node_key",
         "key_rotation_time": 50,
         "qrng_api_key": "",
         "peers": {

@@ -2,7 +2,6 @@ from config import config
 import sys
 import time
 from threading import Thread
-
 from node import Node, NodeService
 import node
 from psk import fetch_from_peers, exists_psk_file, create_psk_file

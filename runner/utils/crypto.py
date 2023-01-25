@@ -1,5 +1,5 @@
 from cryptography.exceptions import InvalidSignature
-from utils import base58_to_hex
+from .utils import base58_to_hex
 from cryptography.hazmat.primitives._serialization import PublicFormat, Encoding
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from .logger import log
