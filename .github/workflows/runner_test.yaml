@@ -33,7 +33,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          pytest runner
+          pytest
 
       - name: Integration tests
         run: |
