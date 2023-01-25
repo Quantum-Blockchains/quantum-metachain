@@ -18,9 +18,6 @@ log.addHandler(consoleHandler)
 
 
 def addLogsHandlerFile():
-    fileHandler = logging.FileHandler(f"{config.config['path_logs_runner']}")
-    fileHandler.setFormatter(logFormatter)
-    log.addHandler(fileHandler)
-
-
-
+    file_handler = logging.FileHandler(f"{config.config['path_logs_runner']}")
+    file_handler.setFormatter(logFormatter)
+    log.addHandler(file_handler)
