@@ -1,3 +1,5 @@
+import os
+
 from config import config
 from time import sleep
 from flask import Flask, request, make_response
@@ -46,3 +48,6 @@ def rotate_pre_shared_key(body):
     sleep(config.config["key_rotation_time"])
 
     node.node_service.current_node.restart()
+
+    if os.path.exists(config.abs_psk_sig_file_path()):
+        os.remove(config.abs_psk_sig_file_path())
