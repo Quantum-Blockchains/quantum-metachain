@@ -2,7 +2,7 @@ import os
 from os import path
 
 from config import config
-from runner.utils import trim_0x_prefix
+from utils import trim_0x_prefix
 
 
 def exists():
