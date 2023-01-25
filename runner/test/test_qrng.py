@@ -1,4 +1,4 @@
-from qrng import get_psk
+from psk import get_psk
 from config import config
 
 url = f"https://qrng.qbck.io/{config.config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
@@ -25,5 +25,5 @@ def test_get_psk_from_random(requests_mock):
 
     result = get_psk()
 
-    assert len(result) == 66
+    assert len(result) == 64
     assert int(result, 16)

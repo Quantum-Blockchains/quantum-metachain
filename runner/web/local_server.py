@@ -8,6 +8,7 @@ from psk import fetch_from_qrng, fetch_from_peers, create_psk_file
 import node
 from threading import Thread
 
+
 class LocalServerWrapper:
 
     def __init__(self):
@@ -31,6 +32,7 @@ def start_thread_with_rotate_pre_shared_key():
 def rotate_pre_shared_key(body):
     log.info("Rotating pre-shared key...")
     is_local_peer = body["is_local_peer"]
+    peer_id = body["peer_id"]
     if is_local_peer:
         psk = fetch_from_qrng()
 
@@ -38,11 +40,11 @@ def rotate_pre_shared_key(body):
             node_key = file.read()
             signature = sign(psk, node_key)
 
-        with open(config.abs_psk_sig_file_path(), 'wb') as file:
-            file.write(signature)
+        with open(config.abs_psk_sig_file_path(), 'w') as file:
+            file.write(signature.hex())
 
     else:
-        psk = fetch_from_peers()
+        psk = fetch_from_peers(peer_id)
 
     create_psk_file(psk)
     sleep(config.config["key_rotation_time"])

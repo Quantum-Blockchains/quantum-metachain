@@ -1,4 +1,10 @@
-from utils import xor, base64_to_hex
+from utils import xor, base64_to_hex, base58_to_hex, trim_0x_prefix
+
+
+def test_decode_base58():
+    result = bytes.fromhex(base58_to_hex("12D3KooWQ4b1BHDUUW8VbWSCrS4RcdtRL6C8VEVb9Ye59uRp63Y1"))
+    pub_key = bytes.fromhex("002408011220d3a842cd6b623801aaefd9784cb798c0931a8c8f2edb802b488094f187e10c06")
+    assert result == pub_key
 
 
 def test_decode_base64():
@@ -14,3 +20,11 @@ def test_xor():
 
     assert encrypted_result == "0x88f15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
     assert xor(qkd_key, encrypted_result) == psk
+
+
+def test_trim_0x_prefix():
+    val_with_0x = "0x336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
+    val_without_0x = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
+
+    assert trim_0x_prefix(val_with_0x) == val_without_0x
+    assert trim_0x_prefix(val_without_0x) == val_without_0x

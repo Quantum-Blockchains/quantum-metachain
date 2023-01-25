@@ -1,4 +1,9 @@
 import base64
+import base58
+
+
+def base58_to_hex(val: str):
+    return base58.b58decode(val).hex()
 
 
 def base64_to_hex(message: str):
@@ -11,3 +16,7 @@ def xor(s1: str, s2: str):
     """
     result = int(s1, base=16) ^ int(s2, base=16)
     return hex(result)
+
+
+def trim_0x_prefix(val: str):
+    return format(int(val, 16), 'x')
