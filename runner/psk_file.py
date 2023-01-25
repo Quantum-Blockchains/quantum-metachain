@@ -1,6 +1,8 @@
-from os import path
-from config import config
 import os
+from os import path
+
+from config import config
+from runner.utils import trim_0x_prefix
 
 
 def exists():
@@ -8,9 +10,7 @@ def exists():
 
 
 def create(psk):
-    # Trim "0x" from psk
-    if psk[:2] == "0x":
-        psk = psk[2:]
+    psk = trim_0x_prefix(psk)
     while len(psk) < 64:
         psk = "0" + psk
 
