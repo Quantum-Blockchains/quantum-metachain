@@ -1,14 +1,14 @@
 {
-        "local_peer_id": "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdB",
+        "local_peer_id": "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc",
         "local_server_port": 5001,
         "external_server_port": 5002,
         "psk_file_path": "runner/config/psk_alice",
-        "psk_sig_file_path": "runner/config/psk1_sig_alice",
+        "psk_sig_file_path": "runner/config/psk_sig_alice",
         "node_key_file_path": "runner/config/node_key_alice",
         "key_rotation_time": 50,
         "qrng_api_key": "",
         "peers": {
-            "QmSk5HQbn6LhUwDiNMseVUjuRYhEtYj4aUZ6WfWoGURpdV": {
+            "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
                 "qkd_addr": "http://212.244.177.99:8182/api/v1/keys/Bob1SAE",
                 "server_addr": "http://localhost:5004"
             }

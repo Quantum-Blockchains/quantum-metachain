@@ -2,9 +2,9 @@ import json
 import logging
 from flask import Flask, jsonify, Response
 import psk_file
+from config import config
 from qkd import get_enc_key
 from utils import xor
-from config import config
 
 
 class ExternalServerWrapper:
@@ -37,15 +37,18 @@ def get_psk(peer_id):
     try:
         with open(config.abs_psk_file_path()) as file:
             psk_key = file.read()
+        with open(config.abs_psk_sig_file_path()) as file:
+            signature = file.read()
 
-    except OSError:
-        logging.debug("Couldn't open psk file")
-        return Response(json.dumps({"message": "Couldn't open psk file"}), status=500, mimetype="application/json")
+    except OSError as e:
+        logging.error(f"Invalid psk file: {e}")
+        return Response(json.dumps({"message": "Invalid psk file"}), status=500, mimetype="application/json")
 
     key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
     xored_psk = xor(psk_key, qkd_key)
 
     return jsonify({
         "key": xored_psk,
-        "key_id": key_id
+        "key_id": key_id,
+        "signature": signature
     })

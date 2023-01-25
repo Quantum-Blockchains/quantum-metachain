@@ -25,5 +25,5 @@ def test_get_psk_from_random(requests_mock):
 
     result = get_psk()
 
-    assert len(result) == 66
+    assert len(result) == 64
     assert int(result, 16)
