@@ -2,15 +2,16 @@ import logging
 import sys
 import time
 from threading import Thread
+
 import node
 import psk_file
+import psk_rotation_test
+import signature_file
+from config import config
 from external_server import ExternalServerWrapper
 from local_server import LocalServerWrapper
 from node import Node, NodeService
-from psk import fetch_from_peers
-import psk_rotation_test
-from config import config
-
+from psk import get_psk_from_peers
 
 logging.basicConfig(format='[%(asctime)s] %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -30,9 +31,9 @@ else:
     try:
         logging.info("Starting QMC runner...")
         if not psk_file.exists():
-            # peer id ?
-            psk = fetch_from_peers()
+            psk, signature = get_psk_from_peers()
             psk_file.create(psk)
+            signature_file.create(signature)
 
         # Wait until psk file is created
         while not psk_file.exists():
