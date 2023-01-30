@@ -1,5 +1,4 @@
 import logging
-from time import sleep
 from typing import Optional
 
 import requests
@@ -9,7 +8,6 @@ from config import config
 from crypto import verify, to_public_from_peerid
 from qrng import get_psk
 from utils import xor, trim_0x_prefix
-
 
 PskWithSignature = tuple[str, str]
 EncryptedPskResponse = tuple[str, str, str]
@@ -24,18 +22,11 @@ def generate_psk_from_qrng():
 
 
 def get_psk_from_peers(psk_creator_peer_id: str = None) -> PskWithSignature:
-    psks_with_sig = fetch_from_peers()
-    psk_with_sig = validate_psk(psks_with_sig, psk_creator_peer_id)
-
-    # if there is no valid psk, wait and try again
-    if psk_with_sig is None:
-        sleep(5)
-        get_psk_from_peers(psk_creator_peer_id)
-    else:
-        return psks_with_sig
+    psks_with_sig = __fetch_from_peers()
+    return __validate_psk(psks_with_sig, psk_creator_peer_id)
 
 
-def fetch_from_peers() -> [PskWithSignature]:
+def __fetch_from_peers() -> [PskWithSignature]:
     logging.info("Fetching PSK from other peers...")
     peers = config.config["peers"]
 
@@ -45,14 +36,14 @@ def fetch_from_peers() -> [PskWithSignature]:
         fetch_response = _fetch_encrypted_psk(peer_id, peer['server_addr'])
         if fetch_response is not None:
             encrypted_key, qkd_key_id, signature = fetch_response
-            psk = _decrypt_psk(encrypted_key, peer["qkd_addr"], qkd_key_id)
+            psk = __decrypt_psk(encrypted_key, peer["qkd_addr"], qkd_key_id)
             logging.debug(f"Fetched psk: {psk} and signature: {signature}")
             psks_with_sig.append((psk, signature))
 
     return psks_with_sig
 
 
-def validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str = None) -> Optional[PskWithSignature]:
+def __validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str = None) -> Optional[PskWithSignature]:
     # Keys and signatures from all the peers should be equal if we don't have psk creator peer id to verify against
     if psk_creator_peer_id is None:
         if len(set(psks_with_sig)) == 1:
@@ -74,7 +65,7 @@ def _fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPskR
         return response_body['key'], response_body['key_id'], response_body['signature']
 
 
-def _decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
+def __decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
     _, qkd_key = qkd.get_dec_key(qkd_addr, qkd_key_id)
     psk = xor(encrypted_psk, qkd_key)
     return trim_0x_prefix(psk)
