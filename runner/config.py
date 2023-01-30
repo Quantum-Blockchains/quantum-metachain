@@ -33,22 +33,6 @@ class Config:
         else:
             with open(f"{ROOT_DIR}/{config_path}", "r") as f:
                 self.config = json.load(f)
-            if sys.argv[0] != "runner/runner_services_for_tests.py" and sys.argv[1] != "test" and sys.argv[0] != "runner/node_simulator.py":
-                directory = path.join(ROOT_DIR, "tmp")
-                if not path.exists(directory):
-                    mkdir(directory)
-
-                directory_node = path.join(directory, f'{self.config["local_peer_id"]}')
-                if not path.exists(directory_node):
-                    mkdir(directory_node)
-
-                directory_logs = path.join(directory_node, 'logs')
-                if not path.exists(directory_logs):
-                    mkdir(directory_logs)
-
-                self.config["path_logs_runner"] = f"{ROOT_DIR}/tmp/{self.config['local_peer_id']}/logs/runner.log"
-                self.config["path_logs_node"] = f"{ROOT_DIR}/tmp/{self.config['local_peer_id']}/logs/node.log"
-                self.config["psk_sig_file_path"] = f"tmp/{self.config['local_peer_id']}/psk_sig"
 
     def abs_psk_file_path(self):
         return f"{ROOT_DIR}/{self.config['psk_file_path']}"
@@ -59,11 +43,32 @@ class Config:
     def abs_psk_sig_file_path(self):
         return f"{ROOT_DIR}/{self.config['psk_sig_file_path']}"
 
+    def abs_log_node_file_path(self):
+        return f"{ROOT_DIR}/{self.config['path_logs_node']}"
 
-if len(sys.argv) < 2:
+
+if len(sys.argv) == 1:
     config = Config()
 elif sys.argv[1] != '--config':
     config = Config()
 else:
     config_path = sys.argv[2]
     config = Config(config_path)
+
+
+def create_directory():
+    directory = path.join(ROOT_DIR, "tmp")
+    if not path.exists(directory):
+        mkdir(directory)
+
+    directory_node = path.join(directory, f'{config.config["local_peer_id"]}')
+    if not path.exists(directory_node):
+        mkdir(directory_node)
+
+    directory_logs = path.join(directory_node, 'logs')
+    if not path.exists(directory_logs):
+        mkdir(directory_logs)
+
+    config.config["path_logs_runner"] = f"{ROOT_DIR}/tmp/{config.config['local_peer_id']}/logs/runner.log"
+    config.config["path_logs_node"] = f"{ROOT_DIR}/tmp/{config.config['local_peer_id']}/logs/node.log"
+    config.config["psk_sig_file_path"] = f"tmp/{config.config['local_peer_id']}/psk_sig"
