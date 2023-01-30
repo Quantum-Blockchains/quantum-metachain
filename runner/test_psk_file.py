@@ -43,4 +43,4 @@ def test_remove_with_no_file():
 
         return
 
-    raise
+    raise Exception("File was not removed but didn't receive error")

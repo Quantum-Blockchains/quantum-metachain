@@ -25,7 +25,12 @@ class ExternalServerWrapper:
 def get_psk(peer_id):
     logging.info(f"Fetching psk for peer with id: {peer_id}...")
 
-    peer_config = config.config["peers"][peer_id]
+    try:
+        peer_config = config.config["peers"][peer_id]
+    except KeyError:
+        logging.debug(f"{peer_id} not found - this peer is not configured")
+        return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
+
     if peer_config is None:
         logging.debug(f"{peer_id} not found - this peer is not configured")
         return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
