@@ -48,3 +48,5 @@ def rotate_pre_shared_key(body):
     sleep(config.config["key_rotation_time"])
 
     node.node_service.current_node.restart()
+    write_node_logs_thread = Thread(target=node.write_logs_node_to_file, args=())
+    write_node_logs_thread.start()

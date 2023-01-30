@@ -113,6 +113,10 @@ def start_test():
     finally:
         process_alice.terminate()
         process_bob.terminate()
+        if path.exists(config_alice.abs_log_node_file_path()):
+            os.remove(config_alice.abs_log_node_file_path())
+        if path.exists(config_bob.abs_log_node_file_path()):
+            os.remove(config_bob.abs_log_node_file_path())
         if path.exists(config_alice.abs_psk_file_path()):
             os.remove(config_alice.abs_psk_file_path())
         if path.exists(config_bob.abs_psk_file_path()):
@@ -132,3 +136,6 @@ def send_psk_rotation_request(runner_port, peer_id, is_local):
     url = f"http://localhost:{runner_port}/psk"
     data = {'peer_id': peer_id, 'is_local_peer': is_local}
     requests.post(url, json=data)
+
+
+start_test()

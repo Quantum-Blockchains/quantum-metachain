@@ -2,7 +2,6 @@ import subprocess
 from utils import log
 import sys
 from config import config
-from threading import Thread
 
 
 class Node:
@@ -15,25 +14,17 @@ class Node:
 
         process = subprocess.Popen(self.startup_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
-        # process = subprocess.Popen(self.startup_args)
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
-        if sys.argv[1] != 'test' and sys.argv[0] != "runner/runner_services_for_tests.py" and sys.argv[0] != "runner/node_simulator.py":
-            write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-            write_node_logs_thread.start()
 
     def restart(self):
         log.info("Restarting QMC node...")
         self.terminate()
-        # process = subprocess.Popen(self.startup_args)
 
         process = subprocess.Popen(self.startup_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
-        if sys.argv[1] != 'test' and sys.argv[0] != "runner/runner_services_for_tests.py" and sys.argv[0] != "runner/node_simulator.py":
-            write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-            write_node_logs_thread.start()
 
     def terminate(self):
         log.info("Terminating QMC node...")

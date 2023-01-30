@@ -7,4 +7,5 @@ from .utils import base64_to_hex
 from .utils import base58_to_hex
 from .utils import trim_0x_prefix
 from .logger import log
-from .logger import addLogsHandlerFile
+from .logger import add_logs_andler_file
+from .logger import log_format_for_test
