@@ -1,7 +1,7 @@
 from psk import fetch_from_peers
 
 
-def test_get_psk_from_peers(requests_mock):
+def test_fetch_from_peers(requests_mock):
     expected_psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
     alice_server_addr = "http://localhost:5002"
     alice_qkd_addr = "http://localhost:9182/api/v1/keys/Alice1SAE"

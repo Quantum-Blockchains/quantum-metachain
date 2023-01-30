@@ -21,3 +21,5 @@ def create(psk):
 def remove():
     if exists():
         os.remove(config.abs_psk_file_path())
+    else:
+        raise FileNotFoundError
