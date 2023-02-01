@@ -41,8 +41,8 @@ node_service = NodeService(None)
 
 
 def write_logs_node_to_file():
-    logfile = open(config.config['path_logs_node'], 'w')
-    for line in node_service.current_node.process.stdout:
-        sys.stdout.write(str(line, 'utf-8'))
-        logfile.write(str(line, 'utf-8'))
+    with open(config.config['path_logs_node'], 'w') as logfile:
+        for line in node_service.current_node.process.stdout:
+            sys.stdout.write(str(line, 'utf-8'))
+            logfile.write(str(line, 'utf-8'))
     node_service.current_node.process.wait()
