@@ -56,8 +56,8 @@ else:
     config = Config(config_path)
 
 
-def create_directory():
-    directory = path.join(ROOT_DIR, "tmp")
+def create_directory_for_logs_and_other_files_of_node():
+    directory = path.join(ROOT_DIR, "info_of_nodes")
     if not path.exists(directory):
         mkdir(directory)
 
@@ -69,6 +69,6 @@ def create_directory():
     if not path.exists(directory_logs):
         mkdir(directory_logs)
 
-    config.config["path_logs_runner"] = f"{ROOT_DIR}/tmp/{config.config['local_peer_id']}/logs/runner.log"
-    config.config["path_logs_node"] = f"{ROOT_DIR}/tmp/{config.config['local_peer_id']}/logs/node.log"
-    config.config["psk_sig_file_path"] = f"tmp/{config.config['local_peer_id']}/psk_sig"
+    config.config["path_logs_runner"] = f"{ROOT_DIR}/info_of_nodes/{config.config['local_peer_id']}/logs/runner.log"
+    config.config["path_logs_node"] = f"{ROOT_DIR}/info_of_nodes/{config.config['local_peer_id']}/logs/node.log"
+    config.config["psk_sig_file_path"] = f"info_of_nodes/{config.config['local_peer_id']}/psk_sig"

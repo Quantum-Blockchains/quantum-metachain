@@ -1,4 +1,4 @@
-from config import config, create_directory
+from config import config, create_directory_for_logs_and_other_files_of_node
 import sys
 import time
 from threading import Thread
@@ -11,7 +11,7 @@ from web import ExternalServerWrapper, LocalServerWrapper
 
 startup_args = sys.argv[1:]
 
-create_directory()
+create_directory_for_logs_and_other_files_of_node()
 add_logs_andler_file()
 startup_args.append("--psk-file")
 startup_args.append(config.config['psk_file_path'])
