@@ -1,12 +1,13 @@
 import logging
 from time import sleep
-from flask import Flask, request, make_response
+from flask import Flask, request, make_response, Response
 import psk_file
 from crypto import sign
 from psk import fetch_from_qrng, fetch_from_peers
 from config import config
 import node
 from threading import Thread
+import json
 
 
 class LocalServerWrapper:
@@ -32,8 +33,13 @@ def start_thread_with_rotate_pre_shared_key():
 
 def rotate_pre_shared_key(body):
     logging.info("Rotating pre-shared key...")
-    is_local_peer = body["is_local_peer"]
-    peer_id = body["peer_id"]
+    try:
+        is_local_peer = body["is_local_peer"]
+        peer_id = body["peer_id"]
+
+    except KeyError:
+        return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+
     if is_local_peer:
         psk = fetch_from_qrng()
         with open(config.abs_node_key_file_path()) as file:

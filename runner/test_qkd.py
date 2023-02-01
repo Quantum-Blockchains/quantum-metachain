@@ -1,7 +1,7 @@
 import base64
+from requests.exceptions import InvalidURL
 
 from qkd import get_enc_key, get_dec_key
-from werkzeug.exceptions import HTTPException
 
 
 def new_test_case(should_pass, url, response_body):
@@ -39,7 +39,7 @@ def test_get_enc_key_empty_url(requests_mock):
 
     try:
         _, _ = get_enc_key(enc_url)
-    except HTTPException:
+    except InvalidURL:
         return
 
     raise Exception("Expected error, didn't receive one")
@@ -54,7 +54,7 @@ def test_get_enc_key_invalid_url(requests_mock):
 
     try:
         _, _ = get_enc_key(enc_url)
-    except HTTPException:
+    except InvalidURL:
         return
 
     raise Exception("Expected error, didn't receive one")
@@ -88,7 +88,7 @@ def test_get_dec_key_empty_url(requests_mock):
 
     try:
         _, _ = get_enc_key(dec_url)
-    except HTTPException:
+    except InvalidURL:
         return
 
     raise Exception("Expected error, didn't receive one")
@@ -103,7 +103,7 @@ def test_get_dec_key_invalid_url(requests_mock):
 
     try:
         _, _ = get_enc_key(dec_url)
-    except HTTPException:
+    except InvalidURL:
         return
 
     raise Exception("Expected error, didn't receive one")

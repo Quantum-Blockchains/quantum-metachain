@@ -13,7 +13,7 @@ default_config = {
     "psk_file_path": "psk1",
     "psk_sig_file_path": "psk1_sig",
     "node_key_file_path": ".node_key",
-    "key_rotation_time": 50,
+    "key_rotation_time": 5,
     "qrng_api_key": "api_key",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
