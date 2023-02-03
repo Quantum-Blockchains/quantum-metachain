@@ -1,8 +1,8 @@
 import time
-import psk_file
+from psk import exists_psk_file, remove_psk_file
 
-if psk_file.exists():
-    psk_file.remove()
+if exists_psk_file():
+    remove_psk_file()
 
 while True:
     time.sleep(50)

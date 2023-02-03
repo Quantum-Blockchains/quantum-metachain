@@ -1,4 +1,4 @@
-import logging
+from utils import log
 import requests
 import validators
 from Crypto import Random
@@ -15,7 +15,7 @@ def get_psk() -> str:
         response = requests.get(url)
         response.raise_for_status()
     except (requests.exceptions.RequestException, requests.exceptions.HTTPError):
-        logging.warning("Failed to get key from QRNG: Proceeding to fallback random psk...")
+        log.warning("Failed to get key from QRNG: Proceeding to fallback random psk...")
         return f"{Random.get_random_bytes(32).hex()}"
     else:
         data = response.json()
