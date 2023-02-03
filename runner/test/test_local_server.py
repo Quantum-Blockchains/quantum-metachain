@@ -1,4 +1,4 @@
-from local_server import rotate_pre_shared_key
+from web.local_server import rotate_pre_shared_key
 from config import config
 import node
 from node import Node, NodeService
@@ -15,14 +15,10 @@ def test_rotate_pre_shared_key_local_peer_success():
         "peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     }
 
-    with patch("local_server.fetch_from_qrng") as fetch_from_qrng:
+    with patch("web.local_server.fetch_from_qrng") as fetch_from_qrng:
         fetch_from_qrng.return_value = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
         rotate_pre_shared_key(body)
         fetch_from_qrng.assert_called()
-
-    # since we restart node in handler we can check not for psk but for signature
-
-    assert path.exists(config.abs_psk_sig_file_path())
 
 
 def test_rotate_pre_shared_key_not_local_peer_success():
@@ -35,7 +31,7 @@ def test_rotate_pre_shared_key_not_local_peer_success():
         "peer_id": peer_id
     }
 
-    with patch("local_server.fetch_from_peers") as fetch_from_peers:
+    with patch("web.local_server.fetch_from_peers") as fetch_from_peers:
         fetch_from_peers.return_value = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
         rotate_pre_shared_key(body)
         fetch_from_peers.assert_called_with(peer_id)

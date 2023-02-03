@@ -3,6 +3,7 @@ import json
 from flask import Flask, jsonify, Response
 from psk import exists_psk_file, get_enc_key
 from utils import xor, log
+import logging
 
 
 class ExternalServerWrapper:

@@ -1,7 +1,7 @@
 import base64
 from requests.exceptions import InvalidURL
 
-from qkd import get_enc_key, get_dec_key
+from psk.qkd import get_enc_key, get_dec_key
 
 
 def new_test_case(should_pass, url, response_body):

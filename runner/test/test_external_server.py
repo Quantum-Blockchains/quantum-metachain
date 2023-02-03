@@ -1,17 +1,15 @@
-from external_server import get_psk
-from psk_file import create, exists
-from crypto import sign
+from utils.crypto import sign
 from config import config
-from external_server import ExternalServerWrapper
+from web.external_server import ExternalServerWrapper, get_psk
 from utils import xor
-from psk_file import remove
+from psk.psk_file import remove_psk_file, create_psk_file, exists_psk_file
 
 
 def prepare_psk():
     psk = "1234123412341234123412341234123412341234123412341234123412341234"
     sig = ""
-    create(psk)
-    if not exists():
+    create_psk_file(psk)
+    if not exists_psk_file():
         raise Exception("Cannot continue without psk")
 
     with open(config.abs_node_key_file_path()) as file:
@@ -63,7 +61,7 @@ def test_get_psk_peer_config_missing():
 
 def test_get_psk_psk_missing():
     try:
-        remove()
+        remove_psk_file()
     except FileNotFoundError:
         print("file missing - continuing")
 

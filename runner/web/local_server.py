@@ -9,6 +9,7 @@ from psk import fetch_from_qrng, fetch_from_peers, create_psk_file
 import node
 from threading import Thread
 import json
+import logging
 
 
 class LocalServerWrapper:
