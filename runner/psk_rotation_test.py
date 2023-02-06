@@ -1,4 +1,4 @@
-from config import Config
+from config import config_service, Config
 from utils import log, verify, to_public, to_public_from_peerid
 import requests
 import time
@@ -27,7 +27,7 @@ def start_test():
 
     try:
 
-        send_psk_rotation_request(config_alice.config["local_server_port"], config_alice.config["local_peer_id"], True)
+        send_psk_rotation_request(config_alice.local_server_port, config_alice.local_peer_id, True)
         time.sleep(10)
 
         with open(config_alice.abs_psk_file_path(), 'r') as file:
@@ -45,7 +45,7 @@ def start_test():
             else:
                 log.info("Alice signing successful")
 
-        send_psk_rotation_request(config_bob.config["local_server_port"], config_alice.config["local_peer_id"], False)
+        send_psk_rotation_request(config_bob.local_server_port, config_alice.local_peer_id, False)
 
         timestamp = time.time()
 
@@ -69,7 +69,7 @@ def start_test():
             log.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
-        if not verify(psk_bob, bytes.fromhex(sig_alice), to_public_from_peerid(config_alice.config["local_peer_id"])):
+        if not verify(psk_bob, bytes.fromhex(sig_alice), to_public_from_peerid(config_alice.local_peer_id)):
             test = False
             raise ValueError("Bob psk verification failed.")
         else:
@@ -77,9 +77,9 @@ def start_test():
 
         time.sleep(70)
 
-        send_psk_rotation_request(config_bob.config["local_server_port"], config_bob.config["local_peer_id"], True)
+        send_psk_rotation_request(config_bob.local_server_port, config_bob.local_peer_id, True)
         time.sleep(5)
-        send_psk_rotation_request(config_alice.config["local_server_port"], config_bob.config["local_peer_id"], False)
+        send_psk_rotation_request(config_alice.local_server_port, config_bob.local_peer_id, False)
 
         timestamp = time.time()
 

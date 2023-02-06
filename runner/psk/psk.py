@@ -1,6 +1,6 @@
 import requests
 from cryptography.exceptions import InvalidSignature
-from config import config
+import config
 from .qkd import get_dec_key
 from .qrng import get_psk
 from utils import log, xor, trim_0x_prefix, verify, to_public_from_peerid
@@ -16,12 +16,12 @@ def fetch_from_qrng():
 
 def fetch_from_peers(peer_id):
     log.info("Fetching PSK from other peers...")
-    peers = config.config["peers"]
+    peers = config.config_service.current_config.peers
 
     psk = None
     while not psk:
         for peer in peers.values():
-            get_psk_url = f"{peer['server_addr']}/peer/{config.config['local_peer_id']}/psk"
+            get_psk_url = f"{peer['server_addr']}/peer/{config.config_service.current_config.local_peer_id}/psk"
             get_psk_response = requests.get(get_psk_url)
 
             if get_psk_response.status_code != 200:

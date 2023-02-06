@@ -1,25 +1,32 @@
-from config import config, create_directory_for_logs_and_other_files_of_node
-import sys
+from params import args
 import time
 from threading import Thread
-from node import Node, NodeService, write_logs_node_to_file
+from node import Node, NodeService
 import node
 from psk import fetch_from_peers, exists_psk_file, create_psk_file
 from utils import log, add_logs_andler_file
 from web import ExternalServerWrapper, LocalServerWrapper
+import config
+from config import create_directory_for_logs_and_other_files_of_node, Config, InvalidConfigurationFile, ConfigService
 
 
-startup_args = sys.argv[1:]
+try:
+    config.config_service = ConfigService(Config(args.config_file))
+except InvalidConfigurationFile as e:
+    log.error(e.message)
+    exit()
 
 create_directory_for_logs_and_other_files_of_node()
 add_logs_andler_file()
-startup_args.append("--psk-file")
-startup_args.append(config.config['psk_file_path'])
-startup_args.append("--runner-port")
-startup_args.append(str(config.config['local_server_port']))
-startup_args.append("--node-key-file")
-startup_args.append(config.config['node_key_file_path'])
-node.node_service = NodeService(Node(startup_args[2:]))
+
+args.startup_args.append("--psk-file")
+args.startup_args.append(config.config_service.current_config.psk_file_path)
+args.startup_args.append("--runner-port")
+args.startup_args.append(str(config.config_service.current_config.local_server_port))
+args.startup_args.append("--node-key-file")
+args.startup_args.append(config.config_service.current_config.node_key_file_path)
+
+node.node_service = NodeService(Node(args.startup_args))
 
 try:
     log.info("Starting QMC runner...")
@@ -33,8 +40,6 @@ try:
         time.sleep(1)
 
     node.node_service.current_node.start()
-    write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-    write_node_logs_thread.start()
 
     external_server = ExternalServerWrapper()
     external_thread = Thread(target=external_server.run, args=())

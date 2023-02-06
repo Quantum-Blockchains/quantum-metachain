@@ -1,4 +1,8 @@
 from psk import fetch_from_peers
+import config
+
+
+config.config_service = config.ConfigService(config.Config())
 
 
 def test_get_psk_from_peers(requests_mock):

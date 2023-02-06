@@ -1,11 +1,11 @@
 from utils import log
 import requests
 from Crypto import Random
-from config import config
+import config
 
 
 def get_psk() -> str:
-    url = f"https://qrng.qbck.io/{config.config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
+    url = f"https://qrng.qbck.io/{config.config_service.current_config.qrng_api_key}/qbck/block/hex?size=1&length=32"
     try:
         response = requests.get(url)
         response.raise_for_status()

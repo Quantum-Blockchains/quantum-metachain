@@ -1,5 +1,4 @@
 import json
-import sys
 from os import path, mkdir
 
 
@@ -11,7 +10,7 @@ default_config = {
     "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
     "local_server_port": 5003,
     "external_server_port": 5004,
-    "psk_file_path": "/tmp/psk1",
+    "psk_file_path": "tmp/psk1",
     "psk_sig_file_path": "/tmp/psk1_sig",
     "node_key_file_path": ".node_key",
     "key_rotation_time": 50,
@@ -25,35 +24,81 @@ default_config = {
 }
 
 
+class InvalidConfigurationFile(Exception):
+    "Raised when all required information is not provided in the configuration file."
+    def __init__(self, key):
+        self.message = f"No information provided in configuration file: {key}"
+        super().__init__(self.message)
+
+
 class Config:
 
     def __init__(self, config_path=None):
         if config_path is None:
-            self.config = default_config
+            config_json = default_config
         else:
             with open(f"{ROOT_DIR}/{config_path}", "r") as f:
-                self.config = json.load(f)
+                config_json = json.load(f)
+
+        if 'local_peer_id' in config_json:
+            self.local_peer_id = config_json['local_peer_id']
+        else:
+            raise InvalidConfigurationFile('local_peer_id')
+
+        if 'local_server_port' in config_json:
+            self.local_server_port = config_json['local_server_port']
+        else:
+            raise InvalidConfigurationFile('local_server_port')
+
+        if 'external_server_port' in config_json:
+            self.external_server_port = config_json['external_server_port']
+        else:
+            raise InvalidConfigurationFile('external_server_port')
+
+        if 'psk_file_path' in config_json:
+            self.psk_file_path = config_json['psk_file_path']
+        else:
+            raise InvalidConfigurationFile('psk_file_path')
+
+        if 'psk_sig_file_path' in config_json:
+            self.psk_sig_file_path = config_json['psk_sig_file_path']
+        else:
+            raise InvalidConfigurationFile('psk_sig_file_path')
+
+        if 'node_key_file_path' in config_json:
+            self.node_key_file_path = config_json['node_key_file_path']
+        else:
+            raise InvalidConfigurationFile('node_key_file_path')
+
+        if 'key_rotation_time' in config_json:
+            self.key_rotation_time = config_json['key_rotation_time']
+        else:
+            raise InvalidConfigurationFile('key_rotation_time')
+
+        if 'qrng_api_key' in config_json:
+            self.qrng_api_key = config_json['qrng_api_key']
+        else:
+            raise InvalidConfigurationFile('qrng_api_key')
+
+        if 'peers' in config_json:
+            self.peers = config_json['peers']
+        else:
+            raise InvalidConfigurationFile('peers')
+
+        if 'path_logs_node' in config_json:
+            self.path_logs_node = config_json['path_logs_node']
 
     def abs_psk_file_path(self):
-        return f"{ROOT_DIR}/{self.config['psk_file_path']}"
+        return f"{ROOT_DIR}/{self.psk_file_path}"
 
     def abs_node_key_file_path(self):
-        return f"{ROOT_DIR}/{self.config['node_key_file_path']}"
+        return f"{ROOT_DIR}/{self.node_key_file_path}"
 
     def abs_psk_sig_file_path(self):
-        return f"{ROOT_DIR}/{self.config['psk_sig_file_path']}"
+        return f"{ROOT_DIR}/{self.psk_sig_file_path}"
 
     def abs_log_node_file_path(self):
-        return f"{ROOT_DIR}/{self.config['path_logs_node']}"
-
-
-if len(sys.argv) == 1:
-    config = Config()
-elif sys.argv[1] != '--config':
-    config = Config()
-else:
-    config_path = sys.argv[2]
-    config = Config(config_path)
+        return f"{ROOT_DIR}/{self.path_logs_node}"
 
 
 def create_directory_for_logs_and_other_files_of_node():
@@ -61,7 +106,7 @@ def create_directory_for_logs_and_other_files_of_node():
     if not path.exists(directory):
         mkdir(directory)
 
-    directory_node = path.join(directory, f'{config.config["local_peer_id"]}')
+    directory_node = path.join(directory, f'{config_service.current_config.local_peer_id}')
     if not path.exists(directory_node):
         mkdir(directory_node)
 
@@ -69,6 +114,14 @@ def create_directory_for_logs_and_other_files_of_node():
     if not path.exists(directory_logs):
         mkdir(directory_logs)
 
-    config.config["path_logs_runner"] = f"{ROOT_DIR}/info_of_nodes/{config.config['local_peer_id']}/logs/runner.log"
-    config.config["path_logs_node"] = f"{ROOT_DIR}/info_of_nodes/{config.config['local_peer_id']}/logs/node.log"
-    config.config["psk_sig_file_path"] = f"info_of_nodes/{config.config['local_peer_id']}/psk_sig"
+    config_service.current_config.path_logs_runner = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/runner.log"
+    config_service.current_config.path_logs_node = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/node.log"
+    config_service.current_config.psk_sig_file_path = f"info_of_nodes/{config_service.current_config.local_peer_id}/psk_sig"
+
+
+class ConfigService:
+    def __init__(self, config):
+        self.current_config = config
+
+
+config_service = ConfigService(None)

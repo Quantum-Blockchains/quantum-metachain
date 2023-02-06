@@ -1,4 +1,4 @@
-from config import config
+import config
 import json
 from flask import Flask, jsonify, Response
 from psk import exists_psk_file, get_enc_key
@@ -15,14 +15,14 @@ class ExternalServerWrapper:
         self.external_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
     def run(self):
-        self.external_server.run(None, config.config["external_server_port"], False)
+        self.external_server.run(None, config.config_service.current_config.external_server_port, False)
 
 
 # TODO add peer authorizationS
 def get_psk(peer_id):
     log.info(f"Fetching psk for peer with id: {peer_id}...")
 
-    peer_config = config.config["peers"][peer_id]
+    peer_config = config.config_service.current_config.peers[peer_id]
     if peer_config is None:
         log.debug(f"{peer_id} not found - this peer is not configured")
         return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
@@ -32,9 +32,9 @@ def get_psk(peer_id):
         return Response(json.dumps({"message": "Couldn't find psk file"}), status=404, mimetype="application/json")
 
     try:
-        with open(config.abs_psk_file_path()) as file:
+        with open(config.config_service.current_config.abs_psk_file_path()) as file:
             psk_key = file.read()
-        with open(config.abs_psk_sig_file_path()) as file:
+        with open(config.config_service.current_config.abs_psk_sig_file_path()) as file:
             signature = file.read()
 
     except OSError as e:
