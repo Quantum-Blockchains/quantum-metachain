@@ -1,9 +1,7 @@
 from web.local_server import rotate_pre_shared_key
-from config import config
 import node
 from node import Node, NodeService
-from os import path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 
 def test_rotate_pre_shared_key_local_peer_success():
@@ -41,7 +39,6 @@ def test_rotate_pre_shared_key_missing_config():
     node.node_service = NodeService(Node(["python3", "node_simulator.py"]))
     node.node_service.current_node.start()
 
-    # TODO make sure this is proper behaviour - if we provide just that peer is local do we really need peer_id?
     body = {
         "is_local_peer": True,
     }
@@ -55,5 +52,3 @@ def test_rotate_pre_shared_key_missing_config():
 
     response = rotate_pre_shared_key(body)
     assert response.status_code == 400
-
-

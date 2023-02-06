@@ -9,7 +9,6 @@ from psk import fetch_from_qrng, fetch_from_peers, create_psk_file
 import node
 from threading import Thread
 import json
-import logging
 
 
 class LocalServerWrapper:
@@ -33,7 +32,7 @@ def start_thread_with_rotate_pre_shared_key():
 
 
 def rotate_pre_shared_key(body):
-    logging.info("Rotating pre-shared key...")
+    log.info("Rotating pre-shared key...")
     try:
         is_local_peer = body["is_local_peer"]
         peer_id = body["peer_id"]

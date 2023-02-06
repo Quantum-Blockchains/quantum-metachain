@@ -1,15 +1,5 @@
-import base64
 from requests.exceptions import InvalidURL
-
 from psk.qkd import get_enc_key, get_dec_key
-
-
-def new_test_case(should_pass, url, response_body):
-    return {
-        "should_pass": should_pass,
-        "url": url,
-        "response_body": response_body,
-    }
 
 
 def test_get_enc_key_success(requests_mock):

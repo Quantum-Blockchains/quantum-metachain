@@ -3,6 +3,7 @@ from config import config
 from web.external_server import ExternalServerWrapper, get_psk
 from utils import xor
 from psk.psk_file import remove_psk_file, create_psk_file, exists_psk_file
+from unittest.mock import patch
 
 
 def prepare_psk():
@@ -57,6 +58,7 @@ def test_get_psk_peer_config_missing():
     resp = get_psk(peer_id)
 
     assert resp.status_code == 404
+    assert resp.get_json() == {"message": "Peer not found"}
 
 
 def test_get_psk_psk_missing():
@@ -70,3 +72,19 @@ def test_get_psk_psk_missing():
     resp = get_psk(peer_id)
 
     assert resp.status_code == 404
+    assert resp.get_json() == {"message": "Couldn't find psk file"}
+
+
+def test_get_psk_get_enc_key_failed(requests_mock):
+    _, _ = prepare_psk()
+    peer_id = "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"
+
+    expected_resp = {"error": "an error from QKD"}
+    expected_url = "http://localhost:9182/api/v1/keys/Alice1SAE/enc_keys?size=256"
+
+    requests_mock.get(expected_url, json=expected_resp)
+
+    resp = get_psk(peer_id)
+
+    assert resp.status_code == 500
+    assert resp.get_json() == {"message": "Couldn't get enc key from QKD"}

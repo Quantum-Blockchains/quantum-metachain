@@ -38,7 +38,7 @@ def test_create_and_remove_psk_too_short():
 def test_remove_with_no_file():
     try:
         remove_psk_file()
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         print("Expected")
 
         return

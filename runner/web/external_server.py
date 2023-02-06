@@ -3,7 +3,6 @@ import json
 from flask import Flask, jsonify, Response
 from psk import exists_psk_file, get_enc_key
 from utils import xor, log
-import logging
 
 
 class ExternalServerWrapper:
@@ -26,7 +25,7 @@ def get_psk(peer_id):
     try:
         peer_config = config.config["peers"][peer_id]
     except KeyError:
-        logging.debug(f"{peer_id} not found - this peer is not configured")
+        log.debug(f"{peer_id} not found - this peer is not configured")
         return Response(json.dumps({"message": "Peer not found"}), status=404, mimetype="application/json")
 
     if peer_config is None:
@@ -47,8 +46,11 @@ def get_psk(peer_id):
         log.error(f"Invalid psk file: {e}")
         return Response(json.dumps({"message": "Invalid psk file"}), status=500, mimetype="application/json")
 
-    key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
-    xored_psk = xor(psk_key, qkd_key)
+    try:
+        key_id, qkd_key = get_enc_key(peer_config['qkd_addr'])
+        xored_psk = xor(psk_key, qkd_key)
+    except KeyError:
+        return Response(json.dumps({"message": "Couldn't get enc key from QKD"}), status=500, mimetype="application/json")
 
     return jsonify({
         "key": xored_psk,
