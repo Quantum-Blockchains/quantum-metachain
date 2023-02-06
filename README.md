@@ -19,7 +19,7 @@ cargo build --release
 Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
 
 ```bash
-python3 runner/app.py --config <config_path> ./target/release/qmc-node \
+python3 runner/app.py --config-file <config_path> --process './target/release/qmc-node \
 --base-path /tmp/<node_name> \
 --chain ./quantumMetachainSpecRaw.json \
 --name <node_name> \
@@ -28,13 +28,13 @@ python3 runner/app.py --config <config_path> ./target/release/qmc-node \
 --rpc-port <port_number> \
 --telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
 --rpc-methods Unsafe \
---no-mdns
+--no-mdns'
 ```
 
 For example:
 
 ```bash
-python3 runner/app.py --config config.json ./target/release/qmc-node \
+python3 runner/app.py --config-file config.json --process './target/release/qmc-node \
 --base-path /tmp/alice \
 --chain ./quantumMetachainSpecRaw.json \
 --name alice \
@@ -43,7 +43,7 @@ python3 runner/app.py --config config.json ./target/release/qmc-node \
 --rpc-port 9933 \
 --telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
 --rpc-methods Unsafe \
---no-mdns
+--no-mdns'
 ```
 
 ## Docker
@@ -64,7 +64,7 @@ cargo test
 ### Key rotation testing
 
 ```bash
-python3 runner/app.py test
+python3 runner/psk_rotation_test.py
 ```
 
 ## Documentation
