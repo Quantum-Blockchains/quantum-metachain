@@ -35,16 +35,11 @@ def rotate_pre_shared_key(body):
     peer_id = body["peer_id"]
     if is_local_peer:
         psk = generate_psk_from_qrng()
-
         with open(config.abs_node_key_file_path()) as file:
             node_key = file.read()
-            signature = sign(psk, node_key)
-
-        with open(config.abs_psk_sig_file_path(), 'w') as file:
-            file.write(signature.hex())
-
+            signature = sign(psk, node_key).hex()
     else:
-        psk, signature = get_from_peers(peer_id)
+        psk, signature = get_psk_from_peers(peer_id)
 
     create_psk_file(psk)
     create_signature_file(signature)
