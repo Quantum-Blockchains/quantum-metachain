@@ -1,11 +1,8 @@
-import logging
-from utils import base58_to_hex
-
 from cryptography.exceptions import InvalidSignature
+from .utils import base58_to_hex
 from cryptography.hazmat.primitives._serialization import PublicFormat, Encoding
 from cryptography.hazmat.primitives.asymmetric import ed25519
-
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+from .logger import log
 
 
 def to_public(priv_key_str: str) -> bytes:
@@ -33,5 +30,5 @@ def verify(data: str, signature: bytes, pub_key_bytes: bytes) -> bool:
         public_key.verify(signature, data.encode())
         return True
     except InvalidSignature:
-        logging.error("Invalid signature")
+        log.error("Invalid signature")
         return False

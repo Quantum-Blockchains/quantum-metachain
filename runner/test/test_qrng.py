@@ -1,4 +1,4 @@
-from qrng import get_psk
+from psk import get_psk
 from config import config
 
 url = f"https://qrng.qbck.io/{config.config['qrng_api_key']}/qbck/block/hex?size=1&length=32"

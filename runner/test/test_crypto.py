@@ -1,4 +1,4 @@
-from crypto import sign, verify, to_public, to_public_from_peerid
+from utils import sign, verify, to_public, to_public_from_peerid
 
 
 def test_public_key_conversion():
