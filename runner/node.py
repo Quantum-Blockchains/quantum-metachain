@@ -2,9 +2,21 @@ import subprocess
 from utils import log
 import sys
 from config import config
+from psk import exists_psk_file, remove_psk_file
 
 
-class Node:
+class NodeInterface:
+    def start(self):
+        pass
+
+    def restart(self):
+        pass
+
+    def terminate(self):
+        pass
+
+
+class Node(NodeInterface):
     def __init__(self, startup_args):
         self.startup_args = startup_args
         self.process = None
@@ -30,6 +42,19 @@ class Node:
         log.info("Terminating QMC node...")
         self.process.terminate()
         self.process = None
+
+
+class NodeTest(NodeInterface):
+
+    def start(self):
+        log.info("Starting QMC node...")
+        if exists_psk_file():
+            remove_psk_file()
+
+    def restart(self):
+        log.info("Restarting QMC node...")
+        if exists_psk_file():
+            remove_psk_file()
 
 
 class NodeService:

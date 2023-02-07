@@ -125,7 +125,6 @@ def start_test():
             os.remove(config_alice.abs_psk_sig_file_path())
         if path.exists(config_bob.abs_psk_sig_file_path()):
             os.remove(config_bob.abs_psk_sig_file_path())
-        log.info("Closing QMC processes...")
         if test:
             log.info("Test: Successfully")
         else:
