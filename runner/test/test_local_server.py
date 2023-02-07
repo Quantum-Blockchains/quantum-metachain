@@ -13,10 +13,10 @@ def test_rotate_pre_shared_key_local_peer_success():
         "peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     }
 
-    with patch("web.local_server.fetch_from_qrng") as fetch_from_qrng:
-        fetch_from_qrng.return_value = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
+    with patch("web.local_server.generate_psk_from_qrng") as generate_psk_from_qrng:
+        generate_psk_from_qrng.return_value = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
         rotate_pre_shared_key(body)
-        fetch_from_qrng.assert_called()
+        generate_psk_from_qrng.assert_called()
 
 
 def test_rotate_pre_shared_key_not_local_peer_success():
@@ -29,10 +29,10 @@ def test_rotate_pre_shared_key_not_local_peer_success():
         "peer_id": peer_id
     }
 
-    with patch("web.local_server.fetch_from_peers") as fetch_from_peers:
-        fetch_from_peers.return_value = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
+    with patch("web.local_server.get_psk_from_peers") as get_psk_from_peers:
+        get_psk_from_peers.return_value = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a", "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
         rotate_pre_shared_key(body)
-        fetch_from_peers.assert_called_with(peer_id)
+        get_psk_from_peers.assert_called_with(peer_id)
 
 
 def test_rotate_pre_shared_key_missing_config():
