@@ -9,6 +9,7 @@ target/
 config.json
 venv/
 __pycache__
+runner.log
 
 # Other
 psk

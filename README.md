@@ -64,7 +64,7 @@ cargo test
 ### Key rotation testing
 
 ```bash
-python3 runner/app.py test
+python3 runner/psk_rotation_test.py
 ```
 
 ## Documentation
