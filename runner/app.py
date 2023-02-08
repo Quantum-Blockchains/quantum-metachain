@@ -1,11 +1,12 @@
 import sys
-import time
 from threading import Thread
 
 import node
 from common.config import config, create_node_info_dir
 from node import Node, NodeService, write_logs_node_to_file
 from common.logger import log, add_logs_handler_file
+from common.file import psk_file_manager, psk_sig_file_manager
+from core import pre_shared_key
 from web import ExternalServerWrapper, LocalServerWrapper
 
 startup_args = sys.argv[1:]
@@ -22,14 +23,10 @@ node.node_service = NodeService(Node(startup_args[2:]))
 
 try:
     log.info("Starting QMC runner...")
-    if not exists_psk_file():
-        psk, signature = psk.get_psk_from_peers()
-        create_psk_file(psk)
-        create_signature_file(signature)
-
-    # Wait until psk file is created
-    while not exists_psk_file():
-        time.sleep(1)
+    if not psk_file_manager.exists():
+        psk, signature = pre_shared_key.get_psk_from_peers()
+        psk_file_manager.create(psk)
+        psk_sig_file_manager.create(signature)
 
     node.node_service.current_node.start()
     write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())

@@ -12,23 +12,19 @@ from os import path
 def start_test():
 
     log.info("Starting test...")
-
     test = False
 
     config_alice = Config('test/tmp/alice/config_alice.json')
-
     config_bob = Config('test/tmp/bob/config_bob.json')
 
     process_alice = subprocess.Popen(
         ["python3", "runner_services_for_tests.py", "--config", "test/tmp/alice/config_alice.json", "ALICE"])
-
     process_bob = subprocess.Popen(
         ["python3", "runner_services_for_tests.py", "--config", "test/tmp/bob/config_bob.json", "BOB"])
 
     time.sleep(10)
 
     try:
-
         send_psk_rotation_request(config_alice.config["local_server_port"], config_alice.config["local_peer_id"], True)
         time.sleep(10)
 
@@ -115,10 +111,6 @@ def start_test():
     finally:
         process_alice.terminate()
         process_bob.terminate()
-        if path.exists(config_alice.abs_node_logs_file_path()):
-            os.remove(config_alice.abs_node_logs_file_path())
-        if path.exists(config_bob.abs_node_logs_file_path()):
-            os.remove(config_bob.abs_node_logs_file_path())
         if path.exists(config_alice.abs_psk_file_path()):
             os.remove(config_alice.abs_psk_file_path())
         if path.exists(config_bob.abs_psk_file_path()):
