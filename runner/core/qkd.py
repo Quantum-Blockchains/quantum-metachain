@@ -1,5 +1,5 @@
 import requests
-from utils import base64_to_hex
+from common import crypto
 import validators
 
 
@@ -27,6 +27,6 @@ def _unwrap_response(response):
     key = response["keys"][0]
     key_id = key["key_ID"]
     qkd_key = key["key"]
-    decoded_qkd_key = base64_to_hex(qkd_key)
+    decoded_qkd_key = crypto.base64_to_hex(qkd_key)
 
     return key_id, decoded_qkd_key

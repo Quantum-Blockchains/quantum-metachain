@@ -1,5 +1,7 @@
-from config import Config
-from utils import log, verify, to_public, to_public_from_peerid
+from common.config import Config
+from common.logger import log
+from common import crypto
+
 import requests
 import time
 import os
@@ -13,15 +15,15 @@ def start_test():
 
     test = False
 
-    config_alice = Config('runner/test/tmp/alice/config_alice.json')
+    config_alice = Config('test/tmp/alice/config_alice.json')
 
-    config_bob = Config('runner/test/tmp/bob/config_bob.json')
+    config_bob = Config('test/tmp/bob/config_bob.json')
 
     process_alice = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/alice/config_alice.json", "ALICE"])
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/alice/config_alice.json", "ALICE"])
 
     process_bob = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/bob/config_bob.json", "BOB"])
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/bob/config_bob.json", "BOB"])
 
     time.sleep(10)
 
@@ -39,7 +41,7 @@ def start_test():
         with open(config_alice.abs_node_key_file_path(), 'r') as file:
             priv_key_alice = file.read()
 
-            if not verify(psk_alice, bytes.fromhex(sig_alice), to_public(priv_key_alice)):
+            if not crypto.verify(psk_alice, bytes.fromhex(sig_alice), crypto.to_public(priv_key_alice)):
                 test = False
                 raise ValueError("Alice psk signing failed.")
             else:
@@ -69,7 +71,7 @@ def start_test():
             log.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
-        if not verify(psk_bob, bytes.fromhex(sig_alice), to_public_from_peerid(config_alice.config["local_peer_id"])):
+        if not crypto.verify(psk_bob, bytes.fromhex(sig_alice), crypto.to_public_from_peerid(config_alice.config["local_peer_id"])):
             test = False
             raise ValueError("Bob psk verification failed.")
         else:
@@ -113,10 +115,10 @@ def start_test():
     finally:
         process_alice.terminate()
         process_bob.terminate()
-        if path.exists(config_alice.abs_log_node_file_path()):
-            os.remove(config_alice.abs_log_node_file_path())
-        if path.exists(config_bob.abs_log_node_file_path()):
-            os.remove(config_bob.abs_log_node_file_path())
+        if path.exists(config_alice.abs_node_logs_file_path()):
+            os.remove(config_alice.abs_node_logs_file_path())
+        if path.exists(config_bob.abs_node_logs_file_path()):
+            os.remove(config_bob.abs_node_logs_file_path())
         if path.exists(config_alice.abs_psk_file_path()):
             os.remove(config_alice.abs_psk_file_path())
         if path.exists(config_bob.abs_psk_file_path()):

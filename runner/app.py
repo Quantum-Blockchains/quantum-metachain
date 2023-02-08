@@ -3,16 +3,15 @@ import time
 from threading import Thread
 
 import node
-from config import config, create_directory_for_logs_and_other_files_of_node
+from common.config import config, create_node_info_dir
 from node import Node, NodeService, write_logs_node_to_file
-from psk import get_psk_from_peers, exists_psk_file, create_psk_file, create_signature_file
-from utils import log, add_logs_andler_file
+from common.logger import log, add_logs_handler_file
 from web import ExternalServerWrapper, LocalServerWrapper
 
 startup_args = sys.argv[1:]
 
-create_directory_for_logs_and_other_files_of_node()
-add_logs_andler_file()
+create_node_info_dir()
+add_logs_handler_file()
 startup_args.append("--psk-file")
 startup_args.append(config.config['psk_file_path'])
 startup_args.append("--runner-port")
@@ -24,7 +23,7 @@ node.node_service = NodeService(Node(startup_args[2:]))
 try:
     log.info("Starting QMC runner...")
     if not exists_psk_file():
-        psk, signature = get_psk_from_peers()
+        psk, signature = psk.get_psk_from_peers()
         create_psk_file(psk)
         create_signature_file(signature)
 

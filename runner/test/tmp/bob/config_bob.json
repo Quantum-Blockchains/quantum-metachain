@@ -7,7 +7,7 @@
         "node_key_file_path": "runner/test/tmp/bob/node_key",
         "key_rotation_time": 50,
         "qrng_api_key": "",
-        "path_logs_node": "runner/test/tmp/bob/node.log",
+        "node_logs_path": "runner/test/tmp/bob/node.log",
         "peers": {
             "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
                 "qkd_addr": "http://212.244.177.99:9182/api/v1/keys/Alice1SAE",

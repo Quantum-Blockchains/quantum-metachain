@@ -1,11 +1,12 @@
 from typing import Optional
 
 import requests
-from config import config
-from utils import log, xor, trim_0x_prefix, verify, to_public_from_peerid
+from common.config import config
+from common.logger import log
+from common import crypto
 
 from .qkd import get_dec_key
-from .qrng import get_psk
+from .qrng import generate_random_hex
 
 PskWithSignature = tuple[str, str]
 EncryptedPskResponse = tuple[str, str, str]
@@ -13,10 +14,10 @@ EncryptedPskResponse = tuple[str, str, str]
 
 def generate_psk_from_qrng():
     log.info("Calling QRNG Api to get new PSK...")
-    psk = get_psk()
+    psk = generate_random_hex()
     log.debug(f"Generated psk: {psk}")
 
-    return trim_0x_prefix(psk)
+    return crypto.trim_0x_prefix(psk)
 
 
 def get_psk_from_peers(psk_creator_peer_id: str = None) -> PskWithSignature:
@@ -49,7 +50,7 @@ def __validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str =
     # When we know psk creator peer id it's ok to get first verified key
     else:
         for psk, signature in psks_with_sig:
-            if verify(psk, bytes.fromhex(signature), to_public_from_peerid(psk_creator_peer_id)):
+            if crypto.verify(psk, bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
                 return psk, signature
 
 
@@ -65,5 +66,5 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
 
 def __decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
     _, qkd_key = get_dec_key(qkd_addr, qkd_key_id)
-    psk = xor(encrypted_psk, qkd_key)
-    return trim_0x_prefix(psk)
+    psk = crypto.xor(encrypted_psk, qkd_key)
+    return crypto.trim_0x_prefix(psk)

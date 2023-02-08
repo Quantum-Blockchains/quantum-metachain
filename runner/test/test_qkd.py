@@ -1,5 +1,5 @@
 from requests.exceptions import InvalidURL
-from psk.qkd import get_enc_key, get_dec_key
+from core.qkd import get_enc_key, get_dec_key
 
 
 def test_get_enc_key_success(requests_mock):

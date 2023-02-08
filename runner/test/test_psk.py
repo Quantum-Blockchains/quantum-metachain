@@ -1,7 +1,7 @@
 import pytest
 
-from config import config
-from psk import get_psk_from_peers
+from common.config import config
+from core.pre_shared_key import get_psk_from_peers
 
 
 @pytest.fixture()

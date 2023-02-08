@@ -14,6 +14,7 @@ default_config = {
     "psk_file_path": "psk1",
     "psk_sig_file_path": "psk1_sig",
     "node_key_file_path": ".node_key",
+    "node_logs_path": "node.log",
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
     "peers": {
@@ -43,9 +44,6 @@ class Config:
     def abs_psk_sig_file_path(self):
         return f"{ROOT_DIR}/{self.config['psk_sig_file_path']}"
 
-    def abs_log_node_file_path(self):
-        return f"{ROOT_DIR}/{self.config['path_logs_node']}"
-
 
 if len(sys.argv) == 1:
     config = Config()
@@ -56,8 +54,8 @@ else:
     config = Config(config_path)
 
 
-def create_directory_for_logs_and_other_files_of_node():
-    directory = path.join(ROOT_DIR, "info_of_nodes")
+def create_node_info_dir():
+    directory = path.join(ROOT_DIR, "node_info")
     if not path.exists(directory):
         mkdir(directory)
 
@@ -69,6 +67,6 @@ def create_directory_for_logs_and_other_files_of_node():
     if not path.exists(directory_logs):
         mkdir(directory_logs)
 
-    config.config["path_logs_runner"] = f"{ROOT_DIR}/info_of_nodes/{config.config['local_peer_id']}/logs/runner.log"
-    config.config["path_logs_node"] = f"{ROOT_DIR}/info_of_nodes/{config.config['local_peer_id']}/logs/node.log"
-    config.config["psk_sig_file_path"] = f"info_of_nodes/{config.config['local_peer_id']}/psk_sig"
+    config.config["runner_logs_path"] = f"{ROOT_DIR}/node_info/{config.config['local_peer_id']}/logs/runner.log"
+    config.config["node_logs_path"] = f"{ROOT_DIR}/node_info/{config.config['local_peer_id']}/logs/node.log"
+    config.config["psk_sig_file_path"] = f"node_info/{config.config['local_peer_id']}/psk_sig"

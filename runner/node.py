@@ -1,7 +1,7 @@
 import subprocess
-from utils import log
+from common.logger import log
 import sys
-from config import config
+from common.config import config
 
 
 class Node:
@@ -41,7 +41,7 @@ node_service = NodeService(None)
 
 
 def write_logs_node_to_file():
-    with open(config.config['path_logs_node'], 'w') as logfile:
+    with open(config.config['node_logs_path'], 'w') as logfile:
         for line in node_service.current_node.process.stdout:
             sys.stdout.write(str(line, 'utf-8'))
             logfile.write(str(line, 'utf-8'))

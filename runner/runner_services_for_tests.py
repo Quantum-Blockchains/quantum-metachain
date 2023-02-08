@@ -3,7 +3,7 @@ from web import ExternalServerWrapper, LocalServerWrapper
 import sys
 from node import Node, NodeService
 import node
-from utils import log, log_format_for_test
+from common.logger import log, log_format_for_test
 
 
 path_config = sys.argv[2]
