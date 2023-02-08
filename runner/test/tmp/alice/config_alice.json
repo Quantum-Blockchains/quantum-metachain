@@ -10,15 +10,11 @@
     "path_logs_node": "runner/test/tmp/alice/node.log",
     "peers": {
         "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
-            "qkd_addr": "http://localhost:9182/api/v1/keys/Bob1SAE",
+            "qkd_addr": "http://localhost:8182/alice/bob",
             "server_addr": "http://localhost:5004"
         },
-        "12D3KooWF7ypNwPUCdzZ5KtZHbYD8hzJRwALiVNq8FnKK3bmbE6e": {
-            "qkd_addr": "http://localhost:9182/api/v1/keys/Charlie1SAE",
-            "server_addr": "http://localhost:5006"
-        },
-        "12D3KooWQ9DmT1Bid9kW8HnQvs65qxQBuJt3eiDgS2bNw6EVA4xx": {
-            "qkd_addr": "http://localhost:9182/api/v1/keys/Dave1SAE",
+        "12D3KooWDNdLiaUM2161yCQMvZy9LVgP3fcySk8nuimcKMDBXryj": {
+            "qkd_addr": "http://localhost:8182/alice/dave",
             "server_addr": "http://localhost:5008"
         }
     }

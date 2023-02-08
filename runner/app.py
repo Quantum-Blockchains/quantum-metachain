@@ -4,9 +4,10 @@ import time
 from threading import Thread
 from node import Node, NodeService, write_logs_node_to_file
 import node
-from psk import fetch_from_peers, exists_psk_file, create_psk_file
+from psk import get_psk_from_peers, exists_psk_file, create_psk_file
 from utils import log, add_logs_andler_file
 from web import ExternalServerWrapper, LocalServerWrapper
+import signature_file
 
 
 startup_args = sys.argv[1:]
@@ -24,9 +25,9 @@ node.node_service = NodeService(Node(startup_args[2:]))
 try:
     log.info("Starting QMC runner...")
     if not exists_psk_file():
-        # peer id ?
-        psk = fetch_from_peers("12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc")
+        psk, signature = get_psk_from_peers()
         create_psk_file(psk)
+        signature_file.create(signature)
 
     # Wait until psk file is created
     while not exists_psk_file():

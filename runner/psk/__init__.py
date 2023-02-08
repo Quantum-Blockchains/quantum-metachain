@@ -1,5 +1,5 @@
-from .psk import fetch_from_qrng
-from .psk import fetch_from_peers
+from .psk import generate_psk_from_qrng
+from .psk import get_psk_from_peers
 from .psk_file import create_psk_file
 from .psk_file import remove_psk_file
 from .psk_file import exists_psk_file

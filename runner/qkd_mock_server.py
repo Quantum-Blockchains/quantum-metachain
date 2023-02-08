@@ -1,57 +1,77 @@
-import logging
-from os import path
-from flask import Flask, jsonify
-from config import Config
-
-config_alice = Config('runner/config/config_alice.json')
-config_bob = Config('runner/config/config_bob.json')
-ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
+from flask import Flask, jsonify, request
+from Crypto import Random
 
 
 class QkdMockServerWrapper:
 
     def __init__(self):
-
-
         self.qkd_mock_server = Flask(__name__)
-        logging.getLogger("werkzeug").setLevel("WARNING")
-        self.add_endpoint('/mock_qkd/<node_name>/<peer_id>', 'get_mock_qkd_resp', get_mock_qkd_resp, methods=['GET'])
+
+        self.counter_id = 0
+        self.keys = {}
+
+        self.add_endpoint('/alice/bob/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/alice/bob/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/bob/alice/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/bob/alice/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/alice/dave/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/alice/dave/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/dave/alice/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/dave/alice/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/bob/charlie/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/bob/charlie/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/charlie/bob/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/charlie/bob/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/charlie/dave/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/charlie/dave/dec_keys', 'get_key', self.get_key, methods=['GET'])
+
+        self.add_endpoint('/dave/charlie/enc_keys', 'generate_key', self.generate_key, methods=['GET'])
+        self.add_endpoint('/dave/charlie/dec_keys', 'get_key', self.get_key, methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=['GET'], *args, **kwargs):
         self.qkd_mock_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
     def run(self):
-        self.qkd_mock_server.run(None, 8182, True)
+        self.qkd_mock_server.run(None, 8182, False)
 
+    def generate_key(self):
+        args = request.args
+        size = int(args.get('size'))
+        key = Random.get_random_bytes(int(size/8)).hex()
 
-def get_mock_qkd_resp():
-    # sleep(1)
-    logging.info(f"Mock qkd get successful")
-    return jsonify({
-        "key": "0x1f1205c6a4ac0e3ff341ad6ea8f2945d5fedbd86e1301e6f146e7358feaf5b02",
-        "key_id": "ed1185e5-6223-415f-95fd-6364dcb2df32",
-        "signature": "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
-    })
+        self.keys[self.counter_id] = key
 
+        response = jsonify({
+            "keys": [
+                {
+                    "key": key,
+                    "key_ID": self.counter_id
+                }
+            ]
+        })
 
-# def create_peer_response_mock(node_name, peer_id):
-#     config = Config(f'runner/config/config_{node_name}.json')
-#     server_addr = f"http://localhost:{config['external_server_port']}"
-#     peers_response = {
-#         "key": "0x1f1205c6a4ac0e3ff341ad6ea8f2945d5fedbd86e1301e6f146e7358feaf5b02",
-#         "key_id": "ed1185e5-6223-415f-95fd-6364dcb2df32",
-#         "signature": "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
-#     }
+        self.counter_id = self.counter_id + 1
 
-#     get_psk_url = f"{server_addr}/peer/{peer_id}/psk"
-#     requests_mock.get(get_psk_url, json=peers_response)
+        return response
 
+    def get_key(self):
+        args = request.args
+        key_id = int(args.get('key_ID'))
+        response = jsonify({
+            "keys": [
+                {
+                    "key": self.keys.get(key_id),
+                    "key_ID": key_id
+                }
+            ]
+        })
 
-# def create_qkd_response_mock(node_name, peer_id):
-#     config = Config(f'runner/config/config_{node_name}.json')
-#     qkd_addr = config.peers[peer_id]["qkd_addr"]
-#     qkd_reponse = {"keys": [{
-#         "key_ID": "ed1185e5-6223-415f-95fd-6364dcb2df32",
-#         "key": "LH8sve7mz7ifkzjgmu/jdVtdjkDbMynHmrId09b2Xd0="
-#     }]}
-#     requests_mock.get(f"{qkd_addr}/dec_keys?key_ID=ed1185e5-6223-415f-95fd-6364dcb2df32", json=qkd_reponse)
+        self.keys.pop(key_id)
+
+        return response
