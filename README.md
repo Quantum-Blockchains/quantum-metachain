@@ -55,16 +55,24 @@ docker run -it quantum-metachain
 
 ## Test
 
-### Unit tests
+### Node unit tests
 
 ```bash
 cargo test
 ```
 
+### Runner unit tests
+
+```bash
+cd runner
+pytest --ignore=psk_rotation_test.py
+```
+
 ### Key rotation testing
 
 ```bash
-python3 runner/psk_rotation_test.py
+cd runner
+python3 psk_rotation_test.py
 ```
 
 ## Documentation

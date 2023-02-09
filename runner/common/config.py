@@ -10,10 +10,11 @@ default_config = {
     "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
     "local_server_port": 5003,
     "external_server_port": 5004,
-    "psk_file_path": "tmp/psk1",
-    "psk_sig_file_path": "/tmp/psk1_sig",
-    "node_key_file_path": ".node_key",
-    "key_rotation_time": 50,
+    "psk_file_path": "psk1",
+    "psk_sig_file_path": "tmp/psk1",
+    "node_key_file_path": "/tmp/psk1_sig",
+    "node_logs_path": "node.log",
+    "key_rotation_time": 5,
     "qrng_api_key": "api_key",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
@@ -101,8 +102,8 @@ class Config:
         return f"{ROOT_DIR}/{self.path_logs_node}"
 
 
-def create_directory_for_logs_and_other_files_of_node():
-    directory = path.join(ROOT_DIR, "info_of_nodes")
+def create_node_info_dir():
+    directory = path.join(ROOT_DIR, "node_info")
     if not path.exists(directory):
         mkdir(directory)
 
@@ -114,8 +115,8 @@ def create_directory_for_logs_and_other_files_of_node():
     if not path.exists(directory_logs):
         mkdir(directory_logs)
 
-    config_service.current_config.path_logs_runner = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/runner.log"
-    config_service.current_config.path_logs_node = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/node.log"
+    config_service.current_config.runner_logs_path = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/runner.log"
+    config_service.current_config.node_logs_path = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/node.log"
     config_service.current_config.psk_sig_file_path = f"info_of_nodes/{config_service.current_config.local_peer_id}/psk_sig"
 
 
