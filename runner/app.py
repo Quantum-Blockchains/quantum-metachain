@@ -24,11 +24,11 @@ common.file.psk_sig_file_manager = common.file.FileManager(common.config.config_
 create_node_info_dir()
 add_logs_handler_file()
 params.args.startup_args.append("--psk-file")
-params.args.startup_args.append(common.config.config_service.current_config.psk_file_path)
+params.args.startup_args.append(common.config.config_service.current_config.abs_psk_file_path())
 params.args.startup_args.append("--runner-port")
 params.args.startup_args.append(str(common.config.config_service.current_config.local_server_port))
 params.args.startup_args.append("--node-key-file")
-params.args.startup_args.append(common.config.config_service.current_config.node_key_file_path)
+params.args.startup_args.append(common.config.config_service.current_config.abs_node_key_file_path())
 node.node_service = NodeService(Node(params.args.startup_args))
 
 try:
