@@ -1,12 +1,14 @@
-import os
-
-from config import config
-from time import sleep
-from flask import Flask, request, make_response
-from utils import sign, log
-from psk import fetch_from_qrng, fetch_from_peers, create_psk_file
-import node
 from threading import Thread
+from time import sleep
+
+import node
+from common.config import config
+from flask import Flask, request, make_response, Response
+from core import pre_shared_key
+from common.logger import log
+from common.file import psk_file_manager, psk_sig_file_manager, node_key_file_manager
+from common import crypto
+import json
 
 
 class LocalServerWrapper:
@@ -15,7 +17,9 @@ class LocalServerWrapper:
         self.local_server = Flask(__name__)
         self.add_endpoint('/psk', 'rotate_pre_shared_key', start_thread_with_rotate_pre_shared_key, methods=['POST'])
 
-    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=['GET'], *args, **kwargs):
+    def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
+        if methods is None:
+            methods = ['GET']
         self.local_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
     def run(self):
@@ -31,27 +35,26 @@ def start_thread_with_rotate_pre_shared_key():
 
 def rotate_pre_shared_key(body):
     log.info("Rotating pre-shared key...")
-    is_local_peer = body["is_local_peer"]
-    peer_id = body["peer_id"]
+    try:
+        is_local_peer = body["is_local_peer"]
+        peer_id = body["peer_id"]
+
+    except KeyError:
+        return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+
     if is_local_peer:
-        psk = fetch_from_qrng()
-
-        with open(config.abs_node_key_file_path()) as file:
-            node_key = file.read()
-            signature = sign(psk, node_key)
-
-        with open(config.abs_psk_sig_file_path(), 'w') as file:
-            file.write(signature.hex())
-
+        psk = pre_shared_key.generate_psk_from_qrng()
+        node_key = node_key_file_manager.read()
+        signature = crypto.sign(psk, node_key).hex()
     else:
-        psk = fetch_from_peers(peer_id)
+        psk, signature = pre_shared_key.get_psk_from_peers(peer_id)
 
-    create_psk_file(psk)
+    psk_file_manager.create(psk)
+    psk_sig_file_manager.create(signature)
     sleep(config.config["key_rotation_time"])
 
     node.node_service.current_node.restart()
     write_node_logs_thread = Thread(target=node.write_logs_node_to_file, args=())
     write_node_logs_thread.start()
 
-    if os.path.exists(config.abs_psk_sig_file_path()):
-        os.remove(config.abs_psk_sig_file_path())
+    psk_sig_file_manager.remove()
