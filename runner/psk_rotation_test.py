@@ -9,13 +9,14 @@ import subprocess
 from os import path
 
 
+config_alice = Config('test/tmp/alice/config_alice.json')
+config_bob = Config('test/tmp/bob/config_bob.json')
+
+
 def start_test():
 
     log.info("Starting test...")
     test = False
-
-    config_alice = Config('test/tmp/alice/config_alice.json')
-    config_bob = Config('test/tmp/bob/config_bob.json')
 
     process_alice = subprocess.Popen(
         ["python3", "runner_services_for_tests.py", "--config", "test/tmp/alice/config_alice.json", "ALICE"])
@@ -67,7 +68,7 @@ def start_test():
             log.error(f"{psk_alice} =! {psk_bob}")
             raise ValueError("Alice and Bob's keys are different")
 
-        if not crypto.verify(psk_bob, bytes.fromhex(sig_alice), crypto.to_public_from_peerid(config_alice.config["local_peer_id"])):
+        if not crypto.verify(psk_bob, bytes.fromhex(sig_alice), crypto.to_public_from_peerid(config_alice.local_peer_id)):
             test = False
             raise ValueError("Bob psk verification failed.")
         else:

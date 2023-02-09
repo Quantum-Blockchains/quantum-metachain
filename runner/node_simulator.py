@@ -1,13 +1,16 @@
 import time
 import sys
-from common.file import psk_file_manager
-from common import config
+from common.file import FileManager
+from common.config import ConfigService, Config
+import common.config
+import common.file
 
 path_config = sys.argv[2]
-config.config_service = ConfigService(Config(path_config))
+common.config.config_service = ConfigService(Config(path_config))
+common.file.psk_file_manager = FileManager(common.config.config_service.current_config.abs_psk_file_path())
 
-if psk_file_manager.exists():
-    psk_file_manager.remove()
+if common.file.psk_file_manager.exists():
+    common.file.psk_file_manager.remove()
 
 while True:
     time.sleep(50)

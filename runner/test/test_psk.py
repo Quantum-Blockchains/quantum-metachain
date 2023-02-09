@@ -1,13 +1,15 @@
 import pytest
 
-from common.config import config
+import common.config
 from core.pre_shared_key import get_psk_from_peers
+
+
+common.config.config_service = common.config.ConfigService(common.config.Config())
 
 
 @pytest.fixture()
 def before_each(requests_mock):
-    config.config_service = config.ConfigService(config.Config())
-    config.config["peers"] = {
+    common.config.config_service.current_config.peers = {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd_addr": "http://localhost:9182",
             "server_addr": "http://localhost:5002"

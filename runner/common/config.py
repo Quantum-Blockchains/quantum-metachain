@@ -11,8 +11,8 @@ default_config = {
     "local_server_port": 5003,
     "external_server_port": 5004,
     "psk_file_path": "psk1",
-    "psk_sig_file_path": "tmp/psk1",
-    "node_key_file_path": "/tmp/psk1_sig",
+    "psk_sig_file_path": "psk1_sig",
+    "node_key_file_path": ".node_key",
     "node_logs_path": "node.log",
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
@@ -86,8 +86,8 @@ class Config:
         else:
             raise InvalidConfigurationFile('peers')
 
-        if 'path_logs_node' in config_json:
-            self.path_logs_node = config_json['path_logs_node']
+        if 'node_logs_path' in config_json:
+            self.node_logs_path = config_json['node_logs_path']
 
     def abs_psk_file_path(self):
         return f"{ROOT_DIR}/{self.psk_file_path}"
@@ -99,7 +99,7 @@ class Config:
         return f"{ROOT_DIR}/{self.psk_sig_file_path}"
 
     def abs_log_node_file_path(self):
-        return f"{ROOT_DIR}/{self.path_logs_node}"
+        return f"{ROOT_DIR}/{self.node_logs_path}"
 
 
 def create_node_info_dir():
@@ -115,9 +115,9 @@ def create_node_info_dir():
     if not path.exists(directory_logs):
         mkdir(directory_logs)
 
-    config_service.current_config.runner_logs_path = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/runner.log"
-    config_service.current_config.node_logs_path = f"{ROOT_DIR}/info_of_nodes/{config_service.current_config.local_peer_id}/logs/node.log"
-    config_service.current_config.psk_sig_file_path = f"info_of_nodes/{config_service.current_config.local_peer_id}/psk_sig"
+    config_service.current_config.runner_logs_path = f"{ROOT_DIR}/node_info/{config_service.current_config.local_peer_id}/logs/runner.log"
+    config_service.current_config.node_logs_path = f"{ROOT_DIR}/node_info/{config_service.current_config.local_peer_id}/logs/node.log"
+    config_service.current_config.psk_sig_file_path = f"node_info/{config_service.current_config.local_peer_id}/psk_sig"
 
 
 class ConfigService:
@@ -126,3 +126,4 @@ class ConfigService:
 
 
 config_service = ConfigService(None)
+# current_config = None

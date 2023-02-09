@@ -4,9 +4,14 @@ import pytest
 
 from common.crypto import xor
 from web.external_server import get_psk, ExternalServerWrapper
+import common.config
+import common.file
 
 psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
 signature = "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
+common.config.config_service = common.config.ConfigService(common.config.Config())
+common.file.psk_file_manager = common.file.FileManager(common.config.config_service.current_config.abs_psk_file_path())
+common.file.psk_sig_file_manager = common.file.FileManager(common.config.config_service.current_config.abs_psk_sig_file_path())
 
 
 @patch('common.file.psk_file_manager.exists', return_value=True)
