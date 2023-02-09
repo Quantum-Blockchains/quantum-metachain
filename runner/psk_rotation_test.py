@@ -15,6 +15,7 @@ config_bob = Config('runner/test/tmp/bob/config_bob.json')
 config_charlie = Config('runner/test/tmp/charlie/config_charlie.json')
 config_dave = Config('runner/test/tmp/dave/config_dave.json')
 
+nodes = [("alice", config_alice), ("bob", config_bob), ("charlie", config_charlie), ("dave", config_dave)]
 
 def start_test():
 
@@ -45,161 +46,8 @@ def start_test():
     time.sleep(10)
 
     try:
-        send_psk_rotation_request(config_alice.config["local_server_port"], config_alice.config["local_peer_id"], True)
-        time.sleep(10)
-
-        with open(config_alice.abs_psk_file_path(), 'r') as file:
-            psk_alice = file.read()
-
-        with open(config_alice.abs_psk_sig_file_path(), 'r') as file:
-            sig_alice = file.read()
-
-        with open(config_alice.abs_node_key_file_path(), 'r') as file:
-            priv_key_alice = file.read()
-
-            if not verify(psk_alice, bytes.fromhex(sig_alice), to_public(priv_key_alice)):
-                test = False
-                raise ValueError("Alice psk signing failed.")
-            else:
-                log.info("Alice signing successful")
-
-        timestamp = time.time()
-
-        while not path.exists(config_alice.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Alice did not generate a psk within a minute.")
-            time.sleep(1)
-
-        send_psk_rotation_request(config_bob.config["local_server_port"], config_alice.config["local_peer_id"], False)
-        send_psk_rotation_request(config_dave.config["local_server_port"], config_alice.config["local_peer_id"], False)
-
-        while not path.exists(config_bob.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Bob didn't get the psk within a minute.")
-            time.sleep(1)
-
-        send_psk_rotation_request(config_charlie.config["local_server_port"], config_alice.config["local_peer_id"],
-                                  False)
-
-        while not path.exists(config_charlie.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Charlie didn't get the psk within a minute.")
-            time.sleep(1)
-
-        while not path.exists(config_dave.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Dave didn't get the psk within a minute.")
-            time.sleep(1)
-
-        with open(config_bob.abs_psk_file_path(), 'r') as file:
-            psk_bob = file.read()
-
-        with open(config_charlie.abs_psk_file_path(), 'r') as file:
-            psk_charlie = file.read()
-
-        with open(config_dave.abs_psk_file_path(), 'r') as file:
-            psk_dave = file.read()
-
-        if psk_bob != psk_alice:
-            test = False
-            log.error(f"{psk_alice} =! {psk_bob}")
-            raise ValueError("Alice and Bob's keys are different")
-
-        if not verify(psk_bob, bytes.fromhex(sig_alice), to_public_from_peerid(config_alice.config["local_peer_id"])):
-            test = False
-            raise ValueError("Bob psk verification failed.")
-        else:
-            log.info("Bob psk verification successful")
-
-        if psk_charlie != psk_alice:
-            test = False
-            log.error(f"{psk_alice} =! {psk_charlie}")
-            raise ValueError("Alice and Charlies keys are different")
-
-        if not verify(psk_charlie, bytes.fromhex(sig_alice), to_public_from_peerid(config_alice.config["local_peer_id"])):
-            test = False
-            raise ValueError("Charlie psk verification failed.")
-        else:
-            log.info("Charlie psk verification successful")
-
-        if psk_dave != psk_alice:
-            test = False
-            log.error(f"{psk_alice} =! {psk_dave}")
-            raise ValueError("Alice and Dave keys are different")
-
-        if not verify(psk_dave, bytes.fromhex(sig_alice), to_public_from_peerid(config_alice.config["local_peer_id"])):
-            test = False
-            raise ValueError("Dave psk verification failed.")
-        else:
-            log.info("Dave psk verification successful")
-
-        time.sleep(70)
-
-        send_psk_rotation_request(config_bob.config["local_server_port"], config_bob.config["local_peer_id"], True)
-        time.sleep(5)
-        send_psk_rotation_request(config_alice.config["local_server_port"], config_bob.config["local_peer_id"], False)
-        time.sleep(5)
-        send_psk_rotation_request(config_charlie.config["local_server_port"], config_bob.config["local_peer_id"], False)
-        time.sleep(5)
-        send_psk_rotation_request(config_dave.config["local_server_port"], config_bob.config["local_peer_id"], False)
-        time.sleep(5)
-
-        timestamp = time.time()
-
-        while not path.exists(config_bob.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Bob did not generate a psk within a minute.")
-            time.sleep(1)
-
-        with open(config_bob.abs_psk_file_path(), 'r') as file:
-            psk_bob = file.read()
-
-        while not path.exists(config_alice.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Alice didn't get the psk within a minute.")
-            time.sleep(1)
-
-        while not path.exists(config_charlie.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Charlie didn't get the psk within a minute.")
-            time.sleep(1)
-
-        while not path.exists(config_dave.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Dave didn't get the psk within a minute.")
-            time.sleep(1)
-
-        with open(config_alice.abs_psk_file_path(), 'r') as file:
-            psk_alice = file.read()
-
-        with open(config_charlie.abs_psk_file_path(), 'r') as file:
-            psk_charlie = file.read()
-
-        with open(config_dave.abs_psk_file_path(), 'r') as file:
-            psk_dave = file.read()
-
-        if psk_alice != psk_bob:
-            test = False
-            log.error(f"{psk_alice} =! {psk_bob}")
-            raise ValueError("Alice and Bob's keys are different")
-
-        if psk_charlie != psk_bob:
-            test = False
-            log.error(f"{psk_charlie} =! {psk_bob}")
-            raise ValueError("Charlie and Bob's keys are different")
-
-        if psk_dave != psk_bob:
-            test = False
-            log.error(f"{psk_dave} =! {psk_bob}")
-            raise ValueError("Dave and Bob's keys are different")
+        for name, node_config in nodes:
+            check_psk_rotation(name, node_config)
 
         test = True
 
@@ -212,38 +60,59 @@ def start_test():
         process_charlie.terminate()
         process_dave.terminate()
 
-        if path.exists(config_alice.abs_log_node_file_path()):
-            os.remove(config_alice.abs_log_node_file_path())
-        if path.exists(config_bob.abs_log_node_file_path()):
-            os.remove(config_bob.abs_log_node_file_path())
-        if path.exists(config_charlie.abs_log_node_file_path()):
-            os.remove(config_charlie.abs_log_node_file_path())
-        if path.exists(config_dave.abs_log_node_file_path()):
-            os.remove(config_dave.abs_log_node_file_path())
-
-        if path.exists(config_alice.abs_psk_file_path()):
-            os.remove(config_alice.abs_psk_file_path())
-        if path.exists(config_bob.abs_psk_file_path()):
-            os.remove(config_bob.abs_psk_file_path())
-        if path.exists(config_charlie.abs_psk_file_path()):
-            os.remove(config_charlie.abs_psk_file_path())
-        if path.exists(config_dave.abs_psk_file_path()):
-            os.remove(config_dave.abs_psk_file_path())
-
-        if path.exists(config_alice.abs_psk_sig_file_path()):
-            os.remove(config_alice.abs_psk_sig_file_path())
-        if path.exists(config_bob.abs_psk_sig_file_path()):
-            os.remove(config_bob.abs_psk_sig_file_path())
-        if path.exists(config_charlie.abs_psk_sig_file_path()):
-            os.remove(config_charlie.abs_psk_sig_file_path())
-        if path.exists(config_dave.abs_psk_sig_file_path()):
-            os.remove(config_dave.abs_psk_sig_file_path())
+        for _, config in nodes:
+            if path.exists(config.abs_log_node_file_path()):
+                os.remove(config.abs_log_node_file_path())
+            if path.exists(config.abs_psk_file_path()):
+                os.remove(config.abs_psk_file_path())
+            if path.exists(config.abs_psk_sig_file_path()):
+                os.remove(config.abs_psk_sig_file_path())
 
         log.info("Closing QMC processes...")
+
         if test:
             log.info("Test: Successfully")
         else:
             log.info("Test: Not successfully")
+
+
+def check_psk_rotation(signer_name, signer_config):
+
+    send_psk_rotation_request(signer_config.config["local_server_port"], signer_config.config["local_peer_id"], True)
+    sleep_until_file_exists(signer_config.abs_psk_file_path())
+
+    for node_name, node_config in nodes:
+        if node_config.config["local_peer_id"] in signer_config.config["peers"]:
+            send_psk_rotation_request(node_config.config["local_server_port"], signer_config.config["local_peer_id"], False)
+            sleep_until_file_exists(node_config.abs_psk_file_path())
+
+    with open(signer_config.abs_psk_file_path(), 'r') as file:
+        psk = file.read()
+
+    with open(signer_config.abs_psk_sig_file_path(), 'r') as file:
+        sig = file.read()
+
+    for node_name, node_config in nodes:
+        if node_name != signer_name:
+            if not path.exists(node_config.abs_psk_file_path()):
+                send_psk_rotation_request(node_config.config["local_server_port"], signer_config.config["local_peer_id"], False)
+                sleep_until_file_exists(node_config.abs_psk_file_path())
+
+            with open(node_config.abs_psk_file_path(), 'r') as file:
+                psk_node = file.read()
+
+            if psk_node != psk:
+                test = False
+                log.error(f"{psk} =! {psk_node}")
+                raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
+            
+            if not verify(psk_node, bytes.fromhex(sig), to_public_from_peerid(signer_config.config["local_peer_id"])):
+                test = False
+                raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
+            else:
+                log.info(f"({signer_name}) {node_name} psk verification successful")
+    log.info(f"{signer_name}'s psk rotation successful")
+    time.sleep(60)
 
 
 def send_psk_rotation_request(runner_port, peer_id, is_local):
@@ -251,5 +120,13 @@ def send_psk_rotation_request(runner_port, peer_id, is_local):
     data = {'peer_id': peer_id, 'is_local_peer': is_local}
     requests.post(url, json=data)
 
+
+def sleep_until_file_exists(file_path):
+    timestamp = time.time()
+    while not path.exists(file_path):
+        if time.time() - timestamp > 60:
+            test = False
+            raise ValueError(f"No file at {file_path} after 1 minute")
+        time.sleep(1)
 
 start_test()
