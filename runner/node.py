@@ -3,20 +3,10 @@ from utils import log
 import sys
 from config import config
 from psk import exists_psk_file, remove_psk_file
+from threading import Thread
 
 
-class NodeInterface:
-    def start(self):
-        pass
-
-    def restart(self):
-        pass
-
-    def terminate(self):
-        pass
-
-
-class Node(NodeInterface):
+class Node:
     def __init__(self, startup_args):
         self.startup_args = startup_args
         self.process = None
@@ -28,6 +18,8 @@ class Node(NodeInterface):
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
+        write_node_logs_thread.start()
 
     def restart(self):
         log.info("Restarting QMC node...")
@@ -37,6 +29,8 @@ class Node(NodeInterface):
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
+        write_node_logs_thread.start()
 
     def terminate(self):
         log.info("Terminating QMC node...")
@@ -44,7 +38,7 @@ class Node(NodeInterface):
         self.process = None
 
 
-class NodeTest(NodeInterface):
+class NodeTest:
 
     def start(self):
         log.info("Starting QMC node...")

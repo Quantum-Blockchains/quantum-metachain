@@ -2,7 +2,7 @@ from config import config, create_directory_for_logs_and_other_files_of_node
 import sys
 import time
 from threading import Thread
-from node import Node, NodeService, write_logs_node_to_file
+from node import Node, NodeService
 import node
 from psk import fetch_from_peers, exists_psk_file, create_psk_file
 from utils import log, add_logs_andler_file
@@ -33,8 +33,6 @@ try:
         time.sleep(1)
 
     node.node_service.current_node.start()
-    write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-    write_node_logs_thread.start()
 
     external_server = ExternalServerWrapper()
     external_thread = Thread(target=external_server.run, args=())
