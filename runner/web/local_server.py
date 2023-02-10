@@ -6,12 +6,14 @@ from common.config import config_service
 from flask import Flask, request, make_response, Response
 from core import pre_shared_key
 from common.logger import log
-# from common.file import psk_file_manager, psk_sig_file_manager, node_key_file_manager
 from common import crypto
 import json
 import common.config
 import common.file
 from node import write_logs_node_to_file
+
+
+GET_PSK_WAITING_TIME = 1
 
 
 class LocalServerWrapper:
@@ -50,7 +52,12 @@ def rotate_pre_shared_key(body):
         node_key = common.file.node_key_file_manager.read()
         signature = crypto.sign(psk, node_key).hex()
     else:
-        psk, signature = pre_shared_key.get_psk_from_peers(peer_id)
+        get_psk_result = None
+
+        while get_psk_result is None:
+            get_psk_result = pre_shared_key.get_psk_from_peers(peer_id)
+            sleep(GET_PSK_WAITING_TIME)
+        psk, signature = get_psk_result
 
     common.file.psk_file_manager.create(psk)
     common.file.psk_sig_file_manager.create(signature)

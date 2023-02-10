@@ -47,11 +47,16 @@ def __validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str =
     if psk_creator_peer_id is None:
         if len(set(psks_with_sig)) == 1:
             return psks_with_sig[0]
+        else:
+            log.warning("Psk validation failed...")
     # When we know psk creator peer id it's ok to get first verified key
     else:
         for psk, signature in psks_with_sig:
+            log.debug(f"validating psk: {psk}, signature: {signature}, psk_creator_peer_id: {psk_creator_peer_id}")
             if crypto.verify(psk, bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
                 return psk, signature
+            else:
+                log.warning("Psk validation failed...")
 
 
 def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPskResponse]:
