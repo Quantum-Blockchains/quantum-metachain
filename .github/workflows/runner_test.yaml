@@ -37,4 +37,4 @@ jobs:
 
       - name: Integration tests
         run: |
-          python3 psk_rotation_test.py
+          cd runner && python3 psk_rotation_test.py
