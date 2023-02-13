@@ -2,7 +2,6 @@ from core.qrng import generate_random_hex
 import common.config
 
 
-common.config.config_service = common.config.ConfigService(common.config.Config())
 url = f"https://qrng.qbck.io/{common.config.config_service.current_config.qrng_api_key}/qbck/block/hex?size=1&length=32"
 
 

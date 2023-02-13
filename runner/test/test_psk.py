@@ -4,9 +4,6 @@ import common.config
 from core.pre_shared_key import get_psk_from_peers
 
 
-common.config.config_service = common.config.ConfigService(common.config.Config())
-
-
 @pytest.fixture()
 def before_each(requests_mock):
     common.config.config_service.current_config.peers = {

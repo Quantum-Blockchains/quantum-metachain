@@ -17,9 +17,7 @@ except InvalidConfigurationFile as e:
     log.error(e.message)
     exit()
 
-common.file.psk_file_manager = common.file.FileManager(common.config.config_service.current_config.abs_psk_file_path())
-common.file.node_key_file_manager = common.file.FileManager(common.config.config_service.current_config.abs_node_key_file_path())
-common.file.psk_sig_file_manager = common.file.FileManager(common.config.config_service.current_config.abs_psk_sig_file_path())
+common.file.initialise_file_managers()
 
 create_node_info_dir()
 add_logs_handler_file()
