@@ -33,7 +33,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          pytest --ignore=psk_rotation_test.py
+          cd runner && pytest --ignore=psk_rotation_test.py
 
       - name: Integration tests
         run: |

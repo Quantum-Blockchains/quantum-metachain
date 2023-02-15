@@ -1,7 +1,7 @@
 from typing import Optional
 
 import requests
-from common.config import config
+import common.config
 from common.logger import log
 from common import crypto
 
@@ -27,7 +27,7 @@ def get_psk_from_peers(psk_creator_peer_id: str = None) -> PskWithSignature:
 
 def __fetch_from_peers() -> [PskWithSignature]:
     log.info("Fetching PSK from other peers...")
-    peers = config.config["peers"]
+    peers = common.config.config_service.current_config.peers
 
     psks_with_sig = []
 
@@ -47,15 +47,20 @@ def __validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str =
     if psk_creator_peer_id is None:
         if len(set(psks_with_sig)) == 1:
             return psks_with_sig[0]
+        else:
+            log.warning("Psk validation failed...")
     # When we know psk creator peer id it's ok to get first verified key
     else:
         for psk, signature in psks_with_sig:
+            log.debug(f"validating psk: {psk}, signature: {signature}, psk_creator_peer_id: {psk_creator_peer_id}")
             if crypto.verify(psk, bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
                 return psk, signature
+            else:
+                log.warning("Psk validation failed...")
 
 
 def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPskResponse]:
-    get_psk_url = f"{peer_addr}/peer/{config.config['local_peer_id']}/psk"
+    get_psk_url = f"{peer_addr}/peer/{common.config.config_service.current_config.local_peer_id}/psk"
     get_psk_response = requests.get(get_psk_url)
     if get_psk_response.status_code != 200:
         log.error(f"{peer_id} didn't send the psk. Message: {get_psk_response.json()['message']}")

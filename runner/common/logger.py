@@ -1,5 +1,5 @@
 import logging
-from .config import config
+import common.config
 import sys
 
 
@@ -15,7 +15,7 @@ log.addHandler(consoleHandler)
 
 
 def add_logs_handler_file():
-    file_handler = logging.FileHandler(f"{config.config['runner_logs_path']}")
+    file_handler = logging.FileHandler(f"{common.config.config_service.current_config.runner_logs_path}")
     file_handler.setFormatter(log_formatter)
     log.addHandler(file_handler)
 

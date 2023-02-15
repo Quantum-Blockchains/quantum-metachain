@@ -1,4 +1,5 @@
 {
+        "__type__": "Config",
         "local_peer_id": "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc",
         "local_server_port": 5001,
         "external_server_port": 5002,

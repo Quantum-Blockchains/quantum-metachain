@@ -5,6 +5,7 @@ import pytest
 from common.crypto import xor
 from web.external_server import get_psk, ExternalServerWrapper
 
+
 psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
 signature = "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
 

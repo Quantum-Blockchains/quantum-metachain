@@ -1,3 +1,4 @@
+from unittest import mock
 from unittest.mock import patch
 
 import pytest
@@ -5,6 +6,7 @@ import pytest
 import node
 from node import Node, NodeService
 from web.local_server import rotate_pre_shared_key
+
 
 psk = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
 signature = "fe2550d4baf581af5f9cc9428e425b093fd4777fdfeb7d00a9b52261754a56ec5034dd0fe3570d9d7f7a21b9d2d2007cba1afe773430dbd79b7c0cf37a55e803"
@@ -48,6 +50,26 @@ def test_rotate_pre_shared_key_when_other_peer_is_chosen(get_psk_from_peers, bef
     rotate_pre_shared_key(body)
 
     get_psk_from_peers.assert_called_with(peer_id)
+
+
+@patch("core.pre_shared_key.get_psk_from_peers")
+def test_rotate_pre_shared_key_when_other_peer_is_chosen_but_returns_none_for_the_first_time(get_psk_from_peers, before_each):
+    get_psk_from_peers.side_effect = [None, ("c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a",
+                                             "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100")]
+    peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
+    body = {
+        "is_local_peer": False,
+        "peer_id": peer_id
+    }
+    rotate_pre_shared_key(body)
+
+    get_psk_from_peers.assert_called_with(peer_id)
+
+    # Assert if mock was called twice
+    assert get_psk_from_peers.call_args_list == [
+        mock.call(peer_id),
+        mock.call(peer_id),
+    ]
 
 
 def test_rotate_pre_shared_key_missing_config():

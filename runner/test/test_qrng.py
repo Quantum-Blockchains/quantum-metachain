@@ -1,7 +1,8 @@
 from core.qrng import generate_random_hex
-from common.config import config
+import common.config
 
-url = f"https://qrng.qbck.io/{config.config['qrng_api_key']}/qbck/block/hex?size=1&length=32"
+
+url = f"https://qrng.qbck.io/{common.config.config_service.current_config.qrng_api_key}/qbck/block/hex?size=1&length=32"
 
 
 def test_generate_random_hex_from_qrng(requests_mock):

@@ -6,7 +6,7 @@
 target/
 
 # Runner
-config.json
+*.config.json
 venv/
 __pycache__
 runner.log
@@ -14,4 +14,5 @@ node.log
 
 # Other
 psk
+psk_sig
 .node_key

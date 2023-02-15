@@ -1,6 +1,6 @@
 import os
 
-from .config import config
+import common.config
 
 
 class FileManager:
@@ -26,6 +26,11 @@ class FileManager:
             raise FileNotFoundError
 
 
-psk_file_manager = FileManager(config.abs_psk_file_path())
-node_key_file_manager = FileManager(config.abs_node_key_file_path())
-psk_sig_file_manager = FileManager(config.abs_psk_sig_file_path())
+global psk_file_manager, node_key_file_manager, psk_sig_file_manager
+
+
+def initialise_file_managers():
+    global psk_file_manager, node_key_file_manager, psk_sig_file_manager
+    psk_file_manager = FileManager(common.config.config_service.current_config.abs_psk_file_path())
+    node_key_file_manager = FileManager(common.config.config_service.current_config.abs_node_key_file_path())
+    psk_sig_file_manager = FileManager(common.config.config_service.current_config.abs_psk_sig_file_path())

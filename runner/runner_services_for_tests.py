@@ -4,12 +4,18 @@ import sys
 from node import Node, NodeService
 import node
 from common.logger import log, log_format_for_test
+import common.config
+import common.file
 
 
 path_config = sys.argv[2]
+common.config.init_config(path_config)
+common.file.initialise_file_managers()
 name = sys.argv[3]
 
 log_format_for_test()
+
+log.info(f"Local port: {common.config.config_service.current_config.local_server_port}")
 
 log.info("Starting test node...")
 node.node_service = NodeService(Node(["python3", "node_simulator.py", "--config", path_config]))
