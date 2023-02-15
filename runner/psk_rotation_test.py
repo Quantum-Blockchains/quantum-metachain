@@ -10,7 +10,6 @@ import subprocess
 from os import path
 import json
 from web.qkd_mock_server import QkdMockServerWrapper
-from threading import Thread
 from multiprocessing import Process
 
 

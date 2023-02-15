@@ -3,7 +3,6 @@ import json
 from flask import Flask, jsonify, Response
 from core import qkd
 from common.logger import log
-# from common.file import psk_file_manager, psk_sig_file_manager
 from common import crypto
 import common.config
 import common.file

@@ -10,7 +10,6 @@ from common import crypto
 import json
 import common.config
 import common.file
-from node import write_logs_node_to_file
 
 
 GET_PSK_WAITING_TIME = 1
