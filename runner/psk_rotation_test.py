@@ -1,19 +1,27 @@
-from config import Config
-from utils import log, verify, to_public, to_public_from_peerid
+import common.config
+from common.config import Config
+from common.logger import log
+from common import crypto
+
 import requests
 import time
 import os
 import subprocess
 from os import path
+import json
 from qkd_mock_server import QkdMockServerWrapper
 from threading import Thread
 from multiprocessing import Process
 
 
-config_alice = Config('runner/test/tmp/alice/config_alice.json')
-config_bob = Config('runner/test/tmp/bob/config_bob.json')
-config_charlie = Config('runner/test/tmp/charlie/config_charlie.json')
-config_dave = Config('runner/test/tmp/dave/config_dave.json')
+with open('test/tmp/alice/config_alice.json', "r") as f:
+    config_alice = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/bob/config_bob.json', "r") as f:
+    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/bob/config_charlie.json', "r") as f:
+    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/bob/config_dave.json', "r") as f:
+    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
 
 nodes = [("alice", config_alice), ("bob", config_bob), ("charlie", config_charlie), ("dave", config_dave)]
 
@@ -105,7 +113,7 @@ def check_psk_rotation(signer_name, signer_config):
                 test = False
                 log.error(f"{psk} =! {psk_node}")
                 raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
-            
+
             if not verify(psk_node, bytes.fromhex(sig), to_public_from_peerid(signer_config.config["local_peer_id"])):
                 test = False
                 raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
