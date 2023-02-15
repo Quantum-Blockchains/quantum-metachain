@@ -9,7 +9,7 @@ import common.file
 
 
 path_config = sys.argv[2]
-common.config.config_service = common.config.ConfigService(common.config.Config(path_config))
+common.config.init_config(path_config)
 common.file.initialise_file_managers()
 name = sys.argv[3]
 

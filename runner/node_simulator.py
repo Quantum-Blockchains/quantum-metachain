@@ -6,7 +6,7 @@ import common.config
 import common.file
 
 path_config = sys.argv[2]
-common.config.config_service = ConfigService(Config(path_config))
+common.config.init_config(path_config)
 common.file.psk_file_manager = FileManager(common.config.config_service.current_config.abs_psk_file_path())
 
 if common.file.psk_file_manager.exists():

@@ -1,3 +1,4 @@
+import common.config
 from common.config import Config
 from common.logger import log
 from common import crypto
@@ -7,10 +8,13 @@ import time
 import os
 import subprocess
 from os import path
+import json
 
 
-config_alice = Config('test/tmp/alice/config_alice.json')
-config_bob = Config('test/tmp/bob/config_bob.json')
+with open('test/tmp/alice/config_alice.json', "r") as f:
+    config_alice = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/bob/config_bob.json', "r") as f:
+    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
 
 
 def start_test():

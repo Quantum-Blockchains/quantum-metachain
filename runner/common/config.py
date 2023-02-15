@@ -14,12 +14,12 @@ default_config = {
     "psk_sig_file_path": "psk1_sig",
     "node_key_file_path": ".node_key",
     "node_logs_path": "node.log",
-    "key_rotation_time": 1,
+    "key_rotation_time": 5,
     "qrng_api_key": "api_key",
     "peers": {
-        "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
-            "qkd_addr": "http://212.244.177.99:8182/api/v1/keys/Bob1SAE",
-            "server_addr": "http://localhost:5004"
+        "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
+            "qkd_addr": "http://localhost:9182/api/v1/keys/Alice1SAE",
+            "server_addr": "http://localhost:5002"
         }
     }
 }
