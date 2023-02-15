@@ -12,7 +12,7 @@ from web import ExternalServerWrapper, LocalServerWrapper
 
 
 try:
-    common.config.config_service = common.config.ConfigService(common.config.Config(params.args.config_file))
+    common.config.init_config(params.args.config_file)
 except InvalidConfigurationFile as e:
     log.error(e.message)
     exit()
