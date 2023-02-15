@@ -1,36 +1,40 @@
-from config import config, create_directory_for_logs_and_other_files_of_node
-import sys
-import time
 from threading import Thread
-from node import Node, NodeService
+
 import node
-from psk import fetch_from_peers, exists_psk_file, create_psk_file
-from utils import log, add_logs_andler_file
+import common.config
+import common.file
+import params
+from common.config import create_node_info_dir, InvalidConfigurationFile
+from node import Node, NodeService
+from common.logger import log, add_logs_handler_file
+from core import pre_shared_key
 from web import ExternalServerWrapper, LocalServerWrapper
 
 
-startup_args = sys.argv[1:]
+try:
+    common.config.init_config(params.args.config_file)
+except InvalidConfigurationFile as e:
+    log.error(e.message)
+    exit()
 
-create_directory_for_logs_and_other_files_of_node()
-add_logs_andler_file()
-startup_args.append("--psk-file")
-startup_args.append(config.config['psk_file_path'])
-startup_args.append("--runner-port")
-startup_args.append(str(config.config['local_server_port']))
-startup_args.append("--node-key-file")
-startup_args.append(config.config['node_key_file_path'])
-node.node_service = NodeService(Node(startup_args[2:]))
+common.file.initialise_file_managers()
+
+create_node_info_dir()
+add_logs_handler_file()
+params.args.startup_args.append("--psk-file")
+params.args.startup_args.append(common.config.config_service.current_config.abs_psk_file_path())
+params.args.startup_args.append("--runner-port")
+params.args.startup_args.append(str(common.config.config_service.current_config.local_server_port))
+params.args.startup_args.append("--node-key-file")
+params.args.startup_args.append(common.config.config_service.current_config.abs_node_key_file_path())
+node.node_service = NodeService(Node(params.args.startup_args))
 
 try:
     log.info("Starting QMC runner...")
-    if not exists_psk_file():
-        # peer id ?
-        psk = fetch_from_peers("12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc")
-        create_psk_file(psk)
-
-    # Wait until psk file is created
-    while not exists_psk_file():
-        time.sleep(1)
+    if not common.file.psk_file_manager.exists():
+        psk, signature = pre_shared_key.get_psk_from_peers()
+        common.file.psk_file_manager.create(psk)
+        common.file.psk_sig_file_manager.create(signature)
 
     node.node_service.current_node.start()
 

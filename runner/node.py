@@ -1,10 +1,9 @@
 import subprocess
-from utils import log
+from common.logger import log
 import sys
-from config import config
-from psk import exists_psk_file, remove_psk_file
+import common.config
 from threading import Thread
-
+import common.file
 
 class Node:
     def __init__(self, startup_args):
@@ -60,7 +59,7 @@ node_service = NodeService(None)
 
 
 def write_logs_node_to_file():
-    with open(config.config['path_logs_node'], 'w') as logfile:
+    with open(common.config.config_service.current_config.node_logs_path, 'w') as logfile:
         for line in node_service.current_node.process.stdout:
             sys.stdout.write(str(line, 'utf-8'))
             logfile.write(str(line, 'utf-8'))
