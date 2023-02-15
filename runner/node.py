@@ -3,6 +3,7 @@ from common.logger import log
 import sys
 import common.config
 from threading import Thread
+import common.file
 
 
 class Node:
@@ -17,6 +18,8 @@ class Node:
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
+        write_node_logs_thread.start()
 
     def restart(self):
         log.info("Restarting QMC node...")
@@ -26,11 +29,26 @@ class Node:
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
+        write_node_logs_thread.start()
 
     def terminate(self):
         log.info("Terminating QMC node...")
         self.process.terminate()
         self.process = None
+
+
+class NodeTest:
+
+    def start(self):
+        log.info("Starting QMC node...")
+        if common.file.psk_file_manager.exists():
+            common.file.psk_file_manager.remove()
+
+    def restart(self):
+        log.info("Restarting QMC node...")
+        if common.file.psk_file_manager.exists():
+            common.file.psk_file_manager.remove()
 
 
 class NodeService:

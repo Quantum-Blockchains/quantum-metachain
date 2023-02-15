@@ -1,7 +1,7 @@
 from threading import Thread
 from web import ExternalServerWrapper, LocalServerWrapper
 import sys
-from node import Node, NodeService
+from node import NodeService, NodeTest
 import node
 from common.logger import log, log_format_for_test
 import common.config
@@ -18,7 +18,7 @@ log_format_for_test()
 log.info(f"Local port: {common.config.config_service.current_config.local_server_port}")
 
 log.info("Starting test node...")
-node.node_service = NodeService(Node(["python3", "node_simulator.py", "--config", path_config]))
+node.node_service = NodeService(NodeTest())
 node.node_service.current_node.start()
 
 external_server = ExternalServerWrapper()

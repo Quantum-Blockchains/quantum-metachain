@@ -5,7 +5,7 @@ import common.config
 import common.file
 import params
 from common.config import create_node_info_dir, InvalidConfigurationFile
-from node import Node, NodeService, write_logs_node_to_file
+from node import Node, NodeService
 from common.logger import log, add_logs_handler_file
 from core import pre_shared_key
 from web import ExternalServerWrapper, LocalServerWrapper
@@ -37,8 +37,6 @@ try:
         common.file.psk_sig_file_manager.create(signature)
 
     node.node_service.current_node.start()
-    write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-    write_node_logs_thread.start()
 
     external_server = ExternalServerWrapper()
     external_thread = Thread(target=external_server.run, args=())
