@@ -43,7 +43,7 @@ class QkdMockServerWrapper:
     def generate_key(self):
         args = request.args
         size = int(args.get('size'))
-        key = Random.get_random_bytes(int(size/8)).hex()
+        key = Random.get_random_bytes(int(size / 8)).hex()
 
         self.keys[self.counter_id] = key
 

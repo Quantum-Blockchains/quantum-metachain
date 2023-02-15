@@ -61,6 +61,7 @@ def start_test():
         test = True
 
     except Exception as e:
+        test = False
         log.error("ERROR: " + str(e))
     finally:
         qkd_server.terminate()
@@ -86,7 +87,6 @@ def start_test():
 
 
 def check_psk_rotation(signer_name, signer_config):
-
     send_psk_rotation_request(signer_config.local_server_port, signer_config.local_peer_id, True)
     sleep_until_file_exists(signer_config.abs_psk_file_path())
 
@@ -111,13 +111,11 @@ def check_psk_rotation(signer_name, signer_config):
                 psk_node = file.read()
 
             if psk_node != psk:
-                test = False
                 log.error(f"{psk} =! {psk_node}")
                 raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
 
             if not common.crypto.verify(psk_node, bytes.fromhex(sig),
                                         common.crypto.to_public_from_peerid(signer_config.local_peer_id)):
-                test = False
                 raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
             else:
                 log.info(f"({signer_name}) {node_name} psk verification successful")
@@ -135,7 +133,6 @@ def sleep_until_file_exists(file_path):
     timestamp = time.time()
     while not path.exists(file_path):
         if time.time() - timestamp > 60:
-            test = False
             raise ValueError(f"No file at {file_path} after 1 minute")
         time.sleep(1)
 
