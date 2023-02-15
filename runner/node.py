@@ -3,6 +3,7 @@ from common.logger import log
 import sys
 import common.config
 from threading import Thread
+import common.file
 
 
 class Node:
@@ -41,13 +42,13 @@ class NodeTest:
 
     def start(self):
         log.info("Starting QMC node...")
-        if exists_psk_file():
-            remove_psk_file()
+        if common.file.psk_file_manager.exists():
+            common.file.psk_file_manager.remove()
 
     def restart(self):
         log.info("Restarting QMC node...")
-        if exists_psk_file():
-            remove_psk_file()
+        if common.file.psk_file_manager.exists():
+            common.file.psk_file_manager.remove()
 
 
 class NodeService:

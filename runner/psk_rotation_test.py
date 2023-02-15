@@ -2,14 +2,14 @@ import common.config
 from common.config import Config
 from common.logger import log
 from common import crypto
-
+import common.crypto
 import requests
 import time
 import os
 import subprocess
 from os import path
 import json
-from qkd_mock_server import QkdMockServerWrapper
+from web.qkd_mock_server import QkdMockServerWrapper
 from threading import Thread
 from multiprocessing import Process
 
@@ -18,12 +18,13 @@ with open('test/tmp/alice/config_alice.json', "r") as f:
     config_alice = json.load(f, object_hook=common.config.custom_config_decoder)
 with open('test/tmp/bob/config_bob.json', "r") as f:
     config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
-with open('test/tmp/bob/config_charlie.json', "r") as f:
-    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
-with open('test/tmp/bob/config_dave.json', "r") as f:
-    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/charlie/config_charlie.json', "r") as f:
+    config_charlie = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/dave/config_dave.json', "r") as f:
+    config_dave = json.load(f, object_hook=common.config.custom_config_decoder)
 
 nodes = [("alice", config_alice), ("bob", config_bob), ("charlie", config_charlie), ("dave", config_dave)]
+
 
 def start_test():
 
@@ -37,18 +38,18 @@ def start_test():
     test = False
 
     process_alice = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/alice/config_alice.json",
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/alice/config_alice.json",
          "ALICE"])
 
     process_bob = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/bob/config_bob.json", "BOB"])
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/bob/config_bob.json", "BOB"])
 
     process_charlie = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/charlie/config_charlie.json",
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/charlie/config_charlie.json",
          "CHARLIE"])
 
     process_dave = subprocess.Popen(
-        ["python3", "runner/runner_services_for_tests.py", "--config", "runner/test/tmp/dave/config_dave.json",
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/dave/config_dave.json",
          "DAVE"])
 
     time.sleep(10)
@@ -86,12 +87,12 @@ def start_test():
 
 def check_psk_rotation(signer_name, signer_config):
 
-    send_psk_rotation_request(signer_config.config["local_server_port"], signer_config.config["local_peer_id"], True)
+    send_psk_rotation_request(signer_config.local_server_port, signer_config.local_peer_id, True)
     sleep_until_file_exists(signer_config.abs_psk_file_path())
 
     for node_name, node_config in nodes:
-        if node_config.config["local_peer_id"] in signer_config.config["peers"]:
-            send_psk_rotation_request(node_config.config["local_server_port"], signer_config.config["local_peer_id"], False)
+        if node_config.local_peer_id in signer_config.peers:
+            send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False)
             sleep_until_file_exists(node_config.abs_psk_file_path())
 
     with open(signer_config.abs_psk_file_path(), 'r') as file:
@@ -103,7 +104,7 @@ def check_psk_rotation(signer_name, signer_config):
     for node_name, node_config in nodes:
         if node_name != signer_name:
             if not path.exists(node_config.abs_psk_file_path()):
-                send_psk_rotation_request(node_config.config["local_server_port"], signer_config.config["local_peer_id"], False)
+                send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False)
                 sleep_until_file_exists(node_config.abs_psk_file_path())
 
             with open(node_config.abs_psk_file_path(), 'r') as file:
@@ -114,7 +115,8 @@ def check_psk_rotation(signer_name, signer_config):
                 log.error(f"{psk} =! {psk_node}")
                 raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
 
-            if not verify(psk_node, bytes.fromhex(sig), to_public_from_peerid(signer_config.config["local_peer_id"])):
+            if not common.crypto.verify(psk_node, bytes.fromhex(sig),
+                                        common.crypto.to_public_from_peerid(signer_config.local_peer_id)):
                 test = False
                 raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
             else:
@@ -136,5 +138,6 @@ def sleep_until_file_exists(file_path):
             test = False
             raise ValueError(f"No file at {file_path} after 1 minute")
         time.sleep(1)
+
 
 start_test()
