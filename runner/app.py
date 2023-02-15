@@ -37,8 +37,6 @@ try:
         common.file.psk_sig_file_manager.create(signature)
 
     node.node_service.current_node.start()
-    write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-    write_node_logs_thread.start()
 
     external_server = ExternalServerWrapper()
     external_thread = Thread(target=external_server.run, args=())

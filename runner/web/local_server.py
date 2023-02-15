@@ -64,7 +64,5 @@ def rotate_pre_shared_key(body):
     sleep(common.config.config_service.current_config.key_rotation_time)
 
     node.node_service.current_node.restart()
-    write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-    write_node_logs_thread.start()
 
     common.file.psk_sig_file_manager.remove()

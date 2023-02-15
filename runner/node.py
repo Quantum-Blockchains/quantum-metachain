@@ -17,6 +17,8 @@ class Node:
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
+        write_node_logs_thread.start()
 
     def restart(self):
         log.info("Restarting QMC node...")
@@ -26,11 +28,26 @@ class Node:
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
+        write_node_logs_thread.start()
 
     def terminate(self):
         log.info("Terminating QMC node...")
         self.process.terminate()
         self.process = None
+
+
+class NodeTest:
+
+    def start(self):
+        log.info("Starting QMC node...")
+        if exists_psk_file():
+            remove_psk_file()
+
+    def restart(self):
+        log.info("Restarting QMC node...")
+        if exists_psk_file():
+            remove_psk_file()
 
 
 class NodeService:
