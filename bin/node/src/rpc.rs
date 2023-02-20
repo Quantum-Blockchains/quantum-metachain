@@ -7,9 +7,13 @@ use jsonrpsee::RpcModule;
 use sc_client_db::offchain::LocalStorage;
 pub use sc_rpc_api::DenyUnsafe;
 use sc_service::config::NetworkConfiguration;
+use qmc_runtime::{opaque::Block, AccountId, Balance, Index, BlockNumber, Hash};
+use std::sync::Arc;
+use sp_api::ProvideRuntimeApi;
 
 /// Full client dependencies.
-pub struct FullDeps {
+pub struct FullDeps<C> {
+    pub client: Arc<C>,
     /// Network configuration
     pub config: NetworkConfiguration,
     /// Offchain storage
@@ -17,15 +21,24 @@ pub struct FullDeps {
 }
 
 /// Instantiate all full RPC extensions.
-pub fn create_full(
-    deps: FullDeps,
-) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>> {
+pub fn create_full<C>(
+    deps: FullDeps<C>,
+) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
+    where
+        C: ProvideRuntimeApi<Block> + sc_client_api::HeaderBackend<sp_runtime::generic::Block<sp_runtime::generic::Header<u32, sp_runtime::traits::BlakeTwo256>, sp_runtime::OpaqueExtrinsic>>,
+        C: Send + Sync + 'static,
+        C::Api: pallet_contracts_rpc::ContractsRuntimeApi<Block, AccountId, Balance, BlockNumber, Hash>,
+{
     use crate::psk_rpc::{Psk, PskApiServer};
 
+    use pallet_contracts_rpc::{Contracts, ContractsApiServer};
+
     let mut module = RpcModule::new(());
-    let FullDeps { config, storage } = deps;
+    let FullDeps { client, config, storage } = deps;
 
     module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
+
+    module.merge(ContractsApiServer::into_rpc(Contracts::new(client.clone())))?;
 
     Ok(module)
 }

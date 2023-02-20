@@ -227,10 +227,12 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
     let prometheus_registry = config.prometheus_registry().cloned();
 
     let rpc_extensions_builder = {
+        let client = client.clone();
         let config = config.network.clone();
         match backend.offchain_storage() {
             Some(storage) => Box::new(move |_, _| {
                 let deps = crate::rpc::FullDeps {
+                    client: client.clone(),
                     config: config.clone(),
                     storage: storage.clone(),
                 };
