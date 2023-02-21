@@ -64,8 +64,7 @@ def test_decode_base64():
     assert result == "0xa95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
 
 
-def test_xor():
-    # test with both keys with valid length
+def test_xor_valid_lengths():
     qkd_key = "0xa95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
     psk = "0xa9d6e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"
 
@@ -73,9 +72,10 @@ def test_xor():
 
     assert encrypted_result == "0x0088f15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
     assert xor(qkd_key, encrypted_result) == psk
-    assert(len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
+    assert (len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
 
-    # test with leading 0s in psk
+
+def test_xor_leading_0s_in_psk():
     qkd_key = "0xa95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
     psk = "0x0000e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"
 
@@ -83,9 +83,10 @@ def test_xor():
 
     assert encrypted_result == "0xa95ef15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
     assert xor(qkd_key, encrypted_result) == psk
-    assert(len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
+    assert (len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
 
-    # test with both values have leading 0s
+
+def test_xor_both_values_with_leading_0s():
     qkd_key = "0x000017a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
     psk = "0x0000e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"
 
@@ -93,7 +94,7 @@ def test_xor():
 
     assert encrypted_result == "0x0000f15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
     assert xor(qkd_key, encrypted_result) == psk
-    assert(len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
+    assert (len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
 
 
 def test_trim_0x_prefix():
