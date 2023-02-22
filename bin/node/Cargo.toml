@@ -41,7 +41,7 @@ sp-inherents = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockc
 sp-keyring = { version = "6.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 frame-system = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
-pallet-contracts = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
+#pallet-contracts = { package = "pallet-contracts", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 pallet-contracts-rpc = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 
 

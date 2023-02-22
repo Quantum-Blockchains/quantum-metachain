@@ -5086,7 +5086,6 @@ dependencies = [
  "futures",
  "hex",
  "jsonrpsee",
- "pallet-contracts",
  "pallet-contracts-rpc",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc",

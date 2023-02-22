@@ -10,6 +10,8 @@ use sc_service::config::NetworkConfiguration;
 use qmc_runtime::{opaque::Block, AccountId, Balance, Index, BlockNumber, Hash};
 use std::sync::Arc;
 use sp_api::ProvideRuntimeApi;
+use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
+use sc_client_api::AuxStore;
 
 /// Full client dependencies.
 pub struct FullDeps<C> {
@@ -25,12 +27,17 @@ pub fn create_full<C>(
     deps: FullDeps<C>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
     where
-        C: ProvideRuntimeApi<Block> + sc_client_api::HeaderBackend<sp_runtime::generic::Block<sp_runtime::generic::Header<u32, sp_runtime::traits::BlakeTwo256>, sp_runtime::OpaqueExtrinsic>>,
-        C: Send + Sync + 'static,
+        C: ProvideRuntimeApi<Block>
+		    + sc_client_api::BlockBackend<Block>
+		    + HeaderBackend<Block>
+		    + AuxStore
+		    + HeaderMetadata<Block, Error = BlockChainError>
+		    + Sync
+		    + Send
+		    + 'static,
         C::Api: pallet_contracts_rpc::ContractsRuntimeApi<Block, AccountId, Balance, BlockNumber, Hash>,
 {
     use crate::psk_rpc::{Psk, PskApiServer};
-
     use pallet_contracts_rpc::{Contracts, ContractsApiServer};
 
     let mut module = RpcModule::new(());
@@ -39,6 +46,7 @@ pub fn create_full<C>(
     module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
 
     module.merge(ContractsApiServer::into_rpc(Contracts::new(client.clone())))?;
+    // module.merge(Contracts::new(client.clone()).into_rpc())?;
 
     Ok(module)
 }
