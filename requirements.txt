@@ -9,3 +9,4 @@ cryptography~=38.0.4
 base58~=2.1.1
 Werkzeug~=2.2.2
 validators~=0.20.0
+onetimepad~=1.4
