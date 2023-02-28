@@ -1,9 +1,8 @@
 from common.config import config_service
 import json
 from flask import Flask, jsonify, Response
-from core import qkd
+from core import qkd, onetimepad
 from common.logger import log
-from common import crypto
 import common.config
 import common.file
 
@@ -38,7 +37,7 @@ def get_psk(peer_id):
     psk = common.file.psk_file_manager.read()
     psk_sig = common.file.psk_sig_file_manager.read()
     key_id, qkd_key = qkd.get_enc_key(peer_config['qkd_addr'])
-    xored_psk = crypto.xor(psk, qkd_key)
+    xored_psk = onetimepad.encrypt(psk, qkd_key)
 
     return jsonify({
         "key": xored_psk,

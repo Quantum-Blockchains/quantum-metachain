@@ -4,6 +4,7 @@ import requests
 import common.config
 from common.logger import log
 from common import crypto
+from core import onetimepad
 
 from .qkd import get_dec_key
 from .qrng import generate_random_hex
@@ -71,5 +72,5 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
 
 def __decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
     _, qkd_key = get_dec_key(qkd_addr, qkd_key_id)
-    psk = crypto.xor(encrypted_psk, qkd_key)
+    psk = onetimepad.decrypt(encrypted_psk, qkd_key)
     return crypto.trim_0x_prefix(psk)
