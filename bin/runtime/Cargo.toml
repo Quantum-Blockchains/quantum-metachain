@@ -77,7 +77,7 @@ std = [
 	"pallet-transaction-payment/std",
 	"pallet-contracts/std",
     "pallet-contracts-primitives/std",
-#	"pallet-contracts-rpc-runtime-api/std",
+	"pallet-contracts-rpc-runtime-api/std",
 	"scale-info/std",
 	"sp-api/std",
 	"sp-block-builder/std",

@@ -45,8 +45,7 @@ pub fn create_full<C>(
 
     module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
 
-    module.merge(ContractsApiServer::into_rpc(Contracts::new(client.clone())))?;
-    // module.merge(Contracts::new(client.clone()).into_rpc())?;
+    module.merge(Contracts::new(client.clone()).into_rpc())?;
 
     Ok(module)
 }
