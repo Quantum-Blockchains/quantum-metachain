@@ -5,7 +5,7 @@
 use std::sync::Arc;
 
 use jsonrpsee::RpcModule;
-use qmc_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash, Index};
+use qmc_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash};
 use sc_client_api::AuxStore;
 use sc_client_db::offchain::LocalStorage;
 pub use sc_rpc_api::DenyUnsafe;
@@ -50,7 +50,7 @@ where
 
     module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
 
-    module.merge(Contracts::new(client.clone()).into_rpc())?;
+    module.merge(Contracts::new(client).into_rpc())?;
 
     Ok(module)
 }
