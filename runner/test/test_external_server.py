@@ -4,6 +4,7 @@ import pytest
 
 from common.crypto import xor
 from web.external_server import get_psk, ExternalServerWrapper
+from core.onetimepad import encrypt, decrypt
 
 
 psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
@@ -35,7 +36,7 @@ def test_get_psk_success(psk_sig_read, psk_read, psk_sig_exists, psk_exists, req
         resp_body = resp.get_json()
 
     assert resp_body == {
-        "key": xor(psk, "1234"),
+        "key": encrypt(psk, "0x1234"),
         "key_id": "key_id",
         "signature": sig
     }
