@@ -2,6 +2,7 @@
 
 use std::{sync::Arc, time::Duration};
 
+use jsonrpsee::RpcModule;
 use qmc_runtime::{self, opaque::Block, RuntimeApi};
 use sc_client_api::{Backend, BlockBackend, ExecutorProvider};
 use sc_consensus_aura::{ImportQueueParams, SlotProportion, StartAuraParams};
@@ -225,24 +226,6 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
     let enable_grandpa = !config.disable_grandpa;
     let prometheus_registry = config.prometheus_registry().cloned();
 
-    let rpc_extensions_builder = {
-        let config = config.network.clone();
-        match backend.offchain_storage() {
-            Some(storage) => Box::new(move |_, _| {
-                let deps = crate::rpc::FullDeps {
-                    config: config.clone(),
-                    storage: storage.clone(),
-                };
-                crate::rpc::create_full(deps).map_err(Into::into)
-            }),
-            None => {
-                return Err(ServiceError::Other(
-                    "Failed to pass \"offchain storage\" to RPC.".to_string(),
-                ))
-            }
-        }
-    };
-
     let runner_port = config.runner_port.unwrap().to_le_bytes();
     if let Some(mut storage) = backend.offchain_storage() {
         storage.set(STORAGE_PREFIX, b"runner-port", &runner_port);
@@ -265,7 +248,7 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
         keystore: keystore_container.sync_keystore(),
         task_manager: &mut task_manager,
         transaction_pool: transaction_pool.clone(),
-        rpc_builder: rpc_extensions_builder,
+        rpc_builder: Box::new(|_, _| Ok(RpcModule::new(()))),
         backend,
         system_rpc_tx,
         config,

@@ -1,4 +1,6 @@
 import subprocess
+import time
+
 from common.logger import log
 import sys
 import common.config
@@ -24,7 +26,7 @@ class Node:
     def restart(self):
         log.info("Restarting QMC node...")
         self.terminate()
-
+        time.sleep(10)
         process = subprocess.Popen(self.startup_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
         log.info(f"QMC process ID: {process.pid}")
