@@ -2,16 +2,16 @@
 //! Substrate provides the `sc-rpc` crate, which defines the core RPC layer
 //! used by Substrate nodes. This file extends those RPC definitions with
 //! capabilities that are specific to this project's runtime configuration.
+use std::sync::Arc;
 
 use jsonrpsee::RpcModule;
+use qmc_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash, Index};
+use sc_client_api::AuxStore;
 use sc_client_db::offchain::LocalStorage;
 pub use sc_rpc_api::DenyUnsafe;
 use sc_service::config::NetworkConfiguration;
-use qmc_runtime::{opaque::Block, AccountId, Balance, Index, BlockNumber, Hash};
-use std::sync::Arc;
 use sp_api::ProvideRuntimeApi;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
-use sc_client_api::AuxStore;
 
 /// Full client dependencies.
 pub struct FullDeps<C> {
@@ -26,22 +26,27 @@ pub struct FullDeps<C> {
 pub fn create_full<C>(
     deps: FullDeps<C>,
 ) -> Result<RpcModule<()>, Box<dyn std::error::Error + Send + Sync>>
-    where
-        C: ProvideRuntimeApi<Block>
-		    + sc_client_api::BlockBackend<Block>
-		    + HeaderBackend<Block>
-		    + AuxStore
-		    + HeaderMetadata<Block, Error = BlockChainError>
-		    + Sync
-		    + Send
-		    + 'static,
-        C::Api: pallet_contracts_rpc::ContractsRuntimeApi<Block, AccountId, Balance, BlockNumber, Hash>,
+where
+    C: ProvideRuntimeApi<Block>
+        + sc_client_api::BlockBackend<Block>
+        + HeaderBackend<Block>
+        + AuxStore
+        + HeaderMetadata<Block, Error = BlockChainError>
+        + Sync
+        + Send
+        + 'static,
+    C::Api: pallet_contracts_rpc::ContractsRuntimeApi<Block, AccountId, Balance, BlockNumber, Hash>,
 {
-    use crate::psk_rpc::{Psk, PskApiServer};
     use pallet_contracts_rpc::{Contracts, ContractsApiServer};
 
+    use crate::psk_rpc::{Psk, PskApiServer};
+
     let mut module = RpcModule::new(());
-    let FullDeps { client, config, storage } = deps;
+    let FullDeps {
+        client,
+        config,
+        storage,
+    } = deps;
 
     module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
 
