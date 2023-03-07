@@ -47,9 +47,20 @@ def xor(s1: str, s2: str):
     """
     xor_two_str accepts two strings as input, converts them to bytes and perform XOR operation.
     """
-    result = int(s1, base=16) ^ int(s2, base=16)
-    return hex(result)
+    result = hex(int(s1, base=16) ^ int(s2, base=16))
+    with_zeros = trim_0x_prefix(result)  # trimming adds 0s, so we can leave lengths as they should be
+
+    return f"0x{with_zeros}"
 
 
 def trim_0x_prefix(val: str):
-    return format(int(val, 16), 'x')
+    result = format(int(val, 16), 'x')
+
+    return fill_key_with_zeros(result)
+
+
+def fill_key_with_zeros(key: str):
+    while len(key) < 64:
+        key = "0" + key
+
+    return key

@@ -16,10 +16,6 @@ use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 /// Full client dependencies.
 pub struct FullDeps<C> {
     pub client: Arc<C>,
-    /// Network configuration
-    pub config: NetworkConfiguration,
-    /// Offchain storage
-    pub storage: LocalStorage,
 }
 
 /// Instantiate all full RPC extensions.
@@ -39,16 +35,10 @@ where
 {
     use pallet_contracts_rpc::{Contracts, ContractsApiServer};
 
-    use crate::psk_rpc::{Psk, PskApiServer};
-
     let mut module = RpcModule::new(());
     let FullDeps {
         client,
-        config,
-        storage,
     } = deps;
-
-    module.merge(PskApiServer::into_rpc(Psk::new(config, storage)))?;
 
     module.merge(Contracts::new(client).into_rpc())?;
 
