@@ -38,6 +38,11 @@ sp-std = { version = "4.0.0", default-features = false, git = "https://github.co
 sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 sp-version = { version = "5.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 
+# Contracts specific packages
+pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
+pallet-contracts-primitives = { version = "6.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
+pallet-contracts-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
+
 # Used for the node template's RPCs
 frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
 pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
@@ -70,6 +75,9 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
+	"pallet-contracts/std",
+    "pallet-contracts-primitives/std",
+	"pallet-contracts-rpc-runtime-api/std",
 	"scale-info/std",
 	"sp-api/std",
 	"sp-block-builder/std",
