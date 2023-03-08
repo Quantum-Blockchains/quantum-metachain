@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 
 import node
-from node import Node, NodeService
+from node import Node, NodeService, NodeTest
 from web.local_server import rotate_pre_shared_key
 
 
@@ -14,7 +14,7 @@ signature = "fe2550d4baf581af5f9cc9428e425b093fd4777fdfeb7d00a9b52261754a56ec503
 
 @pytest.fixture()
 def before_each():
-    node.node_service = NodeService(Node(["python3", "node_simulator.py"]))
+    node.node_service = node.node_service = NodeService(NodeTest())
     node.node_service.current_node.start()
 
 
