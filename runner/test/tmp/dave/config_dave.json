@@ -1,0 +1,23 @@
+{
+    "__type__": "Config",
+    "local_peer_id": "12D3KooWDNdLiaUM2161yCQMvZy9LVgP3fcySk8nuimcKMDBXryj",
+    "local_server_port": 5007,
+    "external_server_port": 5008,
+    "psk_file_path": "test/tmp/dave/psk",
+    "psk_sig_file_path": "test/tmp/dave/psk_sig",
+    "node_key_file_path": "test/tmp/dave/node_key",
+    "key_rotation_time": 50,
+    "qrng_api_key": "",
+    "path_logs_node": "test/tmp/dave/node.log",
+    "node_logs_path": "test/tmp/dave/node.log",
+    "peers": {
+        "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
+            "qkd_addr": "http://localhost:8182/dave/alice",
+            "server_addr": "http://localhost:5002"
+        },
+        "12D3KooWKMGkDmZDuUsQgUyp7sdnDLCDFrJyeBCn723w5GQFzJgL": {
+            "qkd_addr": "http://localhost:8182/dave/charlie",
+            "server_addr": "http://localhost:5006"
+        }
+    }
+}

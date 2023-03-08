@@ -2,142 +2,138 @@ import common.config
 from common.config import Config
 from common.logger import log
 from common import crypto
-
+import common.crypto
 import requests
 import time
 import os
 import subprocess
 from os import path
 import json
+from web.qkd_mock_server import QkdMockServerWrapper
+from multiprocessing import Process
 
 
 with open('test/tmp/alice/config_alice.json', "r") as f:
     config_alice = json.load(f, object_hook=common.config.custom_config_decoder)
 with open('test/tmp/bob/config_bob.json', "r") as f:
     config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/charlie/config_charlie.json', "r") as f:
+    config_charlie = json.load(f, object_hook=common.config.custom_config_decoder)
+with open('test/tmp/dave/config_dave.json', "r") as f:
+    config_dave = json.load(f, object_hook=common.config.custom_config_decoder)
+
+nodes = [("alice", config_alice), ("bob", config_bob), ("charlie", config_charlie), ("dave", config_dave)]
 
 
 def start_test():
 
+    qkd = QkdMockServerWrapper()
+    log.info("Starting qkd server...")
+    qkd_server = Process(target=qkd.run)
+    qkd_server.start()
+
     log.info("Starting test...")
+
     test = False
 
     process_alice = subprocess.Popen(
-        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/alice/config_alice.json", "ALICE"])
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/alice/config_alice.json",
+         "ALICE"])
+
     process_bob = subprocess.Popen(
         ["python3", "runner_services_for_tests.py", "--config", "test/tmp/bob/config_bob.json", "BOB"])
+
+    process_charlie = subprocess.Popen(
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/charlie/config_charlie.json",
+         "CHARLIE"])
+
+    process_dave = subprocess.Popen(
+        ["python3", "runner_services_for_tests.py", "--config", "test/tmp/dave/config_dave.json",
+         "DAVE"])
 
     time.sleep(10)
 
     try:
-        send_psk_rotation_request(config_alice.local_server_port, config_alice.local_peer_id, True)
-        time.sleep(10)
-
-        with open(config_alice.abs_psk_file_path(), 'r') as file:
-            psk_alice = file.read()
-
-        with open(config_alice.abs_psk_sig_file_path(), 'r') as file:
-            sig_alice = file.read()
-
-        with open(config_alice.abs_node_key_file_path(), 'r') as file:
-            priv_key_alice = file.read()
-
-            if not crypto.verify(psk_alice, bytes.fromhex(sig_alice), crypto.to_public(priv_key_alice)):
-                test = False
-                raise ValueError("Alice psk signing failed.")
-            else:
-                log.info("Alice signing successful")
-
-        send_psk_rotation_request(config_bob.local_server_port, config_alice.local_peer_id, False)
-
-        timestamp = time.time()
-
-        while not path.exists(config_alice.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Alice did not generate a psk within a minute.")
-            time.sleep(1)
-
-        while not path.exists(config_bob.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Bob didn't get the psk within a minute.")
-            time.sleep(1)
-
-        with open(config_bob.abs_psk_file_path(), 'r') as file:
-            psk_bob = file.read()
-
-        if psk_bob != psk_alice:
-            test = False
-            log.error(f"{psk_alice} =! {psk_bob}")
-            raise ValueError("Alice and Bob's keys are different")
-
-        if not crypto.verify(psk_bob, bytes.fromhex(sig_alice), crypto.to_public_from_peerid(config_alice.local_peer_id)):
-            test = False
-            raise ValueError("Bob psk verification failed.")
-        else:
-            log.info("Bob psk verification successful")
-
-        time.sleep(70)
-
-        send_psk_rotation_request(config_bob.local_server_port, config_bob.local_peer_id, True)
-        time.sleep(5)
-        send_psk_rotation_request(config_alice.local_server_port, config_bob.local_peer_id, False)
-
-        timestamp = time.time()
-
-        while not path.exists(config_bob.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Bob did not generate a psk within a minute.")
-            time.sleep(1)
-
-        with open(config_bob.abs_psk_file_path(), 'r') as file:
-            psk_bob = file.read()
-
-        while not path.exists(config_alice.abs_psk_file_path()):
-            if time.time() - timestamp > 60:
-                test = False
-                raise ValueError("Alice didn't get the psk within a minute.")
-            time.sleep(1)
-
-        with open(config_alice.abs_psk_file_path(), 'r') as file:
-            psk_alice = file.read()
-
-        if psk_alice != psk_bob:
-            test = False
-            log.error(f"{psk_alice} =! {psk_bob}")
-            raise ValueError("Alice and Bob's keys are different")
+        for name, node_config in nodes:
+            check_psk_rotation(name, node_config)
 
         test = True
 
     except Exception as e:
+        test = False
         log.error("ERROR: " + str(e))
     finally:
+        qkd_server.terminate()
         process_alice.terminate()
         process_bob.terminate()
-        if path.exists(config_alice.abs_log_node_file_path()):
-            os.remove(config_alice.abs_log_node_file_path())
-        if path.exists(config_bob.abs_log_node_file_path()):
-            os.remove(config_bob.abs_log_node_file_path())
-        if path.exists(config_alice.abs_psk_file_path()):
-            os.remove(config_alice.abs_psk_file_path())
-        if path.exists(config_bob.abs_psk_file_path()):
-            os.remove(config_bob.abs_psk_file_path())
-        if path.exists(config_alice.abs_psk_sig_file_path()):
-            os.remove(config_alice.abs_psk_sig_file_path())
-        if path.exists(config_bob.abs_psk_sig_file_path()):
-            os.remove(config_bob.abs_psk_sig_file_path())
+        process_charlie.terminate()
+        process_dave.terminate()
+
+        for _, config in nodes:
+            if path.exists(config.abs_log_node_file_path()):
+                os.remove(config.abs_log_node_file_path())
+            if path.exists(config.abs_psk_file_path()):
+                os.remove(config.abs_psk_file_path())
+            if path.exists(config.abs_psk_sig_file_path()):
+                os.remove(config.abs_psk_sig_file_path())
+
+        log.info("Closing QMC processes...")
+
         if test:
             log.info("Test: Successfully")
         else:
             log.info("Test: Not successfully")
 
 
+def check_psk_rotation(signer_name, signer_config):
+    send_psk_rotation_request(signer_config.local_server_port, signer_config.local_peer_id, True)
+    sleep_until_file_exists(signer_config.abs_psk_file_path())
+
+    for node_name, node_config in nodes:
+        if node_config.local_peer_id in signer_config.peers:
+            send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False)
+            sleep_until_file_exists(node_config.abs_psk_file_path())
+
+    with open(signer_config.abs_psk_file_path(), 'r') as file:
+        psk = file.read()
+
+    with open(signer_config.abs_psk_sig_file_path(), 'r') as file:
+        sig = file.read()
+
+    for node_name, node_config in nodes:
+        if node_name != signer_name:
+            if not path.exists(node_config.abs_psk_file_path()):
+                send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False)
+                sleep_until_file_exists(node_config.abs_psk_file_path())
+
+            with open(node_config.abs_psk_file_path(), 'r') as file:
+                psk_node = file.read()
+
+            if psk_node != psk:
+                log.error(f"{psk} =! {psk_node}")
+                raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
+
+            if not common.crypto.verify(psk_node, bytes.fromhex(sig),
+                                        common.crypto.to_public_from_peerid(signer_config.local_peer_id)):
+                raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
+            else:
+                log.info(f"({signer_name}) {node_name} psk verification successful")
+    log.info(f"{signer_name}'s psk rotation successful")
+    time.sleep(60)
+
+
 def send_psk_rotation_request(runner_port, peer_id, is_local):
     url = f"http://localhost:{runner_port}/psk"
     data = {'peer_id': peer_id, 'is_local_peer': is_local}
     requests.post(url, json=data)
+
+
+def sleep_until_file_exists(file_path):
+    timestamp = time.time()
+    while not path.exists(file_path):
+        if time.time() - timestamp > 60:
+            raise ValueError(f"No file at {file_path} after 1 minute")
+        time.sleep(1)
 
 
 start_test()

@@ -10,9 +10,13 @@
         "qrng_api_key": "",
         "node_logs_path": "test/tmp/bob/node.log",
         "peers": {
-            "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-                "qkd_addr": "http://212.244.177.99:9182/api/v1/keys/Alice1SAE",
-                "server_addr": "http://localhost:5002"
-            }
+             "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
+            "qkd_addr": "http://localhost:8182/bob/alice",
+            "server_addr": "http://localhost:5002"
+        },
+        "12D3KooWKMGkDmZDuUsQgUyp7sdnDLCDFrJyeBCn723w5GQFzJgL": {
+            "qkd_addr": "http://localhost:8182/bob/charlie",
+            "server_addr": "http://localhost:5006"
+        }
         }
     }
