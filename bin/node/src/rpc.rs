@@ -34,9 +34,7 @@ where
     use pallet_contracts_rpc::{Contracts, ContractsApiServer};
 
     let mut module = RpcModule::new(());
-    let FullDeps {
-        client,
-    } = deps;
+    let FullDeps { client } = deps;
 
     module.merge(Contracts::new(client).into_rpc())?;
 
