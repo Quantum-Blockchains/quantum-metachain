@@ -207,7 +207,8 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
             import_queue,
             block_announce_validator_builder: None,
             warp_sync: Some(warp_sync),
-        })?;
+        })
+        .await?;
 
     if config.offchain_worker.enabled {
         sc_service::build_offchain_workers(
@@ -227,19 +228,12 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
 
     let rpc_extensions_builder = {
         let client = client.clone();
-        match backend.offchain_storage() {
-            Some(storage) => Box::new(move |_, _| {
-                let deps = crate::rpc::FullDeps {
-                    client: client.clone(),
-                };
-                crate::rpc::create_full(deps).map_err(Into::into)
-            }),
-            None => {
-                return Err(ServiceError::Other(
-                    "Failed to pass \"offchain storage\" to RPC.".to_string(),
-                ))
-            }
-        }
+        Box::new(move |_, _| {
+            let deps = crate::rpc::FullDeps {
+                client: client.clone(),
+            };
+            crate::rpc::create_full(deps).map_err(Into::into)
+        })
     };
 
     let runner_port = config.runner_port.unwrap().to_le_bytes();

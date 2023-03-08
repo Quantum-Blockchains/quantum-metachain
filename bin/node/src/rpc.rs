@@ -7,9 +7,7 @@ use std::sync::Arc;
 use jsonrpsee::RpcModule;
 use qmc_runtime::{opaque::Block, AccountId, Balance, BlockNumber, Hash};
 use sc_client_api::AuxStore;
-use sc_client_db::offchain::LocalStorage;
 pub use sc_rpc_api::DenyUnsafe;
-use sc_service::config::NetworkConfiguration;
 use sp_api::ProvideRuntimeApi;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 
