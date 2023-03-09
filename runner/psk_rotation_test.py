@@ -1,5 +1,4 @@
 import common.config
-from common.config import Config
 from common.logger import log
 from common import crypto
 import common.crypto
@@ -10,8 +9,10 @@ import subprocess
 from os import path
 import json
 from web.qkd_mock_server import QkdMockServerWrapper
+import multiprocessing
 from multiprocessing import Process
 
+multiprocessing.set_start_method("fork")
 
 with open('test/tmp/alice/config_alice.json', "r") as f:
     config_alice = json.load(f, object_hook=common.config.custom_config_decoder)
