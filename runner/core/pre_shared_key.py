@@ -18,7 +18,7 @@ def generate_psk_from_qrng():
     psk = generate_random_hex()
     log.debug(f"Generated psk: {psk}")
 
-    return crypto.trim_0x_prefix(psk)
+    return psk
 
 
 def get_psk_from_peers(psk_creator_peer_id: str = None) -> PskWithSignature:
@@ -73,4 +73,4 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
 def __decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
     _, qkd_key = get_dec_key(qkd_addr, qkd_key_id)
     psk = onetimepad.decrypt(encrypted_psk, qkd_key)
-    return crypto.trim_0x_prefix(psk)
+    return psk
