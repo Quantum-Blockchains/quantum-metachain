@@ -1,4 +1,4 @@
-from common.crypto import base58_to_hex, base64_to_hex, xor, trim_0x_prefix, sign, verify, to_public, to_public_from_peerid
+from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid
 
 
 def test_public_key_conversion():
@@ -61,51 +61,4 @@ def test_decode_base58():
 
 def test_decode_base64():
     result = base64_to_hex("qV4XorklC1EbehIbsovSaRGlWhyw3jETpt/laDSr3BQ=")
-    assert result == "0xa95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
-
-
-def test_xor_valid_lengths():
-    qkd_key = "0xa95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
-    psk = "0xa9d6e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"
-
-    encrypted_result = xor(qkd_key, psk)
-
-    assert encrypted_result == "0x0088f15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
-    assert xor(qkd_key, encrypted_result) == psk
-    assert (len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
-
-
-def test_xor_leading_0s_in_psk():
-    qkd_key = "0xa95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
-    psk = "0x0000e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"
-
-    encrypted_result = xor(qkd_key, psk)
-
-    assert encrypted_result == "0xa95ef15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
-    assert xor(qkd_key, encrypted_result) == psk
-    assert (len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
-
-
-def test_xor_both_values_with_leading_0s():
-    qkd_key = "0x000017a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
-    psk = "0x0000e6fd9b9fbdd2527b2b7919d0e19e2c5b64e9cb554760d8aa686c0131f282"
-
-    encrypted_result = xor(qkd_key, psk)
-
-    assert encrypted_result == "0x0000f15f22bab68349013962ab5b33f73dfe3ef57b8b76737e758d04359a2e96"
-    assert xor(qkd_key, encrypted_result) == psk
-    assert (len(qkd_key) == 66 and len(psk) == 66 and len(encrypted_result) == 66)
-
-
-def test_trim_0x_prefix():
-    val_with_0x = "0x336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
-    val_without_0x = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
-
-    assert trim_0x_prefix(val_with_0x) == val_without_0x
-    assert trim_0x_prefix(val_without_0x) == val_without_0x
-
-    val_with_0x = "0x0000297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"  # test with preceding 0s
-    val_without_0x = "0000297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
-
-    assert trim_0x_prefix(val_with_0x) == val_without_0x
-    assert trim_0x_prefix(val_without_0x) == val_without_0x
+    assert result == "a95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"

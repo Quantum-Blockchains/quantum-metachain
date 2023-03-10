@@ -17,7 +17,7 @@ def test_get_enc_key_success(requests_mock):
 
     key_id, decoded_key = get_enc_key(enc_url)
     assert key_id == "key_ID"
-    assert decoded_key == "0x1234"
+    assert decoded_key == "1234"
 
 
 def test_get_enc_key_empty_url(requests_mock):
@@ -66,7 +66,7 @@ def test_get_dec_key_success(requests_mock):
 
     key_id_response, decoded_key = get_dec_key(dec_url, key_id)
     assert key_id_response == key_id
-    assert decoded_key == "0x4321"
+    assert decoded_key == "4321"
 
 
 def test_get_dec_key_empty_url(requests_mock):
