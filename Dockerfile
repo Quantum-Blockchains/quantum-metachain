@@ -16,7 +16,7 @@ FROM python:3.10.10-slim
 
 WORKDIR /app
 
-EXPOSE 30333 9944 9933 5002 5004
+EXPOSE 30333 9944 9933 5002
 
 COPY --from=builder node/target/release/qmc-node qmc-node
 

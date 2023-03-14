@@ -36,7 +36,7 @@ services:
       - '30334:30333'
       - '9945:9944'
       - '9934:9933'
-      - '5004:5004'
+      - '5004:5002'
     volumes:
       - ./docker/local/bob/config.json:/app/runner/config.json:ro
       - ./docker/local/bob/node_key:/app/runner/node_key:ro

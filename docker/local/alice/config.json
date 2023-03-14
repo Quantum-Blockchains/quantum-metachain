@@ -12,7 +12,7 @@
   "peers": {
     "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
       "qkd_addr": "http://212.244.177.99:8182/api/v1/keys/Bob1SAE",
-      "server_addr": "http://bob:5004"
+      "server_addr": "http://bob:5002"
     }
   }
 }

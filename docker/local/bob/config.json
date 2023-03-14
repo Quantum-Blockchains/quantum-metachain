@@ -1,8 +1,8 @@
 {
   "__type__": "Config",
   "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
-  "local_server_port": 5003,
-  "external_server_port": 5004,
+  "local_server_port": 5001,
+  "external_server_port": 5002,
   "psk_file_path": "psk",
   "psk_sig_file_path": "psk_sig",
   "node_key_file_path": "node_key",
