@@ -1,0 +1,18 @@
+{
+  "__type__": "Config",
+  "local_peer_id": "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc",
+  "local_server_port": 5001,
+  "external_server_port": 5002,
+  "psk_file_path": "psk",
+  "psk_sig_file_path": "psk_sig",
+  "node_key_file_path": "node_key",
+  "key_rotation_time": 50,
+  "qrng_api_key": "",
+  "node_logs_path": "node.log",
+  "peers": {
+    "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
+      "qkd_addr": "http://212.244.177.99:8182/api/v1/keys/Bob1SAE",
+      "server_addr": "http://bob:5004"
+    }
+  }
+}
