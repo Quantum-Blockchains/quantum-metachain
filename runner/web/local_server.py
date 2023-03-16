@@ -10,6 +10,7 @@ from common import crypto
 import json
 import common.config
 import common.file
+from web.error_handler import init_error_handlers
 
 
 GET_PSK_WAITING_TIME = 1
@@ -19,6 +20,7 @@ class LocalServerWrapper:
 
     def __init__(self):
         self.local_server = Flask(__name__)
+        init_error_handlers(self.local_server)
         self.add_endpoint('/psk', 'rotate_pre_shared_key', start_thread_with_rotate_pre_shared_key, methods=['POST'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
