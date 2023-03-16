@@ -15,7 +15,7 @@ def init_error_handlers(server: Flask):
     server.register_error_handler(404, handle_not_found)
     server.register_error_handler(KeyError, handle_bad_request)
     server.register_error_handler(RequestException, handle_external_request_exception)
-    server.register_error_handler(RequestException, handle_external_request_exception)
+    server.register_error_handler(OSError, handle_os_exception)
     server.register_error_handler(Exception, handle_unexpected_exception)
 
 
