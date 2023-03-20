@@ -3,24 +3,29 @@ from common import crypto
 import validators
 
 
-def get_enc_key(url):
+def get_enc_key(url, cert_path=None, key_path=None):
     qkd_url = f"{url}/enc_keys?size=256"
     if not validators.url(qkd_url):
         raise requests.exceptions.InvalidURL
 
-    response = requests.get(qkd_url).json()
-
+    response = _call_qkd(qkd_url, cert_path, key_path)
     return _unwrap_response(response)
 
 
-def get_dec_key(url, key_id):
+def get_dec_key(url, key_id, cert_path=None, key_path=None):
     qkd_url = f"{url}/dec_keys?key_ID={key_id}"
     if not validators.url(qkd_url):
         raise requests.exceptions.InvalidURL
 
-    response = requests.get(qkd_url).json()
-
+    response = _call_qkd(qkd_url, cert_path, key_path)
     return _unwrap_response(response)
+
+
+def _call_qkd(qkd_url, cert_path=None, key_path=None):
+    if cert_path is None or key_path is None:
+        return requests.get(qkd_url).json()
+    else:
+        return requests.get(qkd_url, cert=(cert_path, key_path), verify=False).json()
 
 
 def _unwrap_response(response):
