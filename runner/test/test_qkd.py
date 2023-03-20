@@ -157,8 +157,7 @@ def test_get_dec_key_calls_without_cert_when_paths_are_not_passed_in_args(reques
     assert decoded_key == "4321"
     assert requests_mock.last_request.scheme == 'http'
     assert requests_mock.last_request.verify is True
-    assert requests_mock.last_request.cert == None
-
+    assert requests_mock.last_request.cert is None
 
 
 def test_get_dec_key_empty_url(requests_mock):

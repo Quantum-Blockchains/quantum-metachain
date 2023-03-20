@@ -39,7 +39,9 @@ def get_psk(peer_id):
 
     psk = common.file.psk_file_manager.read()
     psk_sig = common.file.psk_sig_file_manager.read()
-    key_id, qkd_key = qkd.get_enc_key(peer_config['qkd_addr'])
+    qkd_cert_path = common.config.config_service.current_config.abs_qkd_cert_path_file_path()
+    qkd_cert_key = common.config.config_service.current_config.abs_qkd_cert_key_path_file_path()
+    key_id, qkd_key = qkd.get_enc_key(peer_config['qkd_addr'], qkd_cert_path, qkd_cert_key)
     xored_psk = onetimepad.encrypt(psk, qkd_key)
 
     return jsonify({
