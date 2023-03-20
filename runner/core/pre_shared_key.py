@@ -71,6 +71,8 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
 
 
 def __decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
-    _, qkd_key = get_dec_key(qkd_addr, qkd_key_id)
+    qkd_cert_path = common.config.config_service.current_config.abs_qkd_cert_path_file_path()
+    qkd_cert_key = common.config.config_service.current_config.abs_qkd_cert_key_path_file_path()
+    _, qkd_key = get_dec_key(qkd_addr, qkd_key_id, qkd_cert_path, qkd_cert_key)
     psk = onetimepad.decrypt(encrypted_psk, qkd_key)
     return psk
