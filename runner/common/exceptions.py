@@ -7,4 +7,3 @@ class PeerMisconfiguredError(Exception):
 
 class PSKNotFoundError(Exception):
     pass
-

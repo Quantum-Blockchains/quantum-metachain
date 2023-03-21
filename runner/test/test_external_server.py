@@ -46,7 +46,7 @@ def test_get_psk_peer_config_missing():
     peer_id = "0000000000000000000000000000000000000000000000000"
 
     try:
-        resp = get_psk(peer_id)
+        _ = get_psk(peer_id)
     except exceptions.PeerMisconfiguredError:
         return
 
@@ -57,7 +57,7 @@ def test_get_psk_psk_missing():
     peer_id = "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"
 
     try:
-        resp = get_psk(peer_id)
+        _ = get_psk(peer_id)
     except exceptions.PSKNotFoundError:
         return
 
