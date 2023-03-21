@@ -5,12 +5,15 @@ from core import qkd, onetimepad
 from common.logger import log
 import common.config
 import common.file
+from web.error_handler import init_error_handlers
+from common import exceptions
 
 
 class ExternalServerWrapper:
 
     def __init__(self):
         self.external_server = Flask(__name__)
+        init_error_handlers(self.external_server)
         self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', get_psk, methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
@@ -28,11 +31,11 @@ def get_psk(peer_id):
     peer_config = common.config.config_service.current_config.peers.get(peer_id)
     if peer_config is None or peer_config["qkd_addr"] is None:
         log.warning(f"Peer with id = {peer_id} is not configured")
-        return Response(json.dumps({"message": "Peer is not configured"}), status=404, mimetype="application/json")
+        raise exceptions.PeerMisconfiguredError
 
     if not common.file.psk_file_manager.exists() or not common.file.psk_sig_file_manager.exists():
         log.warning("Couldn't find psk or signature file")
-        return Response(json.dumps({"message": "Pre shared key not found"}), status=404, mimetype="application/json")
+        raise exceptions.PSKNotFoundError
 
     psk = common.file.psk_file_manager.read()
     psk_sig = common.file.psk_sig_file_manager.read()

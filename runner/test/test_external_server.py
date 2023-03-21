@@ -4,6 +4,7 @@ import pytest
 
 from web.external_server import get_psk, ExternalServerWrapper
 from core.onetimepad import encrypt, decrypt
+from common import exceptions
 
 
 psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
@@ -44,19 +45,23 @@ def test_get_psk_success(psk_sig_read, psk_read, psk_sig_exists, psk_exists, req
 def test_get_psk_peer_config_missing():
     peer_id = "0000000000000000000000000000000000000000000000000"
 
-    resp = get_psk(peer_id)
+    try:
+        _ = get_psk(peer_id)
+    except exceptions.PeerMisconfiguredError:
+        return
 
-    assert resp.status_code == 404
-    assert resp.get_json() == {"message": "Peer is not configured"}
+    raise Exception("Test succeeded when it should fail")
 
 
 def test_get_psk_psk_missing():
     peer_id = "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"
 
-    resp = get_psk(peer_id)
+    try:
+        _ = get_psk(peer_id)
+    except exceptions.PSKNotFoundError:
+        return
 
-    assert resp.status_code == 404
-    assert resp.get_json() == {"message": "Pre shared key not found"}
+    raise Exception("Test succeeded when it should fail")
 
 
 # TODO remove this skip mark and test functionality after implementing error handler
