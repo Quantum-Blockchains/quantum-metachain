@@ -64,9 +64,13 @@ class Config:
         return f"{ROOT_DIR}/{self.node_logs_path}"
 
     def abs_qkd_cert_path_file_path(self):
+        if self.qkd_cert_path is None:
+            return None
         return f"{ROOT_DIR}/{self.qkd_cert_path}"
 
     def abs_qkd_cert_key_path_file_path(self):
+        if self.qkd_cert_key_path is None:
+            return None
         return f"{ROOT_DIR}/{self.qkd_cert_key_path}"
 
 
