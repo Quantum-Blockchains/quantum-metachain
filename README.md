@@ -1,22 +1,70 @@
-# Quantum Meta Chain
+# Quantum Meta-chain
 
-## Build
+This is a repository for Quantum Meta-chain, an implementation of a quantum node using quantum 
+and post-quantum security. It is a fork of a rust-based repository, [Substrate](https://github.com/paritytech/substrate).
 
-### Runner dependencies
+## Table of contents
+- [1. Setup](#1-setup)
+  - [1.1. Prerequisites](#11-prerequisites)
+- [2. Building](#2-build)
+  - [2.1. Using `cargo`](#21-using-cargo)
+  - [2.2. Using Docker](#22-using-docker)
+- [3. Running](#3-running)
+  - [3.1. Using Python](#31-using-python)
+  - [3.2. Using Docker](#32-using-docker)
+- [4 - Testing](#4-testing)
+  - [4.1 Runner unit tests](#41-runner-unit-tests)
+  - [4.2 Rust unit tests](#42-rust-unit-tests)
+  - [4.3 Key rotation tests](#43-key-rotation-tests)
+- [5 - Documentation](#5-documentation)
+
+## 1. Setup
+### 1.1. Prerequisites 
+To begin working with this repository you will need the following dependencies:
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Python](https://www.python.org/downloads/)
+- [Docker](https://docs.docker.com/engine/install/) (optional)
+
+After downloading your dependencies you need to make sure to continue with these steps:
+- Because this a substrate fork you will also need to configure Rust with few additional steps, listed [here](https://docs.substrate.io/install/)
+by substrate team.
+- Install Python dependencies:
 ```bash
 python3 -m venv venv
 . ./venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-### Node dependencies
+## 2. Build
+There are few ways to build this repository before running, listed below.
+
+### 2.1. Using `cargo` 
+Cargo is a tool provided by rust framework to easily manage building, running and testing rust code.
+You can use it to build quantum node code with command:
 ```bash
 cargo build --release
 ```
+This will create a binary file in `./target/release`, called `qmc-node`.
 
-## Run
+### 2.2. Using Docker
+Alternate way of building this repository uses Docker. To build a node use command:
+```bash
+docker build -t quantum-metachain .
+```
+This will create a `quantum-metachain` docker image.
+Alternatively, you can also build it with `make`:
+```bash
+make build
+```
 
-Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
+## 3. Running
+Depending on how you built your project you can run it in different ways
+
+### 3.1. Using Python
+Quantum Meta-chain introduces a concept of **Pre-shared key rotation**.
+To make things work we introduced a system for managing rotating those keys called a **runner**.
+Runner works as a wrapper around Rust-built code that rotates pre-shared keys after some period of time.
+To run a Rust-built node run a following command:
 
 ```bash
 python3 runner/app.py --config-file <config_path> --process './target/release/qmc-node \
@@ -30,63 +78,62 @@ python3 runner/app.py --config-file <config_path> --process './target/release/qm
 --rpc-methods Unsafe \
 --no-mdns'
 ```
-
-For example:
-
+If you want to run a configuration f.e. for alice node, you would need to change configuration to that on of alice:
 ```bash
-python3 runner/app.py --config-file config.json --process './target/release/qmc-node \
---base-path /tmp/alice \
+python3 runner/app.py --config-file ./path/to/alice/config.json --process './target/release/qmc-node \
 --chain ./quantumMetachainSpecRaw.json \
---name alice \
---port 30333 \
---ws-port 9945 \
---rpc-port 9933 \
---telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
---rpc-methods Unsafe \
---no-mdns'
+--name Alice \
+
+...
 ```
+For a list of all available flags run your `qmc-node` with `--help` flag
 
-## Docker
-
+### 3.2. Using Docker
+To run a Docker container from docker image built in earlier steps run:
 ```bash
-docker build -t quantum-metachain .
 docker run -it quantum-metachain
 ```
+Optionally you can type
+```bash
+make start
+# and
+make stop
+```
 
-## Test
+## 4. Testing
+There are few layers that need to be covered with testing suites:
+- Quantum Meta-chain code
+- Runner code
+- Key rotating flow
+Each of those layers have their separate way of writing/running tests
 
-### Node unit tests
+### 4.1 Runner unit tests
+To run runner unit tests:
+```bash
+pytest ./runner/test --ignore=psk_rotation_test.py
+```
 
+### 4.2 Rust unit tests
+To run QMC unit tests:
 ```bash
 cargo test
 ```
 
-### Runner unit tests
-
-```bash
-cd runner
-pytest --ignore=psk_rotation_test.py
-```
-
-### Key rotation testing
-
+### 4.3 Key rotation tests
+To run integration key rotation tests:
 ```bash
 cd runner
 python3 psk_rotation_test.py
 ```
+  
 
-## Documentation
-
-### Generate
-
+## 5. Documentation
+To generate documentation run:
 ```bash
 cargo doc
 ```
 
-### Display
-
-In order to display documentation go to `target/doc/<crate you want to see>` and open in the browser located there `index.html` file, e.g.
-
+In order to display documentation go to `target/doc/<crate you want to see>` and open `index.html` file in the browser that you want to, e.g.
 #### MAC
 
 ```bash
