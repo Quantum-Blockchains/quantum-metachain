@@ -11,11 +11,11 @@
   "node_logs_path": "node.log",
   "peers": {
     "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-      "qkd_addr": "http://212.244.177.99:9282/api/v1/keys/Alice2SAE",
+      "qkd_addr": "https://172.16.0.202:9282/api/v1/keys/Alice2SAE",
       "server_addr": "http://alice:5002"
     },
     "12D3KooWSqKmnECvjnp48GWuErQbJ4gbrtoTgaYrtoCagadQ5ANr": {
-      "qkd_addr": "http://212.244.177.99:9082/api/v1/keys/AliceSAE",
+      "qkd_addr": "https://172.16.0.202:9082/api/v1/keys/Alice0SAE",
       "server_addr": "http://dave:5002"
     }
   }
