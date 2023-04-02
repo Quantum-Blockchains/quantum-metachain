@@ -3,12 +3,20 @@ FROM rustlang/rust:nightly as builder
 WORKDIR /node
 
 RUN apt-get update && apt-get -y install clang cmake protobuf-compiler
-RUN rustup target add wasm32-unknown-unknown
 
 COPY bin bin
 COPY pallets pallets
+COPY target target
 COPY Cargo.lock .
 COPY Cargo.toml .
+COPY rust-toolchain .
+
+RUN rustup target add wasm32-unknown-unknown
+
+ENV RUST_BACKTRACE=1
+ENV CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG=true
+
+#CMD ["/bin/bash"]
 
 RUN cargo build --release --target-dir target
 

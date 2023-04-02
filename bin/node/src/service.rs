@@ -207,8 +207,7 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
             import_queue,
             block_announce_validator_builder: None,
             warp_sync: Some(warp_sync),
-        })
-        .await?;
+        })?;
 
     if config.offchain_worker.enabled {
         sc_service::build_offchain_workers(
