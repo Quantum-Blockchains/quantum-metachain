@@ -6,6 +6,7 @@
 target/
 
 # Runner
+certificates
 *.config.json
 venv/
 __pycache__

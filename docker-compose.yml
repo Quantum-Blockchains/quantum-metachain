@@ -12,6 +12,7 @@ services:
       - ./docker/local/alice/config.json:/app/runner/config.json:ro
       - ./docker/local/alice/node_key:/app/runner/node_key:ro
       - ./docker/local/alice/psk:/app/runner/psk
+      - ./runner/certificates:/app/runner/certificates:ro
       - alice_data:/data
     command: >
       python3 runner/app.py --config-file config.json --process './qmc-node
@@ -41,6 +42,7 @@ services:
       - ./docker/local/bob/config.json:/app/runner/config.json:ro
       - ./docker/local/bob/node_key:/app/runner/node_key:ro
       - ./docker/local/bob/psk:/app/runner/psk
+      - ./runner/certificates:/app/runner/certificates:ro
       - bob_data:/data
     command: >
       python3 runner/app.py --config-file config.json --process './qmc-node
@@ -70,6 +72,7 @@ services:
       - ./docker/local/dave/config.json:/app/runner/config.json:ro
       - ./docker/local/dave/node_key:/app/runner/node_key:ro
       - ./docker/local/dave/psk:/app/runner/psk
+      - ./runner/certificates:/app/runner/certificates:ro
       - dave_data:/data
     command: >
       python3 runner/app.py --config-file config.json --process './qmc-node
@@ -99,6 +102,7 @@ services:
       - ./docker/local/charlie/config.json:/app/runner/config.json:ro
       - ./docker/local/charlie/node_key:/app/runner/node_key:ro
       - ./docker/local/charlie/psk:/app/runner/psk
+      - ./runner/certificates:/app/runner/certificates:ro
       - charlie_data:/data
     command: >
       python3 runner/app.py --config-file config.json --process './qmc-node

@@ -16,6 +16,8 @@ default_config = {
     "node_logs_path": "node.log",
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
+    "qkd_cert_path": "certificates/qbck-client.crt",
+    "qkd_cert_key_path": "certificates/qbck-client.key",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd_addr": "http://localhost:9182/api/v1/keys/Alice1SAE",
@@ -35,7 +37,7 @@ class InvalidConfigurationFile(Exception):
 class Config:
 
     def __init__(self, local_peer_id, local_server_port, external_server_port, psk_file_path, psk_sig_file_path,
-                 node_key_file_path, key_rotation_time, qrng_api_key, node_logs_path, peers):
+                 node_key_file_path, key_rotation_time, qrng_api_key, node_logs_path, qkd_cert_path, qkd_cert_key_path, peers):
         self.local_peer_id = local_peer_id
         self.local_server_port = local_server_port
         self.external_server_port = external_server_port
@@ -45,6 +47,8 @@ class Config:
         self.key_rotation_time = key_rotation_time
         self.qrng_api_key = qrng_api_key
         self.node_logs_path = node_logs_path
+        self.qkd_cert_path = qkd_cert_path
+        self.qkd_cert_key_path = qkd_cert_key_path
         self.peers = peers
 
     def abs_psk_file_path(self):
@@ -58,6 +62,16 @@ class Config:
 
     def abs_log_node_file_path(self):
         return f"{ROOT_DIR}/{self.node_logs_path}"
+
+    def abs_qkd_cert_path_file_path(self):
+        if self.qkd_cert_path is None:
+            return None
+        return f"{ROOT_DIR}/{self.qkd_cert_path}"
+
+    def abs_qkd_cert_key_path_file_path(self):
+        if self.qkd_cert_key_path is None:
+            return None
+        return f"{ROOT_DIR}/{self.qkd_cert_key_path}"
 
 
 def custom_config_decoder(obj):
@@ -73,6 +87,8 @@ def custom_config_decoder(obj):
                 obj['key_rotation_time'],
                 obj['qrng_api_key'],
                 obj['node_logs_path'],
+                obj['qkd_cert_path'],
+                obj['qkd_cert_key_path'],
                 obj['peers']
             )
         except KeyError as e:
@@ -92,6 +108,8 @@ def init_config(config_path=None):
             default_config['key_rotation_time'],
             default_config['qrng_api_key'],
             default_config['node_logs_path'],
+            default_config['qkd_cert_path'],
+            default_config['qkd_cert_key_path'],
             default_config['peers']
         )
     else:

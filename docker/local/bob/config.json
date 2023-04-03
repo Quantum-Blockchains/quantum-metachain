@@ -9,13 +9,15 @@
   "key_rotation_time": 50,
   "qrng_api_key": "",
   "node_logs_path": "node.log",
+  "qkd_cert_path": "certificates/qbck-client.crt",
+  "qkd_cert_key_path": "certificates/qbck-client.key",
   "peers": {
     "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-      "qkd_addr": "http://212.244.177.99:9182/api/v1/keys/Alice1SAE",
+      "qkd_addr": "https://172.16.0.202:9182/api/v1/keys/Alice1SAE",
       "server_addr": "http://alice:5002"
     },
     "12D3KooWSqKmnECvjnp48GWuErQbJ4gbrtoTgaYrtoCagadQ5ANr": {
-      "qkd_addr": "http://212.244.177.99:8382/api/v1/keys/Bob3SAE",
+      "qkd_addr": "https://172.16.0.202:8382/api/v1/keys/Bob3SAE",
       "server_addr": "http://dave:5002"
     }
   }

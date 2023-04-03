@@ -1,22 +1,24 @@
 {
-        "__type__": "Config",
-        "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
-        "local_server_port": 5003,
-        "external_server_port": 5004,
-        "psk_file_path": "test/tmp/bob/psk",
-        "psk_sig_file_path": "test/tmp/bob/psk_sig",
-        "node_key_file_path": "test/tmp/bob/node_key",
-        "key_rotation_time": 50,
-        "qrng_api_key": "",
-        "node_logs_path": "test/tmp/bob/node.log",
-        "peers": {
-             "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-            "qkd_addr": "http://localhost:8182/bob/alice",
-            "server_addr": "http://localhost:5002"
-        },
-        "12D3KooWKMGkDmZDuUsQgUyp7sdnDLCDFrJyeBCn723w5GQFzJgL": {
-            "qkd_addr": "http://localhost:8182/bob/charlie",
-            "server_addr": "http://localhost:5006"
-        }
-        }
+  "__type__": "Config",
+  "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
+  "local_server_port": 5003,
+  "external_server_port": 5004,
+  "psk_file_path": "test/tmp/bob/psk",
+  "psk_sig_file_path": "test/tmp/bob/psk_sig",
+  "node_key_file_path": "test/tmp/bob/node_key",
+  "key_rotation_time": 50,
+  "qrng_api_key": "",
+  "node_logs_path": "test/tmp/bob/node.log",
+  "qkd_cert_path": null,
+  "qkd_cert_key_path": null,
+  "peers": {
+    "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
+      "qkd_addr": "http://localhost:8182/bob/alice",
+      "server_addr": "http://localhost:5002"
+    },
+    "12D3KooWKMGkDmZDuUsQgUyp7sdnDLCDFrJyeBCn723w5GQFzJgL": {
+      "qkd_addr": "http://localhost:8182/bob/charlie",
+      "server_addr": "http://localhost:5006"
     }
+  }
+}
