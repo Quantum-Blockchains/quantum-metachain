@@ -21,9 +21,9 @@ def generate_psk_from_qrng():
     return psk
 
 
-def get_psk_from_peers(psk_creator_peer_id: str = None) -> PskWithSignature:
+def get_psk_from_peers(block_number: int, psk_creator_peer_id: str = None) -> PskWithSignature:
     psks_with_sig = __fetch_from_peers()
-    return __validate_psk(psks_with_sig, psk_creator_peer_id)
+    return __validate_psk(block_number, psks_with_sig, psk_creator_peer_id)
 
 
 def __fetch_from_peers() -> [PskWithSignature]:
@@ -43,7 +43,7 @@ def __fetch_from_peers() -> [PskWithSignature]:
     return psks_with_sig
 
 
-def __validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str = None) -> Optional[PskWithSignature]:
+def __validate_psk(block_number: int, psks_with_sig: [PskWithSignature], psk_creator_peer_id: str = None) -> Optional[PskWithSignature]:
     # Keys and signatures from all the peers should be equal if we don't have psk creator peer id to verify against
     if psk_creator_peer_id is None:
         if len(set(psks_with_sig)) == 1:
@@ -54,7 +54,7 @@ def __validate_psk(psks_with_sig: [PskWithSignature], psk_creator_peer_id: str =
     else:
         for psk, signature in psks_with_sig:
             log.debug(f"validating psk: {psk}, signature: {signature}, psk_creator_peer_id: {psk_creator_peer_id}")
-            if crypto.verify(psk, bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
+            if crypto.verify(f'{block_number}{psk}', bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
                 return psk, signature
             else:
                 log.warning("Psk validation failed...")

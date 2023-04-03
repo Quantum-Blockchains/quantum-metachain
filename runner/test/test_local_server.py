@@ -6,10 +6,13 @@ import pytest
 import node
 from node import Node, NodeService, NodeTest
 from web.local_server import rotate_pre_shared_key
+from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid
 
 
 psk = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
-signature = "fe2550d4baf581af5f9cc9428e425b093fd4777fdfeb7d00a9b52261754a56ec5034dd0fe3570d9d7f7a21b9d2d2007cba1afe773430dbd79b7c0cf37a55e803"
+block_number = 5
+signature = sign(f'{block_number}{psk}', "df432c8e967aa21fdd287d3ea61fa85640a8309577f65b4ea78d49d514661654").hex()
+# signature = "fe2550d4baf581af5f9cc9428e425b093fd4777fdfeb7d00a9b52261754a56ec5034dd0fe3570d9d7f7a21b9d2d2007cba1afe773430dbd79b7c0cf37a55e803"
 
 
 @pytest.fixture()
@@ -28,7 +31,8 @@ def test_rotate_pre_shared_key_when_local_peer_is_chosen(psk_sig_remove, psk_sig
                                                          generate_psk_from_qrng, before_each):
     body = {
         "is_local_peer": True,
-        "peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
+        "peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
+        "block_num": block_number
     }
 
     rotate_pre_shared_key(body)
@@ -45,11 +49,12 @@ def test_rotate_pre_shared_key_when_other_peer_is_chosen(get_psk_from_peers, bef
     peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     body = {
         "is_local_peer": False,
-        "peer_id": peer_id
+        "peer_id": peer_id,
+        "block_num": block_number
     }
     rotate_pre_shared_key(body)
 
-    get_psk_from_peers.assert_called_with(peer_id)
+    get_psk_from_peers.assert_called_with(block_number, peer_id)
 
 
 @patch("core.pre_shared_key.get_psk_from_peers")
@@ -59,16 +64,17 @@ def test_rotate_pre_shared_key_when_other_peer_is_chosen_but_returns_none_for_th
     peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     body = {
         "is_local_peer": False,
-        "peer_id": peer_id
+        "peer_id": peer_id,
+        "block_num": block_number
     }
     rotate_pre_shared_key(body)
 
-    get_psk_from_peers.assert_called_with(peer_id)
+    get_psk_from_peers.assert_called_with(block_number, peer_id)
 
     # Assert if mock was called twice
     assert get_psk_from_peers.call_args_list == [
-        mock.call(peer_id),
-        mock.call(peer_id),
+        mock.call(block_number, peer_id),
+        mock.call(block_number, peer_id),
     ]
 
 

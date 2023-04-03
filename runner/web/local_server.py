@@ -1,3 +1,4 @@
+import time
 from threading import Thread
 from time import sleep
 
@@ -44,6 +45,7 @@ def rotate_pre_shared_key(body):
     try:
         is_local_peer = body["is_local_peer"]
         peer_id = body["peer_id"]
+        block_number = body["block_num"]
 
     except KeyError:
         return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
@@ -51,12 +53,12 @@ def rotate_pre_shared_key(body):
     if is_local_peer:
         psk = pre_shared_key.generate_psk_from_qrng()
         node_key = common.file.node_key_file_manager.read()
-        signature = crypto.sign(psk, node_key).hex()
+        signature = crypto.sign(f'{block_number}{psk}', node_key).hex()
     else:
         get_psk_result = None
 
         while get_psk_result is None:
-            get_psk_result = pre_shared_key.get_psk_from_peers(peer_id)
+            get_psk_result = pre_shared_key.get_psk_from_peers(block_number, peer_id)
             sleep(GET_PSK_WAITING_TIME)
         psk, signature = get_psk_result
 
