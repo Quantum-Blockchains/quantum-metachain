@@ -68,7 +68,10 @@ pub mod pallet {
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::hooks]
-    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> where u64: From<<T as frame_system::Config>::BlockNumber> {
+    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
+    where
+        u64: From<<T as frame_system::Config>::BlockNumber>,
+    {
         /// PSK offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
             let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
@@ -272,8 +275,7 @@ impl<T: Config> Pallet<T> {
     fn send_psk_rotation_request(
         runner_port: u16,
         request_body: PskRotationRequest,
-    ) -> Result<(), Error<T>>
-    {
+    ) -> Result<(), Error<T>> {
         let url = format!("http://localhost:{}/psk", runner_port);
 
         let mut vec_body: Vec<&[u8]> = Vec::new();
