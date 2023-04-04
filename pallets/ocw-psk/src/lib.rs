@@ -38,7 +38,7 @@ pub struct LocalPeerIdResponse {
 struct PskRotationRequest {
     peer_id: String,
     is_local_peer: bool,
-    block_num: u32,
+    block_num: u64,
 }
 
 #[frame_support::pallet]
@@ -68,7 +68,7 @@ pub mod pallet {
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::hooks]
-    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> where u32: From<<T as frame_system::Config>::BlockNumber> {
+    impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T> where u64: From<<T as frame_system::Config>::BlockNumber> {
         /// PSK offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
             let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
