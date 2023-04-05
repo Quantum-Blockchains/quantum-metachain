@@ -60,6 +60,35 @@ make build
 ## 3. Running
 Depending on how you built your project you can run it in different ways
 
+Before you start the node, you need to create a configuration file, the path to which must then be provided when you start the node.
+Example:
+```json
+{
+  "__type__": "Config",
+  "local_peer_id": "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc",
+  "local_server_port": 5001,
+  "external_server_port": 5002,
+  "psk_file_path": "test/tmp/alice/psk",
+  "psk_sig_file_path": "test/tmp/alice/psk_sig",
+  "node_key_file_path": "test/tmp/alice/node_key",
+  "key_rotation_time": 50,
+  "qrng_api_key": "",
+  "node_logs_path": "test/tmp/alice/node.log",
+  "qkd_cert_path": null,
+  "qkd_cert_key_path": null,
+  "peers": {
+    "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
+      "qkd_addr": "http://localhost:8182/alice/bob",
+      "server_addr": "http://localhost:5004"
+    },
+    "12D3KooWDNdLiaUM2161yCQMvZy9LVgP3fcySk8nuimcKMDBXryj": {
+      "qkd_addr": "http://localhost:8182/alice/dave",
+      "server_addr": "http://localhost:5008"
+    }
+  }
+}
+```
+
 ### 3.1. Using Python
 Quantum Meta-chain introduces a concept of **Pre-shared key rotation**.
 To make things work we introduced a system for managing rotating those keys called a **runner**.
