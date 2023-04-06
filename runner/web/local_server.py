@@ -1,9 +1,7 @@
-import time
 from threading import Thread
 from time import sleep
 
 import node
-from common.config import config_service
 from flask import Flask, request, make_response, Response
 from core import pre_shared_key
 from common.logger import log
@@ -53,7 +51,8 @@ def rotate_pre_shared_key(body):
     if is_local_peer:
         psk = pre_shared_key.generate_psk_from_qrng()
         node_key = common.file.node_key_file_manager.read()
-        signature = crypto.sign(f'{block_number}{psk}', node_key).hex()
+        data_for_sign = pre_shared_key.PskWithBlockNumber((block_number, psk))
+        signature = crypto.sign(pre_shared_key.psk_with_block_number_to_string(data_for_sign), node_key).hex()
     else:
         get_psk_result = None
 

@@ -11,6 +11,12 @@ from .qrng import generate_random_hex
 
 PskWithSignature = tuple[str, str]
 EncryptedPskResponse = tuple[str, str, str]
+PskWithBlockNumber = tuple[int, str]
+
+
+def psk_with_block_number_to_string(data: PskWithBlockNumber):
+    st = ''.join(map(str, data))
+    return st
 
 
 def generate_psk_from_qrng():
@@ -54,7 +60,9 @@ def __validate_psk(block_number: int, psks_with_sig: [PskWithSignature], psk_cre
     else:
         for psk, signature in psks_with_sig:
             log.debug(f"validating psk: {psk}, signature: {signature}, psk_creator_peer_id: {psk_creator_peer_id}")
-            if crypto.verify(f'{block_number}{psk}', bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
+            #     return psk, signature
+            data_for_verify = PskWithBlockNumber((block_number, psk))
+            if crypto.verify(psk_with_block_number_to_string(data_for_verify), bytes.fromhex(signature), crypto.to_public_from_peerid(psk_creator_peer_id)):
                 return psk, signature
             else:
                 log.warning("Psk validation failed...")

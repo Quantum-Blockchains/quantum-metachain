@@ -1,5 +1,3 @@
-from common.logger import log
-
 
 class PeerMisconfiguredError(Exception):
     pass

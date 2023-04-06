@@ -4,15 +4,14 @@ from unittest.mock import patch
 import pytest
 
 import node
-from node import Node, NodeService, NodeTest
+from node import NodeService, NodeTest
 from web.local_server import rotate_pre_shared_key
-from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid
+from common.crypto import sign
 
 
 psk = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
 block_number = 5
 signature = sign(f'{block_number}{psk}', "df432c8e967aa21fdd287d3ea61fa85640a8309577f65b4ea78d49d514661654").hex()
-# signature = "fe2550d4baf581af5f9cc9428e425b093fd4777fdfeb7d00a9b52261754a56ec5034dd0fe3570d9d7f7a21b9d2d2007cba1afe773430dbd79b7c0cf37a55e803"
 
 
 @pytest.fixture()

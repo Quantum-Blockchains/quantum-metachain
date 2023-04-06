@@ -1,6 +1,4 @@
-from common.config import config_service
-import json
-from flask import Flask, jsonify, Response
+from flask import Flask, jsonify
 from core import qkd, onetimepad
 from common.logger import log
 import common.config

@@ -8,7 +8,8 @@ from common.config import create_node_info_dir, InvalidConfigurationFile
 from node import Node, NodeService
 from common.logger import log, add_logs_handler_file
 from core import pre_shared_key
-from web import ExternalServerWrapper, LocalServerWrapper
+from web.local_server import LocalServerWrapper
+from web.external_server import ExternalServerWrapper
 
 
 try:

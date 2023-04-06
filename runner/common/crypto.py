@@ -26,7 +26,6 @@ def sign(data: str, priv_key_str: str) -> bytes:
 
 def verify(data: str, signature: bytes, pub_key_bytes: bytes) -> bool:
     public_key = ed25519.Ed25519PublicKey.from_public_bytes(pub_key_bytes)
-
     try:
         public_key.verify(signature, data.encode())
         return True
