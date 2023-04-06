@@ -24,6 +24,8 @@ To begin working with this repository you will need the following dependencies:
 - [Rust](https://www.rust-lang.org/tools/install)
 - [Python](https://www.python.org/downloads/)
 - [Docker](https://docs.docker.com/engine/install/) (optional)
+- QKD-simulator
+- Certificate for QKD-simulator
 
 After downloading your dependencies you need to make sure to continue with these steps:
 - Because this a substrate fork you will also need to configure Rust with few additional steps, listed [here](https://docs.substrate.io/install/)
@@ -48,14 +50,11 @@ This will create a binary file in `./target/release`, called `qmc-node`.
 
 ### 2.2. Using Docker
 Alternate way of building this repository uses Docker. To build a node use command:
-```bash
-docker build -t quantum-metachain .
-```
-This will create a `quantum-metachain` docker image.
-Alternatively, you can also build it with `make`:
+
 ```bash
 make build
 ```
+This will create a `quantum-metachain` docker image.
 
 ## 3. Running
 Depending on how you built your project you can run it in different ways
@@ -73,7 +72,6 @@ Example:
   "node_key_file_path": "test/tmp/alice/node_key",
   "key_rotation_time": 50,
   "qrng_api_key": "",
-  "node_logs_path": "test/tmp/alice/node.log",
   "qkd_cert_path": null,
   "qkd_cert_key_path": null,
   "peers": {
@@ -88,6 +86,16 @@ Example:
   }
 }
 ```
+
+- **local_peer_id** - local node identifier, which is generated from the private key(node_key) for "peer to peer";
+- **local_server_port** - port number for the server, which is responsible for starting the pre-shared key rotation and node reboot process;
+- **external_server_port** - port number for the server, which is responsible for transferring the new pre shared key using QKD to the node in need;
+- **psk_file_path** - path to the file that contains the pre-shared key;
+- **psk_sig_file_path** - path to a file containing the signature of the pre-shared key and the block number when the pre-shared key was generated;
+- **node_key_file_path** - path to a file containing the private key fo "peer to peer";
+- **key_rotation_time** - the time from the beginning of the pre-shared key rotation at which nodes are allowed ti receive this key (number of milliseconds);
+- **qrng_api_key** - key to access the qrng used to generate pre-shared key;
+- **peers** - information about the nodes with which we create a connection using QKD. It contains the node identifier, the address of the QKD-simulator and the external server address of the given node;
 
 ### 3.1. Using Python
 Quantum Meta-chain introduces a concept of **Pre-shared key rotation**.
@@ -122,7 +130,7 @@ To run a Docker container from docker image built in earlier steps run:
 ```bash
 docker run -it quantum-metachain
 ```
-Optionally you can type
+You can also use "make" to start a network of four nodes:
 ```bash
 make start
 # and
