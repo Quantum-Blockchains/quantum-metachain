@@ -2,7 +2,6 @@ from threading import Thread
 from time import sleep
 
 import node
-from common.config import config_service
 from flask import Flask, request, make_response, Response
 from core import pre_shared_key
 from common.logger import log
@@ -10,6 +9,7 @@ from common import crypto
 import json
 import common.config
 import common.file
+from core.pre_shared_key import Psk
 from web.error_handler import init_error_handlers
 
 
@@ -44,21 +44,24 @@ def rotate_pre_shared_key(body):
     try:
         is_local_peer = body["is_local_peer"]
         peer_id = body["peer_id"]
+        block_number = body["block_num"]
 
     except KeyError:
         return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
 
     if is_local_peer:
         psk = pre_shared_key.generate_psk_from_qrng()
+        psk_bytes = Psk(psk, block_number=block_number).serialize()
         node_key = common.file.node_key_file_manager.read()
-        signature = crypto.sign(psk, node_key).hex()
+        signature = crypto.sign(psk_bytes, node_key).hex()
     else:
         get_psk_result = None
 
         while get_psk_result is None:
-            get_psk_result = pre_shared_key.get_psk_from_peers(peer_id)
+            get_psk_result = pre_shared_key.get_psk_from_peers(block_number, peer_id)
             sleep(GET_PSK_WAITING_TIME)
-        psk, signature = get_psk_result
+        psk = get_psk_result.psk
+        signature = get_psk_result.signature
 
     common.file.psk_file_manager.create(psk)
     common.file.psk_sig_file_manager.create(signature)

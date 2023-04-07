@@ -1,5 +1,6 @@
 from threading import Thread
-from web import ExternalServerWrapper, LocalServerWrapper
+from web.local_server import LocalServerWrapper
+from web.external_server import ExternalServerWrapper
 import sys
 from node import NodeService, NodeTest
 import node

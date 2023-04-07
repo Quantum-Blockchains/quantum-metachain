@@ -18,17 +18,16 @@ def to_public_from_peerid(peer_id: str) -> bytes:
     return bytes.fromhex(peerid_hex)
 
 
-def sign(data: str, priv_key_str: str) -> bytes:
+def sign(data: bytes, priv_key_str: str) -> bytes:
     priv_key_bytes = bytearray.fromhex(priv_key_str)
     private_key = ed25519.Ed25519PrivateKey.from_private_bytes(priv_key_bytes)
-    return private_key.sign(data.encode())
+    return private_key.sign(data)
 
 
-def verify(data: str, signature: bytes, pub_key_bytes: bytes) -> bool:
+def verify(data: bytes, signature: bytes, pub_key_bytes: bytes) -> bool:
     public_key = ed25519.Ed25519PublicKey.from_public_bytes(pub_key_bytes)
-
     try:
-        public_key.verify(signature, data.encode())
+        public_key.verify(signature, data)
         return True
     except InvalidSignature:
         log.error("Invalid signature")

@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from web.external_server import get_psk, ExternalServerWrapper
-from core.onetimepad import encrypt, decrypt
+from core.onetimepad import encrypt
 from common import exceptions
 
 

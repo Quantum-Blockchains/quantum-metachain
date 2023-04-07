@@ -1,6 +1,5 @@
 import common.config
 from common.logger import log
-from common import crypto
 import common.crypto
 import requests
 import time
@@ -8,6 +7,8 @@ import os
 import subprocess
 from os import path
 import json
+
+from core.pre_shared_key import Psk
 from web.qkd_mock_server import QkdMockServerWrapper
 import multiprocessing
 from multiprocessing import Process
@@ -55,8 +56,10 @@ def start_test():
     time.sleep(10)
 
     try:
+        block_number = 1
         for name, node_config in nodes:
-            check_psk_rotation(name, node_config)
+            check_psk_rotation(name, node_config, block_number)
+            block_number += 1
 
         test = True
 
@@ -86,13 +89,13 @@ def start_test():
             log.info("Test: Not successfully")
 
 
-def check_psk_rotation(signer_name, signer_config):
-    send_psk_rotation_request(signer_config.local_server_port, signer_config.local_peer_id, True)
+def check_psk_rotation(signer_name, signer_config, block_number):
+    send_psk_rotation_request(signer_config.local_server_port, signer_config.local_peer_id, True, block_number)
     sleep_until_file_exists(signer_config.abs_psk_file_path())
 
     for node_name, node_config in nodes:
         if node_config.local_peer_id in signer_config.peers:
-            send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False)
+            send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False, block_number)
             sleep_until_file_exists(node_config.abs_psk_file_path())
 
     with open(signer_config.abs_psk_file_path(), 'r') as file:
@@ -104,7 +107,7 @@ def check_psk_rotation(signer_name, signer_config):
     for node_name, node_config in nodes:
         if node_name != signer_name:
             if not path.exists(node_config.abs_psk_file_path()):
-                send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False)
+                send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False, block_number)
                 sleep_until_file_exists(node_config.abs_psk_file_path())
 
             with open(node_config.abs_psk_file_path(), 'r') as file:
@@ -114,7 +117,8 @@ def check_psk_rotation(signer_name, signer_config):
                 log.error(f"{psk} =! {psk_node}")
                 raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
 
-            if not common.crypto.verify(psk_node, bytes.fromhex(sig),
+            psk_bytes = Psk(psk_node, block_number=block_number).serialize()
+            if not common.crypto.verify(psk_bytes, bytes.fromhex(sig),
                                         common.crypto.to_public_from_peerid(signer_config.local_peer_id)):
                 raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
             else:
@@ -123,9 +127,9 @@ def check_psk_rotation(signer_name, signer_config):
     time.sleep(60)
 
 
-def send_psk_rotation_request(runner_port, peer_id, is_local):
+def send_psk_rotation_request(runner_port, peer_id, is_local, block_number):
     url = f"http://localhost:{runner_port}/psk"
-    data = {'peer_id': peer_id, 'is_local_peer': is_local}
+    data = {'peer_id': peer_id, 'is_local_peer': is_local, 'block_num': block_number}
     requests.post(url, json=data)
 
 
