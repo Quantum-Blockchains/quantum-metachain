@@ -7,6 +7,8 @@ import os
 import subprocess
 from os import path
 import json
+
+from core.pre_shared_key import Psk
 from web.qkd_mock_server import QkdMockServerWrapper
 import multiprocessing
 from multiprocessing import Process
@@ -115,7 +117,8 @@ def check_psk_rotation(signer_name, signer_config, block_number):
                 log.error(f"{psk} =! {psk_node}")
                 raise ValueError(f"{signer_name}'s and {node_name}'s keys are different")
 
-            if not common.crypto.verify(f"{block_number}{psk_node}", bytes.fromhex(sig),
+            psk_bytes = Psk(psk_node, block_number=block_number).serialize()
+            if not common.crypto.verify(psk_bytes, bytes.fromhex(sig),
                                         common.crypto.to_public_from_peerid(signer_config.local_peer_id)):
                 raise ValueError(f"({signer_name}) {node_name} psk verification failed.")
             else:

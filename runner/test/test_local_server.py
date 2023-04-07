@@ -4,14 +4,15 @@ from unittest.mock import patch
 import pytest
 
 import node
+from common.crypto import sign
+from core.pre_shared_key import Psk
 from node import NodeService, NodeTest
 from web.local_server import rotate_pre_shared_key
-from common.crypto import sign
-
 
 psk = "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a"
 block_number = 5
-signature = sign(f'{block_number}{psk}', "df432c8e967aa21fdd287d3ea61fa85640a8309577f65b4ea78d49d514661654").hex()
+signature = sign(Psk(psk, block_number=block_number).serialize(),
+                 "df432c8e967aa21fdd287d3ea61fa85640a8309577f65b4ea78d49d514661654").hex()
 
 
 @pytest.fixture()
@@ -43,7 +44,9 @@ def test_rotate_pre_shared_key_when_local_peer_is_chosen(psk_sig_remove, psk_sig
     psk_sig_remove.assert_called()
 
 
-@patch("core.pre_shared_key.get_psk_from_peers", return_value=("c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a", "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"))
+@patch("core.pre_shared_key.get_psk_from_peers", return_value=Psk(
+    "c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a",
+    signature="17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"))
 def test_rotate_pre_shared_key_when_other_peer_is_chosen(get_psk_from_peers, before_each):
     peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     body = {
@@ -57,9 +60,10 @@ def test_rotate_pre_shared_key_when_other_peer_is_chosen(get_psk_from_peers, bef
 
 
 @patch("core.pre_shared_key.get_psk_from_peers")
-def test_rotate_pre_shared_key_when_other_peer_is_chosen_but_returns_none_for_the_first_time(get_psk_from_peers, before_each):
-    get_psk_from_peers.side_effect = [None, ("c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a",
-                                             "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100")]
+def test_rotate_pre_shared_key_when_other_peer_is_chosen_but_returns_none_for_the_first_time(get_psk_from_peers,
+                                                                                             before_each):
+    get_psk_from_peers.side_effect = [None, Psk("c7ce4948991367f8f08c473f1bdf3a45945951eb4038f735a76e840d36c27b1a",
+                                                signature="17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100")]
     peer_id = "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW"
     body = {
         "is_local_peer": False,

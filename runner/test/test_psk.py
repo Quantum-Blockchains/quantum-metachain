@@ -36,7 +36,8 @@ def test_get_psk_without_creator_id_returns_psk_when_all_keys_from_peers_are_the
 
     result = get_psk_from_peers(block_number)
 
-    assert result == (expected_psk, expected_signature)
+    assert result.psk == expected_psk
+    assert result.signature == expected_signature
 
 
 def test_get_psk_without_creator_id_returns_none_when_not_all_keys_from_peers_are_the_same(requests_mock, before_each):
@@ -56,7 +57,7 @@ def test_get_psk_with_creator_id_returns_psk_when_one_key_is_valid(requests_mock
     encrypted_key = "01040001520f54570802510f5d51540001015d005a04560d045455550b5052025a075201560154550552510e575d000551520c5055050e030c0406005251555c"
     invalid_encrypted_key = "00480253075602535254555555065356520809560903030855000951555655030705055205540855040054520303020953070951520201545403540656060554"
     expected_key = "d797492d1db79517ce899208aa3125739aa7227bce49491df0457f944a3be7c8"
-    expected_signature = "02cee86679916a597c8f74ee7def491de435a1c7f06abfb785ac4b156ddaba2ef32d89c8a5cbeb74d290e54a55c0f017b39166614ebc87009a43c123ee2db602"
+    expected_signature = "1a8a170a4efffcb6b379fc9066aa61cbde42f78567442c3588ca699d70cde4f58f14710e2ae4bf3bd8f4df0527aaf244d43947db40ee0701e9cdf8597eaf5b02"
     peer_id = "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"
     block_number = 1
     __create_alice_peer_response_mock(requests_mock, encrypted_key, expected_signature)
@@ -64,13 +65,14 @@ def test_get_psk_with_creator_id_returns_psk_when_one_key_is_valid(requests_mock
 
     result = get_psk_from_peers(block_number, peer_id)
 
-    assert result == (expected_key, expected_signature)
+    assert result.psk == expected_key
+    assert result.signature == expected_signature
 
 
 def test_get_psk_with_creator_id_returns_psk_when_one_signature_is_valid(requests_mock, before_each):
     encrypted_key = "01040001520f54570802510f5d51540001015d005a04560d045455550b5052025a075201560154550552510e575d000551520c5055050e030c0406005251555c"
     expected_key = "d797492d1db79517ce899208aa3125739aa7227bce49491df0457f944a3be7c8"
-    expected_signature = "02cee86679916a597c8f74ee7def491de435a1c7f06abfb785ac4b156ddaba2ef32d89c8a5cbeb74d290e54a55c0f017b39166614ebc87009a43c123ee2db602"
+    expected_signature = "1a8a170a4efffcb6b379fc9066aa61cbde42f78567442c3588ca699d70cde4f58f14710e2ae4bf3bd8f4df0527aaf244d43947db40ee0701e9cdf8597eaf5b02"
     invalid_signature = "000000"
     peer_id = "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"
     block_number = 1
@@ -79,7 +81,8 @@ def test_get_psk_with_creator_id_returns_psk_when_one_signature_is_valid(request
 
     result = get_psk_from_peers(block_number, peer_id)
 
-    assert result == (expected_key, expected_signature)
+    assert result.psk == expected_key
+    assert result.signature == expected_signature
 
 
 def test_get_psk_with_creator_id_returns_none_when_all_keys_are_invalid(requests_mock, before_each):
