@@ -20,13 +20,13 @@ class ExternalServerWrapper:
         self.external_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
     def run(self):
-        self.external_server.run("0.0.0.0", common.config.config_service.current_config.external_server_port, False)
+        self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False)
 
 
 # TODO add peer authorizationS
 def get_psk(peer_id):
     log.info(f"Fetching psk for peer with id: {peer_id}...")
-    peer_config = common.config.config_service.current_config.peers.get(peer_id)
+    peer_config = common.config.config_service.config.peers.get(peer_id)
     if peer_config is None or peer_config["qkd_addr"] is None:
         log.warning(f"Peer with id = {peer_id} is not configured")
         raise exceptions.PeerMisconfiguredError
@@ -37,8 +37,8 @@ def get_psk(peer_id):
 
     psk = common.file.psk_file_manager.read()
     psk_sig = common.file.psk_sig_file_manager.read()
-    qkd_cert_path = common.config.config_service.current_config.abs_qkd_cert_path_file_path()
-    qkd_cert_key = common.config.config_service.current_config.abs_qkd_cert_key_path_file_path()
+    qkd_cert_path = peer_config["qkd_cert_path"]
+    qkd_cert_key = peer_config["qkd_cert_key_path"]
     key_id, qkd_key = qkd.get_enc_key(peer_config['qkd_addr'], qkd_cert_path, qkd_cert_key)
     xored_psk = onetimepad.encrypt(psk, qkd_key)
 

@@ -39,15 +39,15 @@ def get_psk_from_peers(block_number: int = None, psk_creator_peer_id: str = None
 
 def __fetch_from_peers() -> [Psk]:
     log.info("Fetching PSK from other peers...")
-    peers = common.config.config_service.current_config.peers
+    peers = common.config.config_service.config.peers
 
     psks_with_sig = []
 
-    for peer_id, peer in peers.items():
-        fetch_response = __fetch_encrypted_psk(peer_id, peer['server_addr'])
+    for peer_id, peer_config in peers.items():
+        fetch_response = __fetch_encrypted_psk(peer_id, peer_config['server_addr'])
         if fetch_response is not None:
             encrypted_key, qkd_key_id, signature = fetch_response
-            psk = __decrypt_psk(encrypted_key, peer["qkd_addr"], qkd_key_id)
+            psk = __decrypt_psk(encrypted_key, peer_config, qkd_key_id)
             log.debug(f"Fetched psk: {psk} and signature: {signature}")
             psks_with_sig.append(Psk(psk, signature=signature))
 
@@ -76,7 +76,7 @@ def __validate_psk(psks_with_sig: [Psk], block_number: int = None, psk_creator_p
 
 
 def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPskResponse]:
-    get_psk_url = f"{peer_addr}/peer/{common.config.config_service.current_config.local_peer_id}/psk"
+    get_psk_url = f"{peer_addr}/peer/{common.config.config_service.config.local_peer_id}/psk"
     get_psk_response = requests.get(get_psk_url)
     if get_psk_response.status_code != 200:
         log.error(f"{peer_id} didn't send the psk. Message: {get_psk_response.json()['message']}")
@@ -85,9 +85,10 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
         return response_body['key'], response_body['key_id'], response_body['signature']
 
 
-def __decrypt_psk(encrypted_psk: str, qkd_addr: str, qkd_key_id: str) -> str:
-    qkd_cert_path = common.config.config_service.current_config.abs_qkd_cert_path_file_path()
-    qkd_cert_key = common.config.config_service.current_config.abs_qkd_cert_key_path_file_path()
+def __decrypt_psk(encrypted_psk: str, peer_config: dict, qkd_key_id: str) -> str:
+    qkd_cert_path = peer_config["qkd_cert_path"]
+    qkd_cert_key = peer_config["qkd_cert_key_path"]
+    qkd_addr = peer_config["qkd_addr"]
     _, qkd_key = get_dec_key(qkd_addr, qkd_key_id, qkd_cert_path, qkd_cert_key)
     psk = onetimepad.decrypt(encrypted_psk, qkd_key)
     return psk

@@ -16,7 +16,7 @@ name = sys.argv[3]
 
 log_format_for_test()
 
-log.info(f"Local port: {common.config.config_service.current_config.local_server_port}")
+log.info(f"Local port: {common.config.config_service.config.local_server_port}")
 
 log.info("Starting test node...")
 node.node_service = NodeService(NodeTest())
