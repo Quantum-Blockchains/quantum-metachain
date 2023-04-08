@@ -29,9 +29,9 @@ default_config = {
 class Config:
     def __init__(self, config_dict):
         for key, value in config_dict.items():
-            if key.endswith("path"):
+            if key.endswith("path") and value is not None:
                 value = to_absolute(value)
-            if key == "peers":
+            if key == "peers" and value is not None:
                 value = self.process_peers(value)
             setattr(self, key, value)
 
@@ -42,11 +42,15 @@ class Config:
     @staticmethod
     def process_peers(peers):
         for peer_id, peer_config in peers.items():
-            if 'qkd_cert_path' in peer_config:
+            if 'qkd_cert_path' in peer_config and peer_config['qkd_cert_path'] is not None:
                 peer_config['qkd_cert_path'] = to_absolute(peer_config['qkd_cert_path'])
-            if 'qkd_cert_key_path' in peer_config:
+            if 'qkd_cert_key_path' in peer_config and peer_config['qkd_cert_path'] is not None:
                 peer_config['qkd_cert_key_path'] = to_absolute(peer_config['qkd_cert_key_path'])
         return peers
+
+
+def to_absolute(*paths) -> str:
+    return path.join(ROOT_DIR, *paths)
 
 
 def init_config(config_path=None):
@@ -58,10 +62,6 @@ def init_config(config_path=None):
 
     global config_service
     config_service = ConfigService(config)
-
-
-def to_absolute(*paths) -> str:
-    return path.join(ROOT_DIR, *paths)
 
 
 def create_node_info_dir():
