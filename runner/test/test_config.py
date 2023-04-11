@@ -57,4 +57,3 @@ def test_peers_config_initialization():
 def test_init():
     init_config(None)
     assert config_service.config is not None
-
