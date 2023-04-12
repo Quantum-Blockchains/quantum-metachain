@@ -4,7 +4,7 @@ import node
 import common.config
 import common.file
 import params
-from common.config import create_node_info_dir, InvalidConfigurationFile
+from common.config import create_node_info_dir
 from node import Node, NodeService
 from common.logger import log, add_logs_handler_file
 from core import pre_shared_key
@@ -12,12 +12,7 @@ from web.local_server import LocalServerWrapper
 from web.external_server import ExternalServerWrapper
 
 
-try:
-    common.config.init_config(params.args.config_file)
-except InvalidConfigurationFile as e:
-    log.error(e.message)
-    exit()
-
+common.config.init_config(params.args.config_file)
 common.file.initialise_file_managers()
 
 create_node_info_dir()
