@@ -9,15 +9,17 @@
   "key_rotation_time": 50,
   "qrng_api_key": "",
   "node_logs_path": "node.log",
-  "qkd_cert_path": "certificates/qbck-client.crt",
-  "qkd_cert_key_path": "certificates/qbck-client.key",
   "peers": {
     "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
       "qkd_addr": "https://172.16.0.202:9382/api/v1/keys/Alice3SAE",
+      "qkd_cert_path": "certificates/qbck-client.crt",
+      "qkd_cert_key_path": "certificates/qbck-client.key",
       "server_addr": "http://bob:5002"
     },
     "12D3KooWJDGhnHkkRCD29xoYfq7Tq6qDhSLCRueCCRZsghLgesnt": {
-      "qkd_addr": "https://172.16.0.202:8082/api/v1/keys/Bob0SAE",
+      "qkd_addr": "122.166.172.56:9091",
+      "qkd_cert_path": "certificates/charlie-dave/qbck-client.crt",
+      "qkd_cert_key_path": "certificates/charlie-dave/qbck-client.key",
       "server_addr": "http://charlie:5002"
     }
   }
