@@ -1,7 +1,6 @@
 import json
 from os import path, mkdir
 
-
 PROJECT_DIR = path.abspath(path.dirname(__file__))
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 ENV_PATH = path.join(ROOT_DIR, ".env")
@@ -16,131 +15,72 @@ default_config = {
     "node_logs_path": "node.log",
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
-    "qkd_cert_path": "certificates/qbck-client.crt",
-    "qkd_cert_key_path": "certificates/qbck-client.key",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd_addr": "http://localhost:9182/api/v1/keys/Alice1SAE",
+            "qkd_cert_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.crt",
+            "qkd_cert_key_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.key",
             "server_addr": "http://localhost:5002"
         }
     }
 }
 
 
-class InvalidConfigurationFile(Exception):
-    "Raised when all required information is not provided in the configuration file."
-    def __init__(self, key):
-        self.message = f"No information provided in configuration file: {key}"
-        super().__init__(self.message)
-
-
 class Config:
+    def __init__(self, config_dict):
+        for key, value in config_dict.items():
+            if key.endswith("path") and value is not None:
+                value = to_absolute(value)
+            if key == "peers" and value is not None:
+                value = self.process_peers(value)
+            setattr(self, key, value)
 
-    def __init__(self, local_peer_id, local_server_port, external_server_port, psk_file_path, psk_sig_file_path,
-                 node_key_file_path, key_rotation_time, qrng_api_key, node_logs_path, qkd_cert_path, qkd_cert_key_path, peers):
-        self.local_peer_id = local_peer_id
-        self.local_server_port = local_server_port
-        self.external_server_port = external_server_port
-        self.psk_file_path = psk_file_path
-        self.psk_sig_file_path = psk_sig_file_path
-        self.node_key_file_path = node_key_file_path
-        self.key_rotation_time = key_rotation_time
-        self.qrng_api_key = qrng_api_key
-        self.node_logs_path = node_logs_path
-        self.qkd_cert_path = qkd_cert_path
-        self.qkd_cert_key_path = qkd_cert_key_path
-        self.peers = peers
+    @staticmethod
+    def from_json(json_data):
+        return Config(json.loads(json_data, object_hook=lambda obj: obj))
 
-    def abs_psk_file_path(self):
-        return f"{ROOT_DIR}/{self.psk_file_path}"
-
-    def abs_node_key_file_path(self):
-        return f"{ROOT_DIR}/{self.node_key_file_path}"
-
-    def abs_psk_sig_file_path(self):
-        return f"{ROOT_DIR}/{self.psk_sig_file_path}"
-
-    def abs_log_node_file_path(self):
-        return f"{ROOT_DIR}/{self.node_logs_path}"
-
-    def abs_qkd_cert_path_file_path(self):
-        if self.qkd_cert_path is None:
-            return None
-        return f"{ROOT_DIR}/{self.qkd_cert_path}"
-
-    def abs_qkd_cert_key_path_file_path(self):
-        if self.qkd_cert_key_path is None:
-            return None
-        return f"{ROOT_DIR}/{self.qkd_cert_key_path}"
+    @staticmethod
+    def process_peers(peers):
+        for peer_id, peer_config in peers.items():
+            if 'qkd_cert_path' in peer_config and peer_config['qkd_cert_path'] is not None:
+                peer_config['qkd_cert_path'] = to_absolute(peer_config['qkd_cert_path'])
+            if 'qkd_cert_key_path' in peer_config and peer_config['qkd_cert_path'] is not None:
+                peer_config['qkd_cert_key_path'] = to_absolute(peer_config['qkd_cert_key_path'])
+        return peers
 
 
-def custom_config_decoder(obj):
-    if '__type__' in obj and obj['__type__'] == 'Config':
-        try:
-            return Config(
-                obj["local_peer_id"],
-                obj["local_server_port"],
-                obj["external_server_port"],
-                obj["psk_file_path"],
-                obj["psk_sig_file_path"],
-                obj['node_key_file_path'],
-                obj['key_rotation_time'],
-                obj['qrng_api_key'],
-                obj['node_logs_path'],
-                obj['qkd_cert_path'],
-                obj['qkd_cert_key_path'],
-                obj['peers']
-            )
-        except KeyError as e:
-            raise InvalidConfigurationFile(e)
-    return obj
+def to_absolute(*paths) -> str:
+    return path.join(ROOT_DIR, *paths)
 
 
 def init_config(config_path=None):
     if config_path is None:
-        config = Config(
-            default_config["local_peer_id"],
-            default_config["local_server_port"],
-            default_config["external_server_port"],
-            default_config["psk_file_path"],
-            default_config["psk_sig_file_path"],
-            default_config['node_key_file_path'],
-            default_config['key_rotation_time'],
-            default_config['qrng_api_key'],
-            default_config['node_logs_path'],
-            default_config['qkd_cert_path'],
-            default_config['qkd_cert_key_path'],
-            default_config['peers']
-        )
+        config = Config(default_config)
     else:
-        with open(f"{ROOT_DIR}/{config_path}", "r") as f:
-            config = json.load(f, object_hook=custom_config_decoder)
+        with open(to_absolute(config_path), "r") as f:
+            config = Config.from_json(f.read())
 
     global config_service
     config_service = ConfigService(config)
 
 
 def create_node_info_dir():
-    directory = path.join(ROOT_DIR, "node_info")
-    if not path.exists(directory):
-        mkdir(directory)
+    node_id = config_service.config.local_peer_id
+    node_info_dir = to_absolute("node_info", node_id)
 
-    directory_node = path.join(directory, f'{config_service.current_config.local_peer_id}')
-    if not path.exists(directory_node):
-        mkdir(directory_node)
+    for subdir in ["", "logs"]:
+        dir_path = path.join(node_info_dir, subdir)
+        if not path.exists(dir_path):
+            mkdir(dir_path)
 
-    directory_logs = path.join(directory_node, 'logs')
-    if not path.exists(directory_logs):
-        mkdir(directory_logs)
-
-    config_service.current_config.runner_logs_path = f"{ROOT_DIR}/node_info/{config_service.current_config.local_peer_id}/logs/runner.log"
-    config_service.current_config.node_logs_path = f"{ROOT_DIR}/node_info/{config_service.current_config.local_peer_id}/logs/node.log"
-    config_service.current_config.psk_sig_file_path = f"node_info/{config_service.current_config.local_peer_id}/psk_sig"
+    config_service.config.runner_logs_path = path.join(node_info_dir, "logs", "runner.log")
+    config_service.config.node_logs_path = path.join(node_info_dir, "logs", "node.log")
+    config_service.config.psk_sig_file_path = path.join(node_info_dir, "psk_sig")
 
 
 class ConfigService:
     def __init__(self, config):
-        self.current_config = config
+        self.config = config
 
 
 config_service = ConfigService(None)

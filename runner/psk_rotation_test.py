@@ -1,4 +1,6 @@
-import common.config
+import traceback
+
+from common.config import Config
 from common.logger import log
 import common.crypto
 import requests
@@ -6,7 +8,6 @@ import time
 import os
 import subprocess
 from os import path
-import json
 
 from core.pre_shared_key import Psk
 from web.qkd_mock_server import QkdMockServerWrapper
@@ -16,13 +17,13 @@ from multiprocessing import Process
 multiprocessing.set_start_method("fork")
 
 with open('test/tmp/alice/config_alice.json', "r") as f:
-    config_alice = json.load(f, object_hook=common.config.custom_config_decoder)
+    config_alice = Config.from_json(f.read())
 with open('test/tmp/bob/config_bob.json', "r") as f:
-    config_bob = json.load(f, object_hook=common.config.custom_config_decoder)
+    config_bob = Config.from_json(f.read())
 with open('test/tmp/charlie/config_charlie.json', "r") as f:
-    config_charlie = json.load(f, object_hook=common.config.custom_config_decoder)
+    config_charlie = Config.from_json(f.read())
 with open('test/tmp/dave/config_dave.json', "r") as f:
-    config_dave = json.load(f, object_hook=common.config.custom_config_decoder)
+    config_dave = Config.from_json(f.read())
 
 nodes = [("alice", config_alice), ("bob", config_bob), ("charlie", config_charlie), ("dave", config_dave)]
 
@@ -63,9 +64,10 @@ def start_test():
 
         test = True
 
-    except Exception as e:
+    except Exception:
         test = False
-        log.error("ERROR: " + str(e))
+        log.error("ERROR: ", exc_info=True)
+        log.error(traceback.format_exc())
     finally:
         qkd_server.terminate()
         process_alice.terminate()
@@ -74,12 +76,12 @@ def start_test():
         process_dave.terminate()
 
         for _, config in nodes:
-            if path.exists(config.abs_log_node_file_path()):
-                os.remove(config.abs_log_node_file_path())
-            if path.exists(config.abs_psk_file_path()):
-                os.remove(config.abs_psk_file_path())
-            if path.exists(config.abs_psk_sig_file_path()):
-                os.remove(config.abs_psk_sig_file_path())
+            if path.exists(config.node_logs_path):
+                os.remove(config.node_logs_path)
+            if path.exists(config.psk_file_path):
+                os.remove(config.psk_file_path)
+            if path.exists(config.psk_sig_file_path):
+                os.remove(config.psk_sig_file_path)
 
         log.info("Closing QMC processes...")
 
@@ -91,26 +93,26 @@ def start_test():
 
 def check_psk_rotation(signer_name, signer_config, block_number):
     send_psk_rotation_request(signer_config.local_server_port, signer_config.local_peer_id, True, block_number)
-    sleep_until_file_exists(signer_config.abs_psk_file_path())
+    sleep_until_file_exists(signer_config.psk_file_path)
 
     for node_name, node_config in nodes:
         if node_config.local_peer_id in signer_config.peers:
             send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False, block_number)
-            sleep_until_file_exists(node_config.abs_psk_file_path())
+            sleep_until_file_exists(node_config.psk_file_path)
 
-    with open(signer_config.abs_psk_file_path(), 'r') as file:
+    with open(signer_config.psk_file_path, 'r') as file:
         psk = file.read()
 
-    with open(signer_config.abs_psk_sig_file_path(), 'r') as file:
+    with open(signer_config.psk_sig_file_path, 'r') as file:
         sig = file.read()
 
     for node_name, node_config in nodes:
         if node_name != signer_name:
-            if not path.exists(node_config.abs_psk_file_path()):
+            if not path.exists(node_config.psk_file_path):
                 send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False, block_number)
-                sleep_until_file_exists(node_config.abs_psk_file_path())
+                sleep_until_file_exists(node_config.psk_file_path)
 
-            with open(node_config.abs_psk_file_path(), 'r') as file:
+            with open(node_config.psk_file_path, 'r') as file:
                 psk_node = file.read()
 
             if psk_node != psk:

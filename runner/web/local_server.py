@@ -29,7 +29,7 @@ class LocalServerWrapper:
         self.local_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
     def run(self):
-        self.local_server.run(None, common.config.config_service.current_config.local_server_port, False)
+        self.local_server.run(None, common.config.config_service.config.local_server_port, False)
 
 
 def start_thread_with_rotate_pre_shared_key():
@@ -65,7 +65,7 @@ def rotate_pre_shared_key(body):
 
     common.file.psk_file_manager.create(psk)
     common.file.psk_sig_file_manager.create(signature)
-    sleep(common.config.config_service.current_config.key_rotation_time)
+    sleep(common.config.config_service.config.key_rotation_time)
 
     node.node_service.current_node.restart()
 

@@ -62,7 +62,7 @@ node_service = NodeService(None)
 
 
 def write_logs_node_to_file():
-    with open(common.config.config_service.current_config.node_logs_path, 'a') as logfile:
+    with open(common.config.config_service.config.node_logs_path, 'a') as logfile:
         logfile.write("====================================================")
         logfile.write("=================== NODE STARTED ===================")
         logfile.write("====================================================\n")
