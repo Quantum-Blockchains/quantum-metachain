@@ -1,6 +1,8 @@
 import requests
-from common import crypto
 import validators
+
+from common import crypto
+from common.logger import log
 
 
 def get_enc_key(url, cert_path=None, key_path=None):
@@ -9,6 +11,7 @@ def get_enc_key(url, cert_path=None, key_path=None):
         raise requests.exceptions.InvalidURL
 
     response = _call_qkd(qkd_url, cert_path, key_path)
+    log.debug(f"response from qkd: {response}")
     return _unwrap_response(response)
 
 
@@ -18,6 +21,7 @@ def get_dec_key(url, key_id, cert_path=None, key_path=None):
         raise requests.exceptions.InvalidURL
 
     response = _call_qkd(qkd_url, cert_path, key_path)
+    log.debug(f"response from qkd: {response}")
     return _unwrap_response(response)
 
 

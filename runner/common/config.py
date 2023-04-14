@@ -65,17 +65,21 @@ def init_config(config_path=None):
 
 
 def create_node_info_dir():
-    node_id = config_service.config.local_peer_id
-    node_info_dir = to_absolute("node_info", node_id)
+    node_info_dir = to_absolute("node_info")
+    if not path.exists(node_info_dir):
+        mkdir(node_info_dir)
 
-    for subdir in ["", "logs"]:
-        dir_path = path.join(node_info_dir, subdir)
-        if not path.exists(dir_path):
-            mkdir(dir_path)
+    peer_id_dir = path.join(node_info_dir, f'{config_service.config.local_peer_id}')
+    if not path.exists(peer_id_dir):
+        mkdir(peer_id_dir)
 
-    config_service.config.runner_logs_path = path.join(node_info_dir, "logs", "runner.log")
-    config_service.config.node_logs_path = path.join(node_info_dir, "logs", "node.log")
-    config_service.config.psk_sig_file_path = path.join(node_info_dir, "psk_sig")
+    logs_dir = path.join(peer_id_dir, 'logs')
+    if not path.exists(logs_dir):
+        mkdir(logs_dir)
+
+    config_service.config.runner_logs_path = path.join(logs_dir, "runner.log")
+    config_service.config.node_logs_path = path.join(logs_dir, "node.log")
+    config_service.config.psk_sig_file_path = path.join(peer_id_dir, "psk_sig")
 
 
 class ConfigService:
