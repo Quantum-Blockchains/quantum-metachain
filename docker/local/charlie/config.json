@@ -17,9 +17,9 @@
       "server_addr": "http://alice:5002"
     },
     "12D3KooWSqKmnECvjnp48GWuErQbJ4gbrtoTgaYrtoCagadQ5ANr": {
-      "qkd_addr": "122.166.172.56:9090",
-      "qkd_cert_path": "certificates/charlie-dave/qbck-client.crt",
-      "qkd_cert_key_path": "certificates/charlie-dave/qbck-client.key",
+      "qkd_addr": "https://172.16.0.202:9082/api/v1/keys/Alice0SAE",
+      "qkd_cert_path": "certificates/qbck-client.crt",
+      "qkd_cert_key_path": "certificates/qbck-client.key",
       "server_addr": "http://dave:5002"
     }
   }
