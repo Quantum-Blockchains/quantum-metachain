@@ -1,10 +1,11 @@
 from flask import Flask, jsonify
-from core import qkd, onetimepad
-from common.logger import log
+
 import common.config
 import common.file
-from web.error_handler import init_error_handlers
 from common import exceptions
+from common.logger import log
+from core import qkd, onetimepad
+from web.error_handler import init_error_handlers
 
 
 class ExternalServerWrapper:
@@ -27,7 +28,7 @@ class ExternalServerWrapper:
 def get_psk(peer_id):
     log.info(f"Fetching psk for peer with id: {peer_id}...")
     peer_config = common.config.config_service.config.peers.get(peer_id)
-    if peer_config is None or peer_config["qkd_addr"] is None:
+    if peer_config is None or peer_config["qkd"] is None:
         log.warning(f"Peer with id = {peer_id} is not configured")
         raise exceptions.PeerMisconfiguredError
 
@@ -37,9 +38,7 @@ def get_psk(peer_id):
 
     psk = common.file.psk_file_manager.read()
     psk_sig = common.file.psk_sig_file_manager.read()
-    qkd_cert_path = peer_config["qkd_cert_path"]
-    qkd_cert_key = peer_config["qkd_cert_key_path"]
-    key_id, qkd_key = qkd.get_enc_key(peer_config['qkd_addr'], qkd_cert_path, qkd_cert_key)
+    key_id, qkd_key = qkd.get_enc_key(peer_config['qkd'])
     xored_psk = onetimepad.encrypt(psk, qkd_key)
 
     return jsonify({

@@ -47,7 +47,7 @@ def __fetch_from_peers() -> [Psk]:
         fetch_response = __fetch_encrypted_psk(peer_id, peer_config['server_addr'])
         if fetch_response is not None:
             encrypted_key, qkd_key_id, signature = fetch_response
-            psk = __decrypt_psk(encrypted_key, peer_config, qkd_key_id)
+            psk = __decrypt_psk(encrypted_key, peer_config['qkd'], qkd_key_id)
             log.debug(f"Fetched psk: {psk} and signature: {signature}")
             psks_with_sig.append(Psk(psk, signature=signature))
 
@@ -85,10 +85,7 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
         return response_body['key'], response_body['key_id'], response_body['signature']
 
 
-def __decrypt_psk(encrypted_psk: str, peer_config: dict, qkd_key_id: str) -> str:
-    qkd_cert_path = peer_config["qkd_cert_path"]
-    qkd_cert_key = peer_config["qkd_cert_key_path"]
-    qkd_addr = peer_config["qkd_addr"]
-    _, qkd_key = get_dec_key(qkd_addr, qkd_key_id, qkd_cert_path, qkd_cert_key)
+def __decrypt_psk(encrypted_psk: str, qkd_config: dict, qkd_key_id: str) -> str:
+    _, qkd_key = get_dec_key(qkd_key_id, qkd_config)
     psk = onetimepad.decrypt(encrypted_psk, qkd_key)
     return psk

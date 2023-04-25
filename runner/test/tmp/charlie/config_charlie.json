@@ -12,15 +12,19 @@
   "node_logs_path": "test/tmp/charlie/node.log",
   "peers": {
     "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
-      "qkd_addr": "http://localhost:8182/charlie/bob",
-      "qkd_cert_path": null,
-      "qkd_cert_key_path": null,
+      "qkd": {
+        "url": "http://localhost:8182/charlie/bob",
+        "client_cert_path": null,
+        "cert_key_path": null
+      },
       "server_addr": "http://localhost:5004"
     },
     "12D3KooWDNdLiaUM2161yCQMvZy9LVgP3fcySk8nuimcKMDBXryj": {
-      "qkd_addr": "http://localhost:8182/charlie/dave",
-      "qkd_cert_path": null,
-      "qkd_cert_key_path": null,
+      "qkd": {
+        "url": "http://localhost:8182/charlie/dave",
+        "client_cert_path": null,
+        "cert_key_path": null
+      },
       "server_addr": "http://localhost:5008"
     }
   }

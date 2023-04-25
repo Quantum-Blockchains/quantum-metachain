@@ -1,7 +1,6 @@
 from os import path
 import copy
 
-
 from common.config import Config, init_config, config_service, ROOT_DIR
 
 # Sample configuration for testing purposes
@@ -17,9 +16,11 @@ test_config = {
     "qrng_api_key": "api_key_test",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-            "qkd_addr": "http://localhost:9182/api/v1/keys/Alice1SAE_test",
-            "qkd_cert_path": "certificates/qbck-client_test.crt",
-            "qkd_cert_key_path": "certificates/qbck-client_test.key",
+            "qkd": {
+                "url": "http://localhost:9182/api/v1/keys/Alice1SAE_test",
+                "client_cert_path": "certificates/qbck-client_test.crt",
+                "cert_key_path": "certificates/qbck-client_test.key",
+            },
             "server_addr": "http://localhost:6002"
         }
     }
@@ -44,14 +45,15 @@ def test_config_initialization():
 def test_peers_config_initialization():
     config = Config(copy.deepcopy(test_config))
     test_peer = test_config["peers"]["12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"]
-    config_peer = config.peers["12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"]
+    peer_config = config.peers["12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"]
+    qkd_config = peer_config["qkd"]
 
-    assert config_peer["qkd_addr"] == test_peer["qkd_addr"]
-    assert config_peer["server_addr"] == test_peer["server_addr"]
+    assert peer_config["server_addr"] == test_peer["server_addr"]
+    assert qkd_config["url"] == test_peer["qkd"]["url"]
 
     # Paths in config are absolute
-    assert config_peer["qkd_cert_path"] == path.join(ROOT_DIR, test_peer["qkd_cert_path"])
-    assert config_peer["qkd_cert_key_path"] == path.join(ROOT_DIR, test_peer["qkd_cert_key_path"])
+    assert qkd_config["client_cert_path"] == path.join(ROOT_DIR, test_peer["qkd"]["client_cert_path"])
+    assert qkd_config["cert_key_path"] == path.join(ROOT_DIR, test_peer["qkd"]["cert_key_path"])
 
 
 def test_init():
