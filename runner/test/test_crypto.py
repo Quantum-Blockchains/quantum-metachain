@@ -1,4 +1,5 @@
-from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid, is_hex
+from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid, is_hex, \
+    hex_to_base64
 
 
 def test_public_key_conversion():
@@ -65,6 +66,11 @@ def test_decode_base58():
 def test_decode_base64():
     result = base64_to_hex("qV4XorklC1EbehIbsovSaRGlWhyw3jETpt/laDSr3BQ=")
     assert result == "a95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
+
+
+def test_hex_to_base64():
+    result = hex_to_base64("1c41ab2772c630d371f70f9be474ac152a7c574cbff754283c8cda99b77a7949")
+    assert result == "HEGrJ3LGMNNx9w+b5HSsFSp8V0y/91QoPIzambd6eUk="
 
 
 def test_is_hex():
