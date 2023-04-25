@@ -40,3 +40,15 @@ def base58_to_hex(val: str):
 
 def base64_to_hex(message: str):
     return f"{base64.b64decode(message).hex()}"
+
+
+def is_hex(s):
+    """
+    Checks if the input string is a hexadecimal string.
+    """
+    try:
+        int(s, 16)
+        return True
+    except ValueError:
+        return False
+

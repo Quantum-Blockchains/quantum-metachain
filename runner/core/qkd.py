@@ -5,8 +5,8 @@ from common import crypto
 from common.logger import log
 
 
-def get_enc_key(url, cert_path=None, key_path=None):
-    qkd_url = f"{url}/enc_keys?size=256"
+def get_enc_key(url, cert_path=None, key_path=None, size=256):
+    qkd_url = f"{url}/enc_keys?size={size}"
     if not validators.url(qkd_url):
         raise requests.exceptions.InvalidURL
 

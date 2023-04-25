@@ -1,4 +1,4 @@
-from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid
+from common.crypto import base58_to_hex, base64_to_hex, sign, verify, to_public, to_public_from_peerid, is_hex
 
 
 def test_public_key_conversion():
@@ -32,7 +32,8 @@ def test_signature_flow_unsuccessful_when_pubkey_is_different():
 def test_verification_flow_successful():
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7".encode()
     public_key = bytes.fromhex("da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e")
-    signature = bytes.fromhex("fae47d3f21430743df8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
+    signature = bytes.fromhex(
+        "fae47d3f21430743df8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
 
     assert verify(data, signature, public_key)
 
@@ -40,7 +41,8 @@ def test_verification_flow_successful():
 def test_verification_flow_unsuccessful_when_pubkey_is_different():
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7".encode()
     public_key = bytes.fromhex("0000000000000000000000000000000000000000000000000000000000000000")
-    signature = bytes.fromhex("fae47d3f21430743df8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
+    signature = bytes.fromhex(
+        "fae47d3f21430743df8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
 
     assert not verify(data, signature, public_key)
 
@@ -48,7 +50,8 @@ def test_verification_flow_unsuccessful_when_pubkey_is_different():
 def test_verification_flow_unsuccessful_when_signature_is_different():
     data = "18617dff4efef20450dd5eafc060fd85faacca13d95ace3bda0be32e4694fcd7".encode()
     public_key = bytes.fromhex("da94c76735530f88f286dabc3785e69d82920ecfbedae3ab068c5df58709644e")
-    signature = bytes.fromhex("abcded3f21430743af8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
+    signature = bytes.fromhex(
+        "abcded3f21430743af8062d9c4a82cee5df7606d5672413d13aea657eb248d3f917f7487b7e154437515162903396bf3c827d54ea9ff2c9bf47290804d96630b")
 
     assert not verify(data, signature, public_key)
 
@@ -62,3 +65,16 @@ def test_decode_base58():
 def test_decode_base64():
     result = base64_to_hex("qV4XorklC1EbehIbsovSaRGlWhyw3jETpt/laDSr3BQ=")
     assert result == "a95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14"
+
+
+def test_is_hex():
+    assert is_hex('1a') is True
+    assert is_hex('1A') is True
+    assert is_hex('ff') is True
+    assert is_hex('00') is True
+    assert is_hex('12345abc') is True
+    assert is_hex('g') is False
+    assert is_hex('G') is False
+    assert is_hex('1G') is False
+    assert is_hex('xyz') is False
+    assert is_hex('12345abz') is False
