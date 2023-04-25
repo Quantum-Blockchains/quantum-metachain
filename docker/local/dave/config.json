@@ -12,6 +12,7 @@
   "peers": {
     "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
       "qkd": {
+        "provider": "etsi014",
         "url": "https://172.16.0.202:9382/api/v1/keys/Alice3SAE",
         "client_cert_path": "certificates/qbck-client.crt",
         "cert_key_path": "certificates/qbck-client.key"

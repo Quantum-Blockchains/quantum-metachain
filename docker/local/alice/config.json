@@ -12,6 +12,7 @@
   "peers": {
     "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
       "qkd": {
+        "provider": "etsi014",
         "url": "https://172.16.0.202:8182/api/v1/keys/Bob1SAE",
         "client_cert_path": "certificates/qbck-client.crt",
         "cert_key_path": "certificates/qbck-client.key"
@@ -20,6 +21,7 @@
     },
     "12D3KooWJDGhnHkkRCD29xoYfq7Tq6qDhSLCRueCCRZsghLgesnt": {
       "qkd": {
+        "provider": "etsi014",
         "url": "https://172.16.0.202:8282/api/v1/keys/Bob2SAE",
         "client_cert_path": "certificates/qbck-client.crt",
         "cert_key_path": "certificates/qbck-client.key"
