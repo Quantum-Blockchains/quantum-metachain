@@ -8,7 +8,7 @@ import common.config
 from common import crypto
 from common.logger import log
 from core import onetimepad
-from .qkd import get_dec_key
+from .qkd import get_qkd_provider
 from .qrng import generate_random_hex
 
 EncryptedPskResponse = tuple[str, str, str]
@@ -86,6 +86,7 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
 
 
 def __decrypt_psk(encrypted_psk: str, qkd_config: dict, qkd_key_id: str) -> str:
-    _, qkd_key = get_dec_key(qkd_key_id, qkd_config)
+    qkd_provider = get_qkd_provider(qkd_config)
+    _, qkd_key = qkd_provider.get_dec_key(qkd_key_id)
     psk = onetimepad.decrypt(encrypted_psk, qkd_key)
     return psk

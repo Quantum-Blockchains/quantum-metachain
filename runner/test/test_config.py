@@ -1,5 +1,5 @@
-from os import path
 import copy
+from os import path
 
 from common.config import Config, init_config, config_service, ROOT_DIR
 
@@ -17,6 +17,7 @@ test_config = {
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd": {
+                "provider": "custom_provider",
                 "url": "http://localhost:9182/api/v1/keys/Alice1SAE_test",
                 "client_cert_path": "certificates/qbck-client_test.crt",
                 "cert_key_path": "certificates/qbck-client_test.key",
@@ -50,6 +51,7 @@ def test_peers_config_initialization():
 
     assert peer_config["server_addr"] == test_peer["server_addr"]
     assert qkd_config["url"] == test_peer["qkd"]["url"]
+    assert qkd_config["provider"] == test_peer["qkd"]["provider"]
 
     # Paths in config are absolute
     assert qkd_config["client_cert_path"] == path.join(ROOT_DIR, test_peer["qkd"]["client_cert_path"])

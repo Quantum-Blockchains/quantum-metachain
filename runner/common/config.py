@@ -18,11 +18,10 @@ default_config = {
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd": {
+                "provider": "etsi014",
                 "url": "http://localhost:9182/api/v1/keys/Alice1SAE",
                 "client_cert_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.crt",
-                "cert_key_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.key",
-                "key_size": 256,
-                "is_resp_base64": True,
+                "cert_key_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.key"
             },
             "server_addr": "http://localhost:5002"
         }

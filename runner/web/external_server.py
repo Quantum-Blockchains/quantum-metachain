@@ -4,7 +4,8 @@ import common.config
 import common.file
 from common import exceptions
 from common.logger import log
-from core import qkd, onetimepad
+from core import onetimepad
+from core.qkd import get_qkd_provider
 from web.error_handler import init_error_handlers
 
 
@@ -38,7 +39,8 @@ def get_psk(peer_id):
 
     psk = common.file.psk_file_manager.read()
     psk_sig = common.file.psk_sig_file_manager.read()
-    key_id, qkd_key = qkd.get_enc_key(peer_config['qkd'])
+    qkd_provider = get_qkd_provider(peer_config['qkd'])
+    key_id, qkd_key = qkd_provider.get_enc_key()
     xored_psk = onetimepad.encrypt(psk, qkd_key)
 
     return jsonify({

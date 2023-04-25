@@ -12,6 +12,7 @@
   "peers": {
     "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
       "qkd": {
+        "provider": "etsi014",
         "url": "http://localhost:8182/alice/bob",
         "client_cert_path": null,
         "cert_key_path": null
@@ -20,6 +21,7 @@
     },
     "12D3KooWDNdLiaUM2161yCQMvZy9LVgP3fcySk8nuimcKMDBXryj": {
       "qkd": {
+        "provider": "etsi014",
         "url": "http://localhost:8182/alice/dave",
         "client_cert_path": null,
         "cert_key_path": null

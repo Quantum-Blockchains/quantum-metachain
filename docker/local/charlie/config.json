@@ -11,15 +11,20 @@
   "node_logs_path": "node.log",
   "peers": {
     "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-      "qkd_addr": "https://172.16.0.202:9282/api/v1/keys/Alice2SAE",
-      "qkd_cert_path": "certificates/qbck-client.crt",
-      "qkd_cert_key_path": "certificates/qbck-client.key",
+      "qkd": {
+        "url": "https://172.16.0.202:9282/api/v1/keys/Alice2SAE",
+        "client_cert_path": "certificates/qbck-client.crt",
+        "cert_key_path": "certificates/qbck-client.key"
+      },
       "server_addr": "http://alice:5002"
     },
     "12D3KooWSqKmnECvjnp48GWuErQbJ4gbrtoTgaYrtoCagadQ5ANr": {
-      "qkd_addr": "https://172.16.0.202:9082/api/v1/keys/Alice0SAE",
-      "qkd_cert_path": "certificates/qbck-client.crt",
-      "qkd_cert_key_path": "certificates/qbck-client.key",
+      "qkd": {
+        "provider": "qnulabs",
+        "url": "https://122.166.172.56:9090/api/v1/keys/quantumblochchains",
+        "client_cert_path": "certificates/charlie-dave/qbck-client.crt",
+        "cert_key_path": "certificates/charlie-dave/qbck-client.key"
+      },
       "server_addr": "http://dave:5002"
     }
   }

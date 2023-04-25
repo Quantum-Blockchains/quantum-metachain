@@ -9,6 +9,7 @@ def before_each(requests_mock):
     common.config.config_service.config.peers = {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd": {
+                "provider": "etsi014",
                 "url": "http://localhost:9182",
                 "client_cert_path": "certificates/12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY/qbck-client.crt",
                 "cert_key_path": "certificates/12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY/qbck-client.key",
@@ -17,6 +18,7 @@ def before_each(requests_mock):
         },
         "12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY": {
             "qkd": {
+                "provider": "etsi014",
                 "url": "http://localhost:9182",
                 "client_cert_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.crt",
                 "cert_key_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.key",
