@@ -104,24 +104,6 @@ pub mod pallet {
                 }
             };
 
-            let storage_is_rotation_psk = StorageValueRef::persistent(b"is_rotation_psk");
-            let is_rotation_psk = match storage_is_rotation_psk.get::<bool>() {
-                Ok(p) => match p {
-                    Some(c) => c,
-                    None => {
-                        log::error!("The is_rotation_psk is not passed to the offchain worker.");
-                        return;
-                    }
-                },
-                Err(err) => {
-                    log::error!(
-                        "Error occurred while fetching is_rotation_psk from storage. {:?}",
-                        err
-                    );
-                    return;
-                }
-            };
-
             let storage_number_of_block_for_restart_node = StorageValueRef::persistent(b"storage_number_of_block_for_restart_node");
             let number_of_block_for_restart_node = match storage_number_of_block_for_restart_node.get::<u64>() {
                 Ok(b) => b,
@@ -186,7 +168,6 @@ pub mod pallet {
                         match Self::send_psk_rotation_request(runner_port, request) {
                             Ok(()) => {
                                 storage_number_of_block_for_restart_node.set(&num_block_restart);
-                                storage_is_rotation_psk.set(&true);
                                 log::info!("Psk rotation request sent")
                             }
                             Err(err) => {

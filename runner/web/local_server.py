@@ -22,6 +22,7 @@ class LocalServerWrapper:
         self.local_server = Flask(__name__)
         init_error_handlers(self.local_server)
         self.add_endpoint('/psk', 'rotate_pre_shared_key', start_thread_with_rotate_pre_shared_key, methods=['POST'])
+        self.add_endpoint('/restart', 'restart_node', restart_node, methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -36,6 +37,12 @@ def start_thread_with_rotate_pre_shared_key():
     body = request.get_json()
     thread = Thread(target=rotate_pre_shared_key, args=(body,))
     thread.start()
+    return make_response()
+
+
+def restart_node():
+    common.file.psk_sig_file_manager.remove()
+    node.node_service.current_node.restart()
     return make_response()
 
 
@@ -65,8 +72,3 @@ def rotate_pre_shared_key(body):
 
     common.file.psk_file_manager.create(psk)
     common.file.psk_sig_file_manager.create(signature)
-    sleep(common.config.config_service.config.key_rotation_time)
-
-    node.node_service.current_node.restart()
-
-    common.file.psk_sig_file_manager.remove()
