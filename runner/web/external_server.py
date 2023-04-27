@@ -5,7 +5,7 @@ import common.file
 from common import exceptions
 from common.logger import log
 from core import onetimepad
-from core.qkd import get_qkd_provider
+from core.qkd.provider_factory import get_qkd_provider
 from web.error_handler import init_error_handlers
 
 

@@ -8,7 +8,7 @@ import common.config
 from common import crypto
 from common.logger import log
 from core import onetimepad
-from .qkd import get_qkd_provider
+from .qkd.provider_factory import get_qkd_provider
 from .qrng import generate_random_hex
 
 EncryptedPskResponse = tuple[str, str, str]
