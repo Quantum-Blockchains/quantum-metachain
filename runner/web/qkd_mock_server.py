@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from Crypto import Random
 
+from common.crypto import hex_to_base64
+
 
 class QkdMockServerWrapper:
 
@@ -44,13 +46,14 @@ class QkdMockServerWrapper:
         args = request.args
         size = int(args.get('size'))
         key = Random.get_random_bytes(int(size / 8)).hex()
+        key_base64 = hex_to_base64(key)
 
-        self.keys[self.counter_id] = key
+        self.keys[self.counter_id] = key_base64
 
         response = jsonify({
             "keys": [
                 {
-                    "key": key,
+                    "key": key_base64,
                     "key_ID": self.counter_id
                 }
             ]

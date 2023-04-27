@@ -8,15 +8,21 @@ from core.pre_shared_key import get_psk_from_peers
 def before_each(requests_mock):
     common.config.config_service.config.peers = {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
-            "qkd_addr": "http://localhost:9182",
-            "qkd_cert_path": "certificates/12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY/qbck-client.crt",
-            "qkd_cert_key_path": "certificates/12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY/qbck-client.key",
+            "qkd": {
+                "provider": "etsi014",
+                "url": "http://localhost:9182",
+                "client_cert_path": "certificates/12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY/qbck-client.crt",
+                "cert_key_path": "certificates/12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY/qbck-client.key",
+            },
             "server_addr": "http://localhost:5002"
         },
         "12D3KooWAmo51HBQgCnFhTbGQD47swoBqiBvKYk6fXCJQJfuhhaY": {
-            "qkd_addr": "http://localhost:9182",
-            "qkd_cert_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.crt",
-            "qkd_cert_key_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.key",
+            "qkd": {
+                "provider": "etsi014",
+                "url": "http://localhost:9182",
+                "client_cert_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.crt",
+                "cert_key_path": "certificates/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc/qbck-client.key",
+            },
             "server_addr": "http://localhost:5001"
         }
     }

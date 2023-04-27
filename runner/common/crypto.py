@@ -1,9 +1,12 @@
+import base64
+import binascii
+
+import base58
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives._serialization import PublicFormat, Encoding
 from cryptography.hazmat.primitives.asymmetric import ed25519
+
 from .logger import log
-import base64
-import base58
 
 
 def to_public(priv_key_str: str) -> bytes:
@@ -40,3 +43,20 @@ def base58_to_hex(val: str):
 
 def base64_to_hex(message: str):
     return f"{base64.b64decode(message).hex()}"
+
+
+def hex_to_base64(message: str):
+    hex_bytes = binascii.unhexlify(message)
+    base64_bytes = base64.b64encode(hex_bytes)
+    return base64_bytes.decode('utf-8')
+
+
+def is_hex(s):
+    """
+    Checks if the input string is a hexadecimal string.
+    """
+    try:
+        int(s, 16)
+        return True
+    except ValueError:
+        return False
