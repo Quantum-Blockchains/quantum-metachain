@@ -2,10 +2,9 @@ from unittest.mock import patch
 
 import pytest
 
-from web.external_server import get_psk, ExternalServerWrapper
-from core.onetimepad import encrypt
 from common import exceptions
-
+from core.onetimepad import encrypt
+from web.external_server import get_psk, ExternalServerWrapper
 
 psk = "336d297b4a4ac1876cd2958e321d772804b033c63a0337a88edc6e8b285906df"
 signature = "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
@@ -18,7 +17,7 @@ signature = "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2
 def test_get_psk_success(psk_sig_read, psk_read, psk_sig_exists, psk_exists, requests_mock):
     sig = "17d1dc882d5ed8346be27a2529d046afe42b56825e374236ae0a80ad448086027e2b2982a2eb8f38221cf3aebc223c01b332101b1c7e5718651d076b430e9100"
     peer_id = "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc"
-    qkd_key = "qV4XorklC1EbehIbsovSaRGlWhyw3jETpt/laDSr3BQ=" # a95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14
+    qkd_key = "qV4XorklC1EbehIbsovSaRGlWhyw3jETpt/laDSr3BQ="  # a95e17a2b9250b511b7a121bb28bd26911a55a1cb0de3113a6dfe56834abdc14
     mocked_qkd_resp = {
         "keys": [
             {
