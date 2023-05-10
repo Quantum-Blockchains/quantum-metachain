@@ -18,6 +18,8 @@ use sp_std::vec::Vec;
 #[macro_use]
 extern crate alloc;
 
+const BLOCK_NUM_FOR_PSK_ROTATION: u64 = 60;
+
 #[derive(Deserialize)]
 pub struct PeerInfoResponse {
     pub result: Vec<PeerInfoResult>,
@@ -104,8 +106,9 @@ pub mod pallet {
                 }
             };
 
-            let storage_number_of_block_for_restart_node = StorageValueRef::persistent(b"storage_number_of_block_for_restart_node");
-            let number_of_block_for_restart_node = match storage_number_of_block_for_restart_node.get::<u64>() {
+            let block_num_to_node_restart =
+                StorageValueRef::persistent(b"storage_number_of_block_for_restart_node");
+            let number_of_block_for_restart_node = match block_num_to_node_restart.get::<u64>() {
                 Ok(b) => b,
                 Err(err) => {
                     log::error!(
@@ -116,20 +119,18 @@ pub mod pallet {
                 }
             };
 
-
             let current_block_number: u64 = block_number.into();
             if number_of_block_for_restart_node == Some(current_block_number) {
                 match Self::send_restart_node_request(runner_port) {
                     Ok(()) => {
                         log::info!("Restart node request sent");
-                        return
+                        return;
                     }
                     Err(err) => {
                         log::error!("Failed to send restart node request. {:?}", err)
                     }
                 };
             }
-
 
             if number_of_block_for_restart_node == Some(0) {
                 let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
@@ -155,7 +156,7 @@ pub mod pallet {
                 match Self::choose_psk_creator(entropy, peer_ids) {
                     Some(psk_creator) => {
                         let num_block: u64 = block_number.into();
-                        let num_block_restart = num_block + 60;
+                        let num_block_restart = num_block + BLOCK_NUM_FOR_PSK_ROTATION;
 
                         log::info!("Block number for restart: {:?}", num_block_restart);
 
@@ -167,7 +168,7 @@ pub mod pallet {
                         log::debug!("chosen psk creator: {:?}", request);
                         match Self::send_psk_rotation_request(runner_port, request) {
                             Ok(()) => {
-                                storage_number_of_block_for_restart_node.set(&num_block_restart);
+                                block_num_to_node_restart.set(&num_block_restart);
                                 log::info!("Psk rotation request sent")
                             }
                             Err(err) => {
@@ -286,9 +287,7 @@ impl<T: Config> Pallet<T> {
         Ok(json_res.result)
     }
 
-    fn send_restart_node_request(
-        runner_port: u16
-    ) -> Result<(), Error<T>> {
+    fn send_restart_node_request(runner_port: u16) -> Result<(), Error<T>> {
         let url = format!("http://localhost:{}/restart", runner_port);
         let request = Request::get(&url);
         let timeout = timestamp().add(Duration::from_millis(3000));

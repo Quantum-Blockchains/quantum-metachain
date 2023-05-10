@@ -249,7 +249,11 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
     let number_of_block_for_restart_node: u64 = 0;
     let bytes_number_of_block_for_restart_node = number_of_block_for_restart_node.to_le_bytes();
     if let Some(mut storage) = backend.offchain_storage() {
-        storage.set(STORAGE_PREFIX, b"storage_number_of_block_for_restart_node", &bytes_number_of_block_for_restart_node);
+        storage.set(
+            STORAGE_PREFIX,
+            b"storage_number_of_block_for_restart_node",
+            &bytes_number_of_block_for_restart_node,
+        );
     };
 
     let _rpc_handlers = sc_service::spawn_tasks(sc_service::SpawnTasksParams {

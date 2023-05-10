@@ -41,8 +41,9 @@ def start_thread_with_rotate_pre_shared_key():
 
 
 def restart_node():
-    common.file.psk_sig_file_manager.remove()
+    sleep(3)
     node.node_service.current_node.restart()
+    common.file.psk_sig_file_manager.remove()
     return make_response()
 
 
