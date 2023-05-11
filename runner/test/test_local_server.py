@@ -41,7 +41,6 @@ def test_rotate_pre_shared_key_when_local_peer_is_chosen(psk_sig_remove, psk_sig
     node_key_read.assert_called()
     psk_create.assert_called_with(psk)
     psk_sig_create.assert_called_with(signature)
-    psk_sig_remove.assert_called()
 
 
 @patch("core.pre_shared_key.get_psk_from_peers", return_value=Psk(

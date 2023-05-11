@@ -126,13 +126,20 @@ def check_psk_rotation(signer_name, signer_config, block_number):
             else:
                 log.info(f"({signer_name}) {node_name} psk verification successful")
     log.info(f"{signer_name}'s psk rotation successful")
-    time.sleep(60)
+
+    for node_name, node_config in nodes:
+        send_psk_restart_node(node_config.local_server_port)
 
 
 def send_psk_rotation_request(runner_port, peer_id, is_local, block_number):
     url = f"http://localhost:{runner_port}/psk"
     data = {'peer_id': peer_id, 'is_local_peer': is_local, 'block_num': block_number}
     requests.post(url, json=data)
+
+
+def send_psk_restart_node(runner_port):
+    url = f"http://localhost:{runner_port}/restart"
+    requests.get(url)
 
 
 def sleep_until_file_exists(file_path):
