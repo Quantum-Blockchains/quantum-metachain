@@ -9,10 +9,12 @@ default_config = {
     "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
     "local_server_port": 5003,
     "external_server_port": 5004,
+    "node_http_rpc_port": 9933,
     "psk_file_path": "psk1",
     "psk_sig_file_path": "psk1_sig",
     "node_key_file_path": ".node_key",
     "node_logs_path": "node.log",
+    "checking_number_of_peers_time": 50,
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
     "peers": {

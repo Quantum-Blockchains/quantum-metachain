@@ -6,6 +6,7 @@ import sys
 import common.config
 from threading import Thread
 import common.file
+import requests
 
 
 class Node:
@@ -23,6 +24,9 @@ class Node:
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
 
+        checking_number_of_peers = Thread(target=check_number_peers_of_node, args=())
+        checking_number_of_peers.start()
+
     def restart(self):
         log.info("Restarting QMC node...")
         self.terminate()
@@ -33,6 +37,9 @@ class Node:
         self.process = process
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
+
+        checking_number_of_peers = Thread(target=check_number_peers_of_node, args=())
+        checking_number_of_peers.start()
 
     def terminate(self):
         log.info("Terminating QMC node...")
@@ -70,3 +77,23 @@ def write_logs_node_to_file():
             sys.stdout.write(str(line, 'utf-8'))
             logfile.write(str(line, 'utf-8'))
     node_service.current_node.process.wait()
+
+
+def check_number_peers_of_node():
+    while True:
+        time.sleep(common.config.config_service.config.checking_number_of_peers_time)
+        url = f"http://localhost:{common.config.config_service.config.node_http_rpc_port}"
+        data = {"id": 1, "jsonrpc": "2.0", "method": "system_peers", "params": []}
+        responce = requests.post(url, json=data)
+        if responce.status_code == 200:
+            text = responce.json()
+            number_peers = text["result"]
+            if len(number_peers) == 0:
+                log.info("The node has no contact with any other node.")
+                common.file.psk_sig_file_manager.remove()
+                common.file.psk_file_manager.remove()
+                node_service.current_node.restart()
+        else:
+            common.file.psk_sig_file_manager.remove()
+            common.file.psk_file_manager.remove()
+            node_service.current_node.restart()
