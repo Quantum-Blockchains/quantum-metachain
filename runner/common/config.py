@@ -14,7 +14,7 @@ default_config = {
     "psk_sig_file_path": "psk1_sig",
     "node_key_file_path": ".node_key",
     "node_logs_path": "node.log",
-    "checking_number_of_peers_time": 50,
+    "recovery_check_interval": 50,
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
     "peers": {
