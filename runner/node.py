@@ -6,6 +6,7 @@ import sys
 import common.config
 from threading import Thread
 import common.file
+import requests
 
 
 class Node:
@@ -23,19 +24,18 @@ class Node:
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
 
+        self.recovery_cron = Thread(target=validate_node_to_network_connection, args=())
+        self.recovery_cron.start()
+
     def restart(self):
         log.info("Restarting QMC node...")
         self.terminate()
         time.sleep(10)
-        process = subprocess.Popen(self.startup_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-
-        log.info(f"QMC process ID: {process.pid}")
-        self.process = process
-        write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
-        write_node_logs_thread.start()
+        self.start()
 
     def terminate(self):
         log.info("Terminating QMC node...")
+        self.recovery_cron.join()
         self.process.terminate()
         self.process = None
 
@@ -70,3 +70,24 @@ def write_logs_node_to_file():
             sys.stdout.write(str(line, 'utf-8'))
             logfile.write(str(line, 'utf-8'))
     node_service.current_node.process.wait()
+
+
+def validate_node_to_network_connection():
+    while True:
+        time.sleep(common.config.config_service.config.recovery_check_interval)
+        url = f"http://localhost:{common.config.config_service.config.node_http_rpc_port}"
+        data = {"id": 1, "jsonrpc": "2.0", "method": "system_peers", "params": []}
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            text = response.json()
+            peers_count = text["result"]
+            if len(peers_count) == 0:
+                log.info("Restarting the node, because it lost connection to the network")
+                common.file.psk_sig_file_manager.remove()
+                common.file.psk_file_manager.remove()
+                node_service.current_node.restart()
+        else:
+            log.info("Restarting the node, because it not answering RPC methods calls")
+            common.file.psk_sig_file_manager.remove()
+            common.file.psk_file_manager.remove()
+            node_service.current_node.restart()

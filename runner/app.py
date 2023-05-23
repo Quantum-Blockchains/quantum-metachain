@@ -17,6 +17,8 @@ common.file.initialise_file_managers()
 
 create_node_info_dir()
 add_logs_handler_file()
+params.args.startup_args.append("--rpc-port")
+params.args.startup_args.append(str(common.config.config_service.config.node_http_rpc_port))
 params.args.startup_args.append("--psk-file")
 params.args.startup_args.append(common.config.config_service.config.psk_file_path)
 params.args.startup_args.append("--runner-port")

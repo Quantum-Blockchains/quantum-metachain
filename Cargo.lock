@@ -1287,6 +1287,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "dilithium"
+version = "0.1.0"
+source = "git+https://github.com/Quantum-Blockchains/dilithium.git#26fadffe73382a89901e21691e694d261c12faa9"
+dependencies = [
+ "rand 0.7.3",
+]
+
+[[package]]
 name = "directories"
 version = "4.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7275,6 +7283,7 @@ dependencies = [
  "bitflags",
  "blake2-rfc",
  "byteorder",
+ "dilithium",
  "dyn-clonable",
  "ed25519-dalek",
  "futures",
