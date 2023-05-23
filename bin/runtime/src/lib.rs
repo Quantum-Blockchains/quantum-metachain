@@ -21,6 +21,7 @@ pub use frame_support::{
 };
 pub use frame_system::Call as SystemCall;
 pub use ocw_psk::{self, Call as OcwPskCall};
+pub use ocw_randao::{self, Call as OcwRandaoCall};
 pub use pallet_balances::Call as BalancesCall;
 use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
@@ -329,6 +330,11 @@ impl ocw_psk::Config for Runtime {
     type PskDifficulty2 = ConstU128<{ u128::MAX }>;
 }
 
+impl ocw_randao::Config for Runtime {
+    type Event = Event;
+    type Call = Call;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
     pub struct Runtime
@@ -348,6 +354,7 @@ construct_runtime!(
         Contracts: pallet_contracts,
         // QMC pallets
         OcwPsk: ocw_psk,
+        OcwaRandao: ocw_randao,
     }
 );
 
