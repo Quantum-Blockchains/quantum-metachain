@@ -65,7 +65,7 @@ pub mod pallet {
 
             let current_block_number = block_number.encode();
             let storage_random_num = StorageValueRef::persistent(current_block_number.as_slice());
-            storage_rundom_num.set(&random_num);
+            storage_random_num.set(&random_num);
 
             let hashed_random_num = Self::hash_random_num(random_num);
             log::debug!("Random num: {:?}", random_num);
