@@ -5,16 +5,15 @@ extern crate alloc;
 
 use alloc::string::{String, ToString};
 
+pub use pallet::*;
 use serde::{Deserialize, Serialize};
 use sp_core::Hasher;
 use sp_io::offchain::timestamp;
 use sp_runtime::{
-    offchain::{Duration, http::Request},
+    offchain::{http::Request, Duration},
     traits::Get,
 };
 use sp_std::vec::Vec;
-
-pub use pallet::*;
 
 use crate::Error::HttpFetchingError;
 
@@ -74,8 +73,8 @@ pub mod pallet {
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
-        where
-            u64: From<<T as frame_system::Config>::BlockNumber>,
+    where
+        u64: From<<T as frame_system::Config>::BlockNumber>,
     {
         /// PSK offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
