@@ -117,7 +117,7 @@ impl<T: Config> Pallet<T> {
                 qrng_data,
                 err
             );
-            return DeserializeError;
+            DeserializeError
         })?;
         let qrng_response: QRNGResponse = serde_json::from_str(resp_str).map_err(|err| {
             log::error!(
@@ -125,7 +125,7 @@ impl<T: Config> Pallet<T> {
                 resp_str,
                 err
             );
-            return DeserializeError;
+            DeserializeError
         })?;
         Ok(qrng_response)
     }
