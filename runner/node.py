@@ -22,8 +22,10 @@ class Node:
         self.process = process
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
+        common.config.config_service.config.node_start = True
 
     def restart(self):
+        common.config.config_service.config.node_start = False
         log.info("Restarting QMC node...")
         self.terminate()
         time.sleep(10)
@@ -33,6 +35,7 @@ class Node:
         self.process = process
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
+        common.config.config_service.config.node_start = True
 
     def terminate(self):
         log.info("Terminating QMC node...")
@@ -62,11 +65,14 @@ node_service = NodeService(None)
 
 
 def write_logs_node_to_file():
-    with open(common.config.config_service.config.node_logs_path, 'a') as logfile:
-        logfile.write("====================================================")
-        logfile.write("=================== NODE STARTED ===================")
-        logfile.write("====================================================\n")
-        for line in node_service.current_node.process.stdout:
-            sys.stdout.write(str(line, 'utf-8'))
-            logfile.write(str(line, 'utf-8'))
-    node_service.current_node.process.wait()
+    try:
+        with open(common.config.config_service.config.node_logs_path, 'a') as logfile:
+            logfile.write("====================================================")
+            logfile.write("=================== NODE STARTED ===================")
+            logfile.write("====================================================\n")
+            for line in node_service.current_node.process.stdout:
+                sys.stdout.write(str(line, 'utf-8'))
+                logfile.write(str(line, 'utf-8'))
+        node_service.current_node.process.wait()
+    except:
+        print("DZIALA")
