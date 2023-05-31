@@ -1,17 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-
-use serde::Deserialize;
-use sp_core::{Decode, Encode};
-use sp_core::Hasher;
-use sp_io::offchain::timestamp;
-use sp_runtime::{
-    offchain::{Duration, http::Request}
-};
-use sp_std::str;
-use sp_std::vec::Vec;
-
 pub use pallet::*;
+use serde::Deserialize;
+use sp_core::{Decode, Encode, Hasher};
+use sp_io::offchain::timestamp;
+use sp_runtime::offchain::{http::Request, Duration};
+use sp_std::{str, vec::Vec};
 
 use crate::Error::{DeserializeError, HttpFetchError};
 
@@ -44,12 +38,15 @@ pub mod pallet {
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
-        where
-            u64: From<<T as frame_system::Config>::BlockNumber>,
+    where
+        u64: From<<T as frame_system::Config>::BlockNumber>,
     {
         /// RANDAO offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
-            log::info!("Running RANDAO offchain worker in block: {:?}", block_number);
+            log::info!(
+                "Running RANDAO offchain worker in block: {:?}",
+                block_number
+            );
             let qrng_data = match Self::fetch_qrng_data() {
                 Ok(qrng_data) => qrng_data,
                 Err(err) => {
@@ -110,14 +107,21 @@ impl<T: Config> Pallet<T> {
 
     fn parse_qrng_data(qrng_data: &[u8]) -> Result<QRNGResponse, Error<T>> {
         let resp_str = str::from_utf8(qrng_data).map_err(|err| {
-            log::error!("Failed to deserialize qrng data: {:?} to string, err: {:?}", qrng_data, err);
-            return DeserializeError;
+            log::error!(
+                "Failed to deserialize qrng data: {:?} to string, err: {:?}",
+                qrng_data,
+                err
+            );
+            DeserializeError
         })?;
-        let qrng_response: QRNGResponse =
-            serde_json::from_str(resp_str).map_err(|err| {
-                log::error!("Failed to deserialize qrng data: {:?} to object, err: {:?}", resp_str, err);
-                return DeserializeError;
-            })?;
+        let qrng_response: QRNGResponse = serde_json::from_str(resp_str).map_err(|err| {
+            log::error!(
+                "Failed to deserialize qrng data: {:?} to object, err: {:?}",
+                resp_str,
+                err
+            );
+            DeserializeError
+        })?;
         Ok(qrng_response)
     }
 
