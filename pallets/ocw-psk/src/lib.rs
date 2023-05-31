@@ -1,7 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(test)]
-mod tests;
+#[macro_use]
+extern crate alloc;
 
 use alloc::string::{String, ToString};
 
@@ -15,8 +15,8 @@ use sp_runtime::{
 };
 use sp_std::vec::Vec;
 
-#[macro_use]
-extern crate alloc;
+#[cfg(test)]
+mod tests;
 
 const BLOCK_NUM_FOR_PSK_ROTATION: u64 = 60;
 
@@ -76,6 +76,7 @@ pub mod pallet {
     {
         /// PSK offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
+            log::info!("Running PSK offchain worker...");
             let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
             let rpc_port = match storage_rpc_port.get::<u16>() {
                 Ok(p) => match p {
@@ -209,16 +210,16 @@ impl<T: Config> Pallet<T> {
             .add_header("Content-Type", "application/json")
             .deadline(timeout)
             .send()
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?;
 
         let response = pending
             .try_wait(timeout)
-            .map_err(|_| <Error<T>>::HttpFetchingError)?
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?
+            .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
             log::error!("Unexpected http request status code: {}", response.code);
-            return Err(<Error<T>>::HttpFetchingError);
+            return Err(Error::HttpFetchingError);
         }
 
         Ok(response.body().collect::<Vec<u8>>())
@@ -227,13 +228,13 @@ impl<T: Config> Pallet<T> {
     fn fetch_n_parse_peers(rpc_port: u16) -> Result<Vec<String>, Error<T>> {
         let resp_bytes = Self::fetch_peers(rpc_port).map_err(|e| {
             log::error!("fetch_peers error: {:?}", e);
-            <Error<T>>::HttpFetchingError
+            Error::HttpFetchingError
         })?;
 
         let json_res: PeerInfoResponse =
             serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
                 log::error!("Parse peers error: {:?}", e);
-                <Error<T>>::HttpFetchingError
+                Error::HttpFetchingError
             })?;
 
         Ok(json_res
@@ -257,16 +258,16 @@ impl<T: Config> Pallet<T> {
             .add_header("Content-Type", "application/json")
             .deadline(timeout)
             .send()
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?;
 
         let response = pending
             .try_wait(timeout)
-            .map_err(|_| <Error<T>>::HttpFetchingError)?
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?
+            .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
             log::error!("Unexpected http request status code: {}", response.code);
-            return Err(<Error<T>>::HttpFetchingError);
+            return Err(Error::HttpFetchingError);
         }
 
         Ok(response.body().collect::<Vec<u8>>())
@@ -275,13 +276,13 @@ impl<T: Config> Pallet<T> {
     fn fetch_n_parse_local_peerid(rpc_port: u16) -> Result<String, Error<T>> {
         let resp_bytes = Self::fetch_local_peerid(rpc_port).map_err(|e| {
             log::error!("fetch_local_peerid error: {:?}", e);
-            <Error<T>>::HttpFetchingError
+            Error::HttpFetchingError
         })?;
 
         let json_res: LocalPeerIdResponse =
             serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
                 log::error!("Parse local peerid error: {:?}", e);
-                <Error<T>>::HttpFetchingError
+                Error::HttpFetchingError
             })?;
 
         Ok(json_res.result)
@@ -294,16 +295,16 @@ impl<T: Config> Pallet<T> {
         let pending = request
             .deadline(timeout)
             .send()
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?;
 
         let response = pending
             .try_wait(timeout)
-            .map_err(|_| <Error<T>>::HttpFetchingError)?
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?
+            .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
             log::error!("Unexpected http request status code: {}", response.code);
-            return Err(<Error<T>>::HttpFetchingError);
+            return Err(Error::HttpFetchingError);
         }
 
         Ok(())
@@ -326,16 +327,16 @@ impl<T: Config> Pallet<T> {
             .add_header("Content-Type", "application/json")
             .deadline(timeout)
             .send()
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?;
 
         let response = pending
             .try_wait(timeout)
-            .map_err(|_| <Error<T>>::HttpFetchingError)?
-            .map_err(|_| <Error<T>>::HttpFetchingError)?;
+            .map_err(|_| Error::HttpFetchingError)?
+            .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
             log::error!("Unexpected http request status code: {}", response.code);
-            return Err(<Error<T>>::HttpFetchingError);
+            return Err(Error::HttpFetchingError);
         }
 
         Ok(())

@@ -12,6 +12,7 @@ import requests
 class Node:
     def __init__(self, startup_args):
         self.startup_args = startup_args
+        self.recovery_cron = None
         self.process = None
 
     def start(self):
