@@ -4224,6 +4224,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "ocw-randao-storage"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-support-test",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5166,6 +5184,7 @@ dependencies = [
  "hex-literal",
  "ocw-psk",
  "ocw-randao",
+ "ocw-randao-storage",
  "pallet-aura",
  "pallet-balances",
  "pallet-contracts",
