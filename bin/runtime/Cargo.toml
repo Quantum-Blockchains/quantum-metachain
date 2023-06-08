@@ -55,7 +55,7 @@ hex-literal = { version = "0.3.4", optional = true }
 # local packages
 ocw-psk = { path = "../../pallets/ocw-psk", default-features = false }
 ocw-randao = { path = "../../pallets/ocw-randao", default-features = false }
-ocw-randao-storage = { path = "../../pallets/ocw-randao-storage", default-features = false }
+randao = { path = "../../pallets/randao", default-features = false }
 
 
 [build-dependencies]
@@ -71,7 +71,7 @@ std = [
 	"frame-system/std",
 	"ocw-psk/std",
 	"ocw-randao/std",
-	"ocw-randao-storage/std",
+	"randao/std",
 	"pallet-aura/std",
 	"pallet-balances/std",
 	"pallet-grandpa/std",

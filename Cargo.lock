@@ -4224,24 +4224,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ocw-randao-storage"
-version = "0.1.0"
-dependencies = [
- "frame-support",
- "frame-support-test",
- "frame-system",
- "log",
- "parity-scale-codec",
- "scale-info",
- "serde",
- "serde_json",
- "sp-core",
- "sp-io",
- "sp-runtime",
- "sp-std",
-]
-
-[[package]]
 name = "once_cell"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5184,7 +5166,6 @@ dependencies = [
  "hex-literal",
  "ocw-psk",
  "ocw-randao",
- "ocw-randao-storage",
  "pallet-aura",
  "pallet-balances",
  "pallet-contracts",
@@ -5197,6 +5178,7 @@ dependencies = [
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc-runtime-api",
  "parity-scale-codec",
+ "randao",
  "scale-info",
  "sp-api",
  "sp-block-builder",
@@ -5342,6 +5324,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59cad018caf63deb318e5a4586d99a24424a364f40f1e5778c29aca23f4fc73e"
 dependencies = [
  "rand_core 0.6.4",
+]
+
+[[package]]
+name = "randao"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-support-test",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]
