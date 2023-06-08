@@ -23,6 +23,7 @@ struct QRNGResponse {
 pub mod pallet {
     use frame_support::pallet_prelude::*;
     use frame_system::pallet_prelude::BlockNumberFor;
+    use sp_runtime::offchain::storage::StorageValueRef;
 
     use super::*;
 
@@ -61,7 +62,11 @@ pub mod pallet {
                     return;
                 }
             };
-            // TODO save random number in persistent storage linked to block number (JEQB-253)
+
+            let current_block_number = block_number.encode();
+            let storage_random_num = StorageValueRef::persistent(current_block_number.as_slice());
+            storage_random_num.set(&random_num);
+
             let hashed_random_num = Self::hash_random_num(random_num);
             log::debug!("Random num: {:?}", random_num);
             log::info!("Hashed random num {:?}", &hashed_random_num);

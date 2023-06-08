@@ -1,22 +1,107 @@
-# Quantum Meta Chain
+# Quantum Meta-chain
 
-## Build
+This is a repository for Quantum Meta-chain, an implementation of a quantum node using quantum 
+and post-quantum security. It is a fork of a rust-based repository, [Substrate](https://github.com/paritytech/substrate).
 
-### Runner dependencies
+## Table of contents
+- [1. Setup](#1-setup)
+  - [1.1. Prerequisites](#11-prerequisites)
+- [2. Building](#2-build)
+  - [2.1. Using `cargo`](#21-using-cargo)
+  - [2.2. Using Docker](#22-using-docker)
+- [3. Running](#3-running)
+  - [3.1. Using Python](#31-using-python)
+  - [3.2. Using Docker](#32-using-docker)
+- [4 - Testing](#4-testing)
+  - [4.1 Runner unit tests](#41-runner-unit-tests)
+  - [4.2 Rust unit tests](#42-rust-unit-tests)
+  - [4.3 Key rotation tests](#43-key-rotation-tests)
+- [5 - Documentation](#5-documentation)
+
+## 1. Setup
+### 1.1. Prerequisites 
+To begin working with this repository you will need the following dependencies:
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Python](https://www.python.org/downloads/)
+- [Docker](https://docs.docker.com/engine/install/) (optional)
+- QKD-simulator
+- Certificate for QKD-simulator
+
+After downloading your dependencies you need to make sure to continue with these steps:
+- Because this a substrate fork you will also need to configure Rust with few additional steps, listed [here](https://docs.substrate.io/install/)
+by substrate team.
+- Install Python dependencies:
 ```bash
 python3 -m venv venv
 . ./venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-### Node dependencies
+## 2. Build
+There are few ways to build this repository before running, listed below.
+
+### 2.1. Using `cargo` 
+Cargo is a tool provided by rust framework to easily manage building, running and testing rust code.
+You can use it to build quantum node code with command:
 ```bash
 cargo build --release
 ```
+This will create a binary file in `./target/release`, called `qmc-node`.
 
-## Run
+### 2.2. Using Docker
+Alternate way of building this repository uses Docker. To build a node use command:
 
-Start the node using one of the names: alice, bob, charlie, dave, eve, ferdie.
+```bash
+make build
+```
+This will create a `quantum-metachain` docker image.
+
+## 3. Running
+Depending on how you built your project you can run it in different ways
+
+Before you start the node, you need to create a configuration file, the path to which must then be provided when you start the node.
+Example:
+```json
+{
+  "__type__": "Config",
+  "local_peer_id": "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc",
+  "local_server_port": 5001,
+  "external_server_port": 5002,
+  "psk_file_path": "test/tmp/alice/psk",
+  "psk_sig_file_path": "test/tmp/alice/psk_sig",
+  "node_key_file_path": "test/tmp/alice/node_key",
+  "key_rotation_time": 50,
+  "qrng_api_key": "",
+  "qkd_cert_path": null,
+  "qkd_cert_key_path": null,
+  "peers": {
+    "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW": {
+      "qkd_addr": "http://localhost:8182/alice/bob",
+      "server_addr": "http://localhost:5004"
+    },
+    "12D3KooWDNdLiaUM2161yCQMvZy9LVgP3fcySk8nuimcKMDBXryj": {
+      "qkd_addr": "http://localhost:8182/alice/dave",
+      "server_addr": "http://localhost:5008"
+    }
+  }
+}
+```
+
+- **local_peer_id** - local node identifier, which is generated from the private key(node_key) for "peer to peer";
+- **local_server_port** - port number for the server, which is responsible for starting the pre-shared key rotation and node reboot process;
+- **external_server_port** - port number for the server, which is responsible for transferring the new pre shared key using QKD to the node in need;
+- **psk_file_path** - path to the file that contains the pre-shared key;
+- **psk_sig_file_path** - path to a file containing the signature of the pre-shared key and the block number when the pre-shared key was generated;
+- **node_key_file_path** - path to a file containing the private key fo "peer to peer";
+- **key_rotation_time** - the time from the beginning of the pre-shared key rotation at which nodes are allowed ti receive this key (number of milliseconds);
+- **qrng_api_key** - key to access the qrng used to generate pre-shared key;
+- **peers** - information about the nodes with which we create a connection using QKD. It contains the node identifier, the address of the QKD-simulator and the external server address of the given node;
+
+### 3.1. Using Python
+Quantum Meta-chain introduces a concept of **Pre-shared key rotation**.
+To make things work we introduced a system for managing rotating those keys called a **runner**.
+Runner works as a wrapper around Rust-built code that rotates pre-shared keys after some period of time.
+To run a Rust-built node run a following command:
 
 ```bash
 python3 runner/app.py --config-file <config_path> --process './target/release/qmc-node \
@@ -30,63 +115,62 @@ python3 runner/app.py --config-file <config_path> --process './target/release/qm
 --rpc-methods Unsafe \
 --no-mdns'
 ```
-
-For example:
-
+If you want to run a configuration f.e. for alice node, you would need to change configuration to that on of alice:
 ```bash
-python3 runner/app.py --config-file config.json --process './target/release/qmc-node \
---base-path /tmp/alice \
+python3 runner/app.py --config-file ./path/to/alice/config.json --process './target/release/qmc-node \
 --chain ./quantumMetachainSpecRaw.json \
---name alice \
---port 30333 \
---ws-port 9945 \
---rpc-port 9933 \
---telemetry-url "wss://telemetry.polkadot.io/submit/ 0" \
---rpc-methods Unsafe \
---no-mdns'
+--name Alice \
+
+...
 ```
+For a list of all available flags run your `qmc-node` with `--help` flag
 
-## Docker
-
+### 3.2. Using Docker
+To run a Docker container from docker image built in earlier steps run:
 ```bash
-docker build -t quantum-metachain .
 docker run -it quantum-metachain
 ```
+You can also use "make" to start a network of four nodes:
+```bash
+make start
+# and
+make stop
+```
 
-## Test
+## 4. Testing
+There are few layers that need to be covered with testing suites:
+- Quantum Meta-chain code
+- Runner code
+- Key rotating flow
+Each of those layers have their separate way of writing/running tests
 
-### Node unit tests
+### 4.1 Runner unit tests
+To run runner unit tests:
+```bash
+pytest ./runner/test --ignore=psk_rotation_test.py
+```
 
+### 4.2 Rust unit tests
+To run QMC unit tests:
 ```bash
 cargo test
 ```
 
-### Runner unit tests
-
-```bash
-cd runner
-pytest --ignore=psk_rotation_test.py
-```
-
-### Key rotation testing
-
+### 4.3 Key rotation tests
+To run integration key rotation tests:
 ```bash
 cd runner
 python3 psk_rotation_test.py
 ```
+  
 
-## Documentation
-
-### Generate
-
+## 5. Documentation
+To generate documentation run:
 ```bash
 cargo doc
 ```
 
-### Display
-
-In order to display documentation go to `target/doc/<crate you want to see>` and open in the browser located there `index.html` file, e.g.
-
+In order to display documentation go to `target/doc/<crate you want to see>` and open `index.html` file in the browser that you want to, e.g.
 #### MAC
 
 ```bash
