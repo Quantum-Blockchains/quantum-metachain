@@ -335,7 +335,7 @@ impl ocw_randao::Config for Runtime {
     type Call = Call;
 }
 
-impl ocw_randao_storage::Config for Runtime {
+impl randao::Config for Runtime {
     type Event = Event;
     type Call = Call;
     type Currency = Balances;
@@ -361,7 +361,7 @@ construct_runtime!(
         // QMC pallets
         OcwPsk: ocw_psk,
         OcwRandao: ocw_randao,
-        OcwRandaoStorage: ocw_randao_storage,
+        Randao: randao,
     }
 );
 

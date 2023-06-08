@@ -240,10 +240,7 @@ impl<T: Config> Pallet<T> {
 
     fn check_secret(hash: [u8; 32], secret: u64) -> bool {
         let _hash: [u8; 32] = Self::hash_num(secret);
-        if hash == _hash {
-            return true
-        }
-        return false
+        return hash == _hash
     }
 
     fn hash_num(num: u64) -> [u8; 32] {
@@ -253,10 +250,11 @@ impl<T: Config> Pallet<T> {
     }
 
     fn vec_to_bytes_array(vec: Vec<u8>) -> [u8; 32] {
-        let mut tmp: [u8; 32] = [0; 32];
-        for i in 0..32 {
-            tmp[i] = vec[i];
-        }
-        return tmp
+        // let mut tmp: [u8; 32] = [0; 32];
+        // for i in 0..32 {
+        //     tmp[i] = vec[i];
+        // }
+        // return tmp
+        return vec.try_into().expect("Vector length doesn't match the target array")
     }
 }

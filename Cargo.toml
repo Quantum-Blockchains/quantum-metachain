@@ -4,6 +4,6 @@ members = [
 	"bin/runtime",
     "pallets/ocw-psk",
     "pallets/ocw-randao",
-    "pallets/ocw-randao-storage"
+    "pallets/randao"
 ]
 
