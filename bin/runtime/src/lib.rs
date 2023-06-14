@@ -22,6 +22,7 @@ pub use frame_support::{
 pub use frame_system::Call as SystemCall;
 pub use ocw_psk::{self, Call as OcwPskCall};
 pub use ocw_randao::{self, Call as OcwRandaoCall};
+pub use randao::{self, Call as RandaoCall};
 pub use pallet_balances::Call as BalancesCall;
 use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
@@ -333,6 +334,14 @@ impl ocw_psk::Config for Runtime {
 impl ocw_randao::Config for Runtime {
     type Event = Event;
     type Call = Call;
+}
+
+impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
+where
+	Call: From<C>,
+{
+	type Extrinsic = UncheckedExtrinsic;
+	type OverarchingCall = Call;
 }
 
 impl randao::Config for Runtime {

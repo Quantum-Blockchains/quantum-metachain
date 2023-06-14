@@ -273,7 +273,7 @@ impl<T: Config> Pallet<T> {
         Ok(response.body().collect::<Vec<u8>>())
     }
 
-    fn fetch_n_parse_local_peerid(rpc_port: u16) -> Result<String, Error<T>> {
+    pub fn fetch_n_parse_local_peerid(rpc_port: u16) -> Result<String, Error<T>> {
         let resp_bytes = Self::fetch_local_peerid(rpc_port).map_err(|e| {
             log::error!("fetch_local_peerid error: {:?}", e);
             Error::HttpFetchingError
