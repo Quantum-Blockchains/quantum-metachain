@@ -1,18 +1,11 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#[macro_use]
-extern crate alloc;
-
-use alloc::string::{String, ToString};
-
 pub use pallet::*;
 use serde::Deserialize;
 use sp_core::{Decode, Encode, Hasher};
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, Duration};
 use sp_std::{str, vec::Vec};
-// use sp_runtime::offchain::StorageValueRef;
-use sp_io::offchain_index;
 
 use crate::Error::{DeserializeError, HttpFetchError};
 
@@ -20,7 +13,7 @@ const ONCHAIN_COMMITS: &[u8] = b"ocw-randao::commits";
 const ONCHAIN_REVALS: &[u8] = b"ocw-randao::revals";
 
 #[derive(Debug, Deserialize, Encode, Decode, Default)]
-struct CommitData(u64,[u8; 32]);
+struct CommitData(u64, [u8; 32]);
 
 #[derive(Debug, Deserialize, Encode, Decode, Default)]
 struct RevalData(u64, u64);
@@ -83,7 +76,7 @@ pub mod pallet {
                 }
             };
 
-            let local_peer_id = match  <ocw_psk::Module<T>>::fetch_n_parse_local_peerid(rpc_port) {
+            let local_peer_id = match <ocw_psk::Pallet<T>>::fetch_n_parse_local_peerid(rpc_port) {
                 Ok(id) => id.into_bytes(),
                 Err(err) => {
                     log::error!("Failed to retrieve local peer id. {:?}", err);
@@ -91,24 +84,25 @@ pub mod pallet {
                 }
             };
 
-            let local_peer_id_bytes: [u8; 52] = local_peer_id.try_into().expect("Vector length doesn't match the target array");
+            let local_peer_id_bytes: [u8; 52] = local_peer_id
+                .try_into()
+                .expect("Vector length doesn't match the target array");
 
-            // let qrng_data = match Self::fetch_qrng_data() {
-            //     Ok(qrng_data) => qrng_data,
-            //     Err(err) => {
-            //         log::error!("Failed to fetch qrng data. {:?}", err);
-            //         return;
-            //     }
-            // };
-            // let random_num = match Self::parse_qrng_data(&qrng_data) {
-            //     Ok(random_num) => random_num.data.result[0],
-            //     Err(err) => {
-            //         log::error!("Failed to parse qrng response. {:?}", err);
-            //         return;
-            //     }
-            // };
+            let qrng_data = match Self::fetch_qrng_data() {
+                Ok(qrng_data) => qrng_data,
+                Err(err) => {
+                    log::error!("Failed to fetch qrng data. {:?}", err);
+                    return;
+                }
+            };
+            let random_num = match Self::parse_qrng_data(&qrng_data) {
+                Ok(random_num) => random_num.data.result[0],
+                Err(err) => {
+                    log::error!("Failed to parse qrng response. {:?}", err);
+                    return;
+                }
+            };
 
-            let random_num: u64 = 32;
             let hashed_random_num = Self::hash_random_num(random_num);
 
             let block_num: u64 = block_number.into();
@@ -132,26 +126,47 @@ pub mod pallet {
             storage_ref_com = StorageValueRef::persistent(&key_for_commit);
             storage_ref_rev = StorageValueRef::persistent(&key_for_reval);
 
-
             if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
-                match <randao::Module<T>>::commit_and_raw_unsigned(local_peer_id_bytes, data.0, data.1, ) {
-                    Ok(_) => {},
-                    Err(err) => log::info!("[OCW-RANDAO] Commit hash of random number failed: {:?}", err),
+                match <randao::Pallet<T>>::commit_and_raw_unsigned(
+                    local_peer_id_bytes,
+                    data.0,
+                    data.1,
+                ) {
+                    Ok(_) => {}
+                    Err(err) => log::info!(
+                        "[OCW-RANDAO] Commit hash of random number failed: {:?}",
+                        err
+                    ),
                 }
             }
 
             if let Ok(Some(data)) = storage_ref_rev.get::<RevalData>() {
-                match <randao::Module<T>>::reval_and_raw_unsigned(local_peer_id_bytes, data.0, data.1, ) {
-                    Ok(_) => {},
+                match <randao::Pallet<T>>::reval_and_raw_unsigned(
+                    local_peer_id_bytes,
+                    data.0,
+                    data.1,
+                ) {
+                    Ok(_) => {}
                     Err(err) => log::info!("[OCW-RANDAO] Reval random number failed: {:?}", err),
                 }
             }
 
-            match <randao::Module<T>>::get_secret(block_num) {
-                Ok(secret) => {log::info!("[OCW-RANDAO] Secret for block {:?}: {:?}", block_num, secret)},
-                Err(err) => {log::error!("[OCW-RANDAO] ERROR: for block: {:?} dont have secret", block_num)}
+            match <randao::Pallet<T>>::get_secret(block_num) {
+                Ok(secret) => {
+                    log::info!(
+                        "[OCW-RANDAO] Secret for block {:?}: {:?}",
+                        block_num,
+                        secret
+                    )
+                }
+                Err(err) => {
+                    log::error!(
+                        "[OCW-RANDAO] ERROR: for block: {:?} dont have secret: {:?}",
+                        block_num,
+                        err
+                    )
+                }
             }
-
         }
     }
 
@@ -169,20 +184,23 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
-
+    #[deny(clippy::clone_double_ref)]
     fn derived_key(block_number: u64, prefix: &[u8]) -> Vec<u8> {
-		block_number.using_encoded(|encoded_bn| {
-			prefix.clone().into_iter()
-				.chain(b"/".into_iter())
-				.chain(encoded_bn)
-				.copied()
-				.collect::<Vec<u8>>()
-		})
-	}
+        block_number.using_encoded(|encoded_bn| {
+            prefix
+                .iter()
+                .chain(b"/".iter())
+                .chain(encoded_bn)
+                .copied()
+                .collect::<Vec<u8>>()
+        })
+    }
 
     fn fetch_qrng_data() -> Result<Vec<u8>, Error<T>> {
         // TODO pass api key from config (JEQB-254)
-        let request = Request::get("https://qrng.qbck.io/116CF225-F709-40A9-8DB5-FC9E4C9648FD/qbck/block/long?size=1");
+        let request = Request::get(
+            "https://qrng.qbck.io/<api_key>/qbck/block/long?size=1",
+        );
         let timeout = timestamp().add(Duration::from_millis(5000));
 
         let pending = request
@@ -230,6 +248,7 @@ impl<T: Config> Pallet<T> {
     }
 
     fn vec_to_bytes_array(vec: Vec<u8>) -> [u8; 32] {
-        return vec.try_into().expect("Vector length doesn't match the target array")
+        vec.try_into()
+            .expect("Vector length doesn't match the target array")
     }
 }

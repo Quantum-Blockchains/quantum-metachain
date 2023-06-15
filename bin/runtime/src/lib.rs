@@ -22,14 +22,13 @@ pub use frame_support::{
 pub use frame_system::Call as SystemCall;
 pub use ocw_psk::{self, Call as OcwPskCall};
 pub use ocw_randao::{self, Call as OcwRandaoCall};
-pub use randao::{self, Call as RandaoCall};
 pub use pallet_balances::Call as BalancesCall;
 use pallet_grandpa::{
     fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList,
 };
 pub use pallet_timestamp::Call as TimestampCall;
 use pallet_transaction_payment::CurrencyAdapter;
-// use scale_info::Type;
+pub use randao::{self, Call as RandaoCall};
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -338,10 +337,10 @@ impl ocw_randao::Config for Runtime {
 
 impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
 where
-	Call: From<C>,
+    Call: From<C>,
 {
-	type Extrinsic = UncheckedExtrinsic;
-	type OverarchingCall = Call;
+    type Extrinsic = UncheckedExtrinsic;
+    type OverarchingCall = Call;
 }
 
 impl randao::Config for Runtime {
