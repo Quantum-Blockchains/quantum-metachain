@@ -198,9 +198,7 @@ impl<T: Config> Pallet<T> {
 
     fn fetch_qrng_data() -> Result<Vec<u8>, Error<T>> {
         // TODO pass api key from config (JEQB-254)
-        let request = Request::get(
-            "https://qrng.qbck.io/<api_key>/qbck/block/long?size=1",
-        );
+        let request = Request::get("https://qrng.qbck.io/<api_key>/qbck/block/long?size=1");
         let timeout = timestamp().add(Duration::from_millis(5000));
 
         let pending = request
