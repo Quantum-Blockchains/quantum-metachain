@@ -335,6 +335,12 @@ impl ocw_randao::Config for Runtime {
     type Call = Call;
 }
 
+impl randao::Config for Runtime {
+    type Event = Event;
+    type Call = Call;
+    type Currency = Balances;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
     pub struct Runtime
@@ -354,7 +360,8 @@ construct_runtime!(
         Contracts: pallet_contracts,
         // QMC pallets
         OcwPsk: ocw_psk,
-        OcwaRandao: ocw_randao,
+        OcwRandao: ocw_randao,
+        Randao: randao,
     }
 );
 

@@ -55,6 +55,8 @@ hex-literal = { version = "0.3.4", optional = true }
 # local packages
 ocw-psk = { path = "../../pallets/ocw-psk", default-features = false }
 ocw-randao = { path = "../../pallets/ocw-randao", default-features = false }
+randao = { path = "../../pallets/randao", default-features = false }
+
 
 [build-dependencies]
 substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
@@ -69,6 +71,7 @@ std = [
 	"frame-system/std",
 	"ocw-psk/std",
 	"ocw-randao/std",
+	"randao/std",
 	"pallet-aura/std",
 	"pallet-balances/std",
 	"pallet-grandpa/std",
