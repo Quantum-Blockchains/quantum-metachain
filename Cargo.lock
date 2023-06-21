@@ -4203,6 +4203,7 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
+ "support",
 ]
 
 [[package]]
@@ -4213,7 +4214,6 @@ dependencies = [
  "frame-support-test",
  "frame-system",
  "log",
- "ocw-psk",
  "parity-scale-codec",
  "randao",
  "scale-info",
@@ -4223,6 +4223,7 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-std",
+ "support",
 ]
 
 [[package]]
@@ -7946,6 +7947,23 @@ name = "subtle"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
+
+[[package]]
+name = "support"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "log",
+ "parity-scale-codec",
+ "scale-info",
+ "serde",
+ "serde_json",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
+]
 
 [[package]]
 name = "syn"

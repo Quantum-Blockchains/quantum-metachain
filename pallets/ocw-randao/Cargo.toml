@@ -24,7 +24,7 @@ sp-std = { version = "4.0.0", default-features = false, git = "https://github.co
 serde = { version = '1.0.100', default-features = false, features = ['derive'] }
 serde_json = { version = '1.0.87', default-features = false, features = ['alloc'] }
 randao = { path = "../randao", default-features = false }
-ocw-psk = { path = "../ocw-psk", default-features = false }
+support = { path = "../support", default-features = false }
 
 [dev-dependencies]
 frame-support-test = { version = "3.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.1" }
@@ -42,5 +42,6 @@ std = [
 	"sp-io/std",
 	"sp-runtime/std",
 	"sp-std/std",
+	"support/std",
 ]
 try-runtime = ["frame-support/try-runtime"]

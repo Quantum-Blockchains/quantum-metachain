@@ -10,13 +10,13 @@ use sp_std::{str, vec::Vec};
 use crate::Error::{DeserializeError, HttpFetchError};
 
 const ONCHAIN_COMMITS: &[u8] = b"ocw-randao::commits";
-const ONCHAIN_REVALS: &[u8] = b"ocw-randao::revals";
+const ONCHAIN_REVEALS: &[u8] = b"ocw-randao::reveals";
 
 #[derive(Debug, Deserialize, Encode, Decode, Default)]
 struct CommitData(u64, [u8; 32]);
 
 #[derive(Debug, Deserialize, Encode, Decode, Default)]
-struct RevalData(u64, u64);
+struct RevealData(u64, u64);
 
 #[derive(Deserialize, Encode, Decode, Default)]
 struct QRNGResponseData {
@@ -41,7 +41,7 @@ pub mod pallet {
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::config]
-    pub trait Config: frame_system::Config + randao::Config + ocw_psk::Config {
+    pub trait Config: frame_system::Config + randao::Config {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
     }
@@ -63,42 +63,44 @@ pub mod pallet {
                 Ok(p) => match p {
                     Some(port) => port,
                     None => {
-                        log::error!("The RPC port is not passed to the offchain worker.");
+                        log::error!(
+                            "[OCW-RANDAO] The RPC port is not passed to the offchain worker."
+                        );
                         return;
                     }
                 },
                 Err(err) => {
                     log::error!(
-                        "Error occurred while fetching RPC port from storage. {:?}",
+                        "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
                         err
                     );
                     return;
                 }
             };
 
-            let local_peer_id = match <ocw_psk::Pallet<T>>::fetch_n_parse_local_peerid(rpc_port) {
+            let local_peer_id = match support::get_local_peer_id(rpc_port) {
                 Ok(id) => id.into_bytes(),
                 Err(err) => {
-                    log::error!("Failed to retrieve local peer id. {:?}", err);
+                    log::error!("[OCW-RANDAO] Failed to retrieve local peer id. {:?}", err);
                     return;
                 }
             };
 
             let local_peer_id_bytes: [u8; 52] = local_peer_id
                 .try_into()
-                .expect("Vector length doesn't match the target array");
+                .expect("[OCW-RANDAO] Vector length doesn't match the target array");
 
             let qrng_data = match Self::fetch_qrng_data() {
                 Ok(qrng_data) => qrng_data,
                 Err(err) => {
-                    log::error!("Failed to fetch qrng data. {:?}", err);
+                    log::error!("[OCW-RANDAO] Failed to fetch qrng data. {:?}", err);
                     return;
                 }
             };
             let random_num = match Self::parse_qrng_data(&qrng_data) {
                 Ok(random_num) => random_num.data.result[0],
                 Err(err) => {
-                    log::error!("Failed to parse qrng response. {:?}", err);
+                    log::error!("[OCW-RANDAO] Failed to parse qrng response. {:?}", err);
                     return;
                 }
             };
@@ -107,24 +109,24 @@ pub mod pallet {
 
             let block_num: u64 = block_number.into();
             let block_number_for_commit = block_num + 2;
-            let block_num_for_reval = block_num + 6;
+            let block_num_for_reveal = block_num + 6;
 
             let mut key_for_commit = Self::derived_key(block_number_for_commit, ONCHAIN_COMMITS);
-            let mut key_for_reval = Self::derived_key(block_num_for_reval, ONCHAIN_REVALS);
+            let mut key_for_reveal = Self::derived_key(block_num_for_reveal, ONCHAIN_REVEALS);
 
             let mut storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-            let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reval);
+            let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
 
             let data_for_commit = CommitData(block_num + 10, hashed_random_num);
-            let data_for_reval = RevalData(block_num + 10, random_num);
+            let data_for_reveal = RevealData(block_num + 10, random_num);
             storage_ref_com.set(&data_for_commit);
-            storage_ref_rev.set(&data_for_reval);
+            storage_ref_rev.set(&data_for_reveal);
 
             key_for_commit = Self::derived_key(block_num, ONCHAIN_COMMITS);
-            key_for_reval = Self::derived_key(block_num, ONCHAIN_REVALS);
+            key_for_reveal = Self::derived_key(block_num, ONCHAIN_REVEALS);
 
             storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-            storage_ref_rev = StorageValueRef::persistent(&key_for_reval);
+            storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
 
             if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
                 match <randao::Pallet<T>>::commit_and_raw_unsigned(
@@ -140,31 +142,14 @@ pub mod pallet {
                 }
             }
 
-            if let Ok(Some(data)) = storage_ref_rev.get::<RevalData>() {
-                match <randao::Pallet<T>>::reval_and_raw_unsigned(
+            if let Ok(Some(data)) = storage_ref_rev.get::<RevealData>() {
+                match <randao::Pallet<T>>::reveal_and_raw_unsigned(
                     local_peer_id_bytes,
                     data.0,
                     data.1,
                 ) {
                     Ok(_) => {}
-                    Err(err) => log::info!("[OCW-RANDAO] Reval random number failed: {:?}", err),
-                }
-            }
-
-            match <randao::Pallet<T>>::get_secret(block_num) {
-                Ok(secret) => {
-                    log::info!(
-                        "[OCW-RANDAO] Secret for block {:?}: {:?}",
-                        block_num,
-                        secret
-                    )
-                }
-                Err(err) => {
-                    log::error!(
-                        "[OCW-RANDAO] ERROR: for block: {:?} dont have secret: {:?}",
-                        block_num,
-                        err
-                    )
+                    Err(err) => log::info!("[OCW-RANDAO] Reveal random number failed: {:?}", err),
                 }
             }
         }
@@ -222,7 +207,7 @@ impl<T: Config> Pallet<T> {
     fn parse_qrng_data(qrng_data: &[u8]) -> Result<QRNGResponse, Error<T>> {
         let resp_str = str::from_utf8(qrng_data).map_err(|err| {
             log::error!(
-                "Failed to deserialize qrng data: {:?} to string, err: {:?}",
+                "[OCW-RANDAO] Failed to deserialize qrng data: {:?} to string, err: {:?}",
                 qrng_data,
                 err
             );
@@ -230,7 +215,7 @@ impl<T: Config> Pallet<T> {
         })?;
         let qrng_response: QRNGResponse = serde_json::from_str(resp_str).map_err(|err| {
             log::error!(
-                "Failed to deserialize qrng data: {:?} to object, err: {:?}",
+                "[OCW-RANDAO] Failed to deserialize qrng data: {:?} to object, err: {:?}",
                 resp_str,
                 err
             );
@@ -247,6 +232,6 @@ impl<T: Config> Pallet<T> {
 
     fn vec_to_bytes_array(vec: Vec<u8>) -> [u8; 32] {
         vec.try_into()
-            .expect("Vector length doesn't match the target array")
+            .expect("[OCW-RANDAO] Vector length doesn't match the target array")
     }
 }

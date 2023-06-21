@@ -31,7 +31,6 @@ pub struct Participant {
 #[scale_info(skip_type_params(T))]
 pub struct Campaign {
     pub secret: u64,
-    pub block_num: u64,
     pub commit_balkline: u64,
     pub commit_deadline: u64,
 }
@@ -58,16 +57,17 @@ pub mod pallet {
     #[pallet::generate_deposit(pub(super) fn deposit_event)]
     pub enum Event<T: Config> {
         LogCampaignAdded {
-            capaign_id: u64,
             block_num: u64,
             commit_balkline: u64,
             commit_deadline: u64,
         },
         LogCommit {
+            block_num: u64,
             from: [u8; 52],
             commitment: [u8; 32],
         },
-        LogReval {
+        LogReveal {
+            block_num: u64,
             from: [u8; 52],
             secret: u64,
         },
@@ -77,8 +77,9 @@ pub mod pallet {
     pub enum Error<T> {
         TimeLineCheck,
         TimeLineCommitPhase,
-        TimeLineRevalPhase,
+        TimeLineRevealPhase,
         IncorrectId,
+        CampaignIsAlreadyThere,
         ParticipantIsAlreadyThere,
         IsNotAParticipant,
         SecretDoesNotMatchTheHash,
@@ -88,6 +89,11 @@ pub mod pallet {
     #[pallet::storage]
     pub(super) type Campaigns<T: Config> = StorageMap<_, Twox64Concat, u64, Campaign>;
 
+    /// The first key is the campaign id - block number (type u64)
+    /// The second key is the peer id (type [u8; 52]).
+    /// The length of this array is so that we get the encoded peer id.
+    /// Example:
+    /// 12D3KooWD3eckifWpRn9wQpMG9R9hX3sD158z7EqHWmweQAJU5SA -- Peer ID (ed25519, using the "identity" multihash) encoded as a raw base58btc multihash.
     #[pallet::storage]
     pub(super) type ParticipantsOfCampaigns<T: Config> =
         StorageDoubleMap<_, Twox64Concat, u64, Twox64Concat, [u8; 52], Participant>;
@@ -97,35 +103,34 @@ pub mod pallet {
         #[pallet::weight(0)]
         pub fn create(
             origin: OriginFor<T>,
-            id: u64,
             block_num: u64,
             commit_balkline: u64,
             commit_deadline: u64,
         ) -> DispatchResult {
             ensure_none(origin)?;
-            Self::create_new_campaign(id, block_num, commit_balkline, commit_deadline)
+            Self::create_new_campaign(block_num, commit_balkline, commit_deadline)
         }
 
         #[pallet::weight(0)]
         pub fn commit(
             origin: OriginFor<T>,
             from: [u8; 52],
-            capaign_id: u64,
+            block_num: u64,
             commitment: [u8; 32],
         ) -> DispatchResult {
             ensure_none(origin)?;
-            Self::commit_hash(from, capaign_id, commitment)
+            Self::commit_hash(from, block_num, commitment)
         }
 
         #[pallet::weight(0)]
-        pub fn reval(
+        pub fn reveal(
             origin: OriginFor<T>,
             from: [u8; 52],
-            capaign_id: u64,
+            block_num: u64,
             secret: u64,
         ) -> DispatchResult {
             ensure_none(origin)?;
-            Self::reval_secret(from, capaign_id, secret)
+            Self::reveal_secret(from, block_num, secret)
         }
     }
 
@@ -138,19 +143,18 @@ pub mod pallet {
             log::info!("[RANDAO] Running offchain worker...");
             let current_block_number: u64 = block_number.into();
 
-            let id = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
             let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
             let commit_balkline = COMMIT_BALKLINE;
             let commit_deadline = COMMIT_DEADLINE;
 
-            match Self::create_and_raw_unsigned(id, block_num, commit_balkline, commit_deadline) {
+            match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
                 Ok(()) => log::info!(
                     "[RANDAO] Successful created a campaign for the block {:?}",
-                    id
+                    block_num
                 ),
                 Err(err) => log::info!(
                     "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
-                    id,
+                    block_num,
                     err
                 ),
             };
@@ -173,21 +177,20 @@ pub mod pallet {
 
             match call {
                 Call::create {
-                    id: _,
                     block_num: _,
                     commit_balkline: _,
                     commit_deadline: _,
                 } => valid_tx(b"create".to_vec()),
                 Call::commit {
                     from: _,
-                    capaign_id: _,
+                    block_num: _,
                     commitment: _,
                 } => valid_tx(b"commit".to_vec()),
-                Call::reval {
+                Call::reveal {
                     from: _,
-                    capaign_id: _,
+                    block_num: _,
                     secret: _,
-                } => valid_tx(b"reval".to_vec()),
+                } => valid_tx(b"reveal".to_vec()),
                 _ => InvalidTransaction::Call.into(),
             }
         }
@@ -196,13 +199,11 @@ pub mod pallet {
 
 impl<T: Config> Pallet<T> {
     fn create_and_raw_unsigned(
-        id: u64,
         block_num: u64,
         commit_balkline: u64,
         commit_deadline: u64,
     ) -> Result<(), &'static str> {
         let call = Call::create {
-            id,
             block_num,
             commit_balkline,
             commit_deadline,
@@ -214,12 +215,12 @@ impl<T: Config> Pallet<T> {
 
     pub fn commit_and_raw_unsigned(
         from: [u8; 52],
-        capaign_id: u64,
+        block_num: u64,
         commitment: [u8; 32],
     ) -> Result<(), &'static str> {
         let call = Call::commit {
             from,
-            capaign_id,
+            block_num,
             commitment,
         };
         SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
@@ -227,14 +228,14 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    pub fn reval_and_raw_unsigned(
+    pub fn reveal_and_raw_unsigned(
         from: [u8; 52],
-        capaign_id: u64,
+        block_num: u64,
         secret: u64,
     ) -> Result<(), &'static str> {
-        let call = Call::reval {
+        let call = Call::reveal {
             from,
-            capaign_id,
+            block_num,
             secret,
         };
         SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
@@ -242,13 +243,12 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    pub fn get_secret(campaign_id: u64) -> Result<u64, DispatchError> {
-        let campaigns = Campaigns::<T>::get(campaign_id).ok_or(Error::<T>::IncorrectId)?;
+    pub fn get_secret(block_num: u64) -> Result<u64, DispatchError> {
+        let campaigns = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
         Ok(campaigns.secret)
     }
 
     fn create_new_campaign(
-        id: u64,
         block_num: u64,
         commit_balkline: u64,
         commit_deadline: u64,
@@ -256,6 +256,10 @@ impl<T: Config> Pallet<T> {
         let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
 
+        ensure!(
+            !Campaigns::<T>::contains_key(block_num),
+            Error::<T>::CampaignIsAlreadyThere
+        );
         ensure!(current_block_num < block_num, Error::<T>::TimeLineCheck);
         ensure!(commit_deadline < commit_balkline, Error::<T>::TimeLineCheck);
         ensure!(
@@ -265,15 +269,13 @@ impl<T: Config> Pallet<T> {
 
         let new_campaign = Campaign {
             secret: 0,
-            block_num,
             commit_balkline,
             commit_deadline,
         };
 
-        Campaigns::<T>::insert(id, new_campaign);
+        Campaigns::<T>::insert(block_num, new_campaign);
 
         Self::deposit_event(Event::LogCampaignAdded {
-            capaign_id: id,
             block_num,
             commit_balkline,
             commit_deadline,
@@ -282,23 +284,23 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    fn commit_hash(from: [u8; 52], campaign_id: u64, commitment: [u8; 32]) -> DispatchResult {
+    fn commit_hash(from: [u8; 52], block_num: u64, commitment: [u8; 32]) -> DispatchResult {
         let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
 
         ensure!(
-            !ParticipantsOfCampaigns::<T>::contains_key(campaign_id, &from),
+            !ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
             Error::<T>::ParticipantIsAlreadyThere
         );
 
-        let campaign = Campaigns::<T>::get(campaign_id).ok_or(Error::<T>::IncorrectId)?;
+        let campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
 
         ensure!(
-            current_block_num >= campaign.block_num - campaign.commit_balkline,
+            current_block_num >= block_num - campaign.commit_balkline,
             Error::<T>::TimeLineCommitPhase
         );
         ensure!(
-            current_block_num <= campaign.block_num - campaign.commit_deadline,
+            current_block_num <= block_num - campaign.commit_deadline,
             Error::<T>::TimeLineCommitPhase
         );
 
@@ -307,36 +309,40 @@ impl<T: Config> Pallet<T> {
             commitment,
         };
 
-        ParticipantsOfCampaigns::<T>::insert(campaign_id, &from, new_participant);
-        Self::deposit_event(Event::LogCommit { from, commitment });
+        ParticipantsOfCampaigns::<T>::insert(block_num, &from, new_participant);
+        Self::deposit_event(Event::LogCommit {
+            block_num,
+            from,
+            commitment,
+        });
         log::info!(
             "[RANDAO] The account with the ID {:?} did commit for campaign {:?}",
             from,
-            campaign_id
+            block_num
         );
 
         Ok(())
     }
 
-    fn reval_secret(from: [u8; 52], campaign_id: u64, secret: u64) -> DispatchResult {
+    fn reveal_secret(from: [u8; 52], block_num: u64, secret: u64) -> DispatchResult {
         ensure!(
-            ParticipantsOfCampaigns::<T>::contains_key(campaign_id, &from),
+            ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
             Error::<T>::IsNotAParticipant
         );
 
         let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
-        let mut campaign = Campaigns::<T>::get(campaign_id).ok_or(Error::<T>::IncorrectId)?;
-        let mut participant = ParticipantsOfCampaigns::<T>::get(campaign_id, &from).unwrap();
+        let mut campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
+        let mut participant = ParticipantsOfCampaigns::<T>::get(block_num, &from).unwrap();
 
         ensure!(
-            current_block_num > campaign.block_num - campaign.commit_deadline,
-            Error::<T>::TimeLineRevalPhase
+            current_block_num > block_num - campaign.commit_deadline,
+            Error::<T>::TimeLineRevealPhase
         );
 
         ensure!(
-            current_block_num < campaign.block_num,
-            Error::<T>::TimeLineRevalPhase
+            current_block_num < block_num,
+            Error::<T>::TimeLineRevealPhase
         );
 
         ensure!(
@@ -347,13 +353,17 @@ impl<T: Config> Pallet<T> {
         campaign.secret ^= secret;
 
         participant.secret = secret;
-        ParticipantsOfCampaigns::<T>::insert(campaign_id, &from, participant);
-        Campaigns::<T>::insert(campaign_id, campaign);
-        Self::deposit_event(Event::LogReval { from, secret });
-        log::info!(
-            "[RANDAO] The account with the ID {:?} did reval for campaign {:?}",
+        ParticipantsOfCampaigns::<T>::insert(block_num, &from, participant);
+        Campaigns::<T>::insert(block_num, campaign);
+        Self::deposit_event(Event::LogReveal {
+            block_num,
             from,
-            campaign_id
+            secret,
+        });
+        log::info!(
+            "[RANDAO] The account with the ID {:?} did reveal for campaign {:?}",
+            from,
+            block_num
         );
 
         Ok(())
@@ -372,6 +382,6 @@ impl<T: Config> Pallet<T> {
 
     fn vec_to_bytes_array(vec: Vec<u8>) -> [u8; 32] {
         vec.try_into()
-            .expect("Vector length doesn't match the target array")
+            .expect("[RANDAO] Vector length doesn't match the target array")
     }
 }
