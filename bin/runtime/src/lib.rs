@@ -28,7 +28,7 @@ use pallet_grandpa::{
 };
 pub use pallet_timestamp::Call as TimestampCall;
 use pallet_transaction_payment::CurrencyAdapter;
-// use scale_info::Type;
+pub use randao::{self, Call as RandaoCall};
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
@@ -333,6 +333,14 @@ impl ocw_psk::Config for Runtime {
 impl ocw_randao::Config for Runtime {
     type Event = Event;
     type Call = Call;
+}
+
+impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
+where
+    Call: From<C>,
+{
+    type Extrinsic = UncheckedExtrinsic;
+    type OverarchingCall = Call;
 }
 
 impl randao::Config for Runtime {

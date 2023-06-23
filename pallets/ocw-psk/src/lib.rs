@@ -76,19 +76,19 @@ pub mod pallet {
     {
         /// PSK offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
-            log::info!("Running PSK offchain worker...");
+            log::info!("[OCW-PSK] Running PSK offchain worker...");
             let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
             let rpc_port = match storage_rpc_port.get::<u16>() {
                 Ok(p) => match p {
                     Some(port) => port,
                     None => {
-                        log::error!("The RPC port is not passed to the offchain worker.");
+                        log::error!("[OCW-PSK] The RPC port is not passed to the offchain worker.");
                         return;
                     }
                 },
                 Err(err) => {
                     log::error!(
-                        "Error occurred while fetching RPC port from storage. {:?}",
+                        "[OCW-PSK] Error occurred while fetching RPC port from storage. {:?}",
                         err
                     );
                     return;
@@ -100,7 +100,7 @@ pub mod pallet {
                 Ok(p) => p.unwrap_or(5001),
                 Err(err) => {
                     log::error!(
-                        "Error occurred while fetching runner port from storage. {:?}",
+                        "[OCW-PSK] Error occurred while fetching runner port from storage. {:?}",
                         err
                     );
                     return;
@@ -113,7 +113,7 @@ pub mod pallet {
                 Ok(b) => b,
                 Err(err) => {
                     log::error!(
-                        "Error occurred while fetching number of block from storage. {:?}",
+                        "[OCW-PSK] Error occurred while fetching number of block from storage. {:?}",
                         err
                     );
                     None
@@ -124,31 +124,35 @@ pub mod pallet {
             if number_of_block_for_restart_node == Some(current_block_number) {
                 match Self::send_restart_node_request(runner_port) {
                     Ok(()) => {
-                        log::info!("Restart node request sent");
+                        log::info!("[OCW-PSK] Restart node request sent");
                         return;
                     }
                     Err(err) => {
-                        log::error!("Failed to send restart node request. {:?}", err)
+                        log::error!("[OCW-PSK] Failed to send restart node request. {:?}", err)
                     }
                 };
             }
 
             if number_of_block_for_restart_node == Some(0) {
                 let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-                log::debug!("Entropy in block {:?}: {:?}", block_number, entropy);
+                log::debug!(
+                    "[OCW-PSK] Entropy in block {:?}: {:?}",
+                    block_number,
+                    entropy
+                );
 
                 let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
                     Ok(peers) => peers,
                     Err(err) => {
-                        log::error!("Failed to retrieve peers. {:?}", err);
+                        log::error!("[OCW-PSK] Failed to retrieve peers. {:?}", err);
                         return;
                     }
                 };
 
-                let local_peer_id = match Self::fetch_n_parse_local_peerid(rpc_port) {
+                let local_peer_id = match support::get_local_peer_id(rpc_port) {
                     Ok(id) => id,
                     Err(err) => {
-                        log::error!("Failed to retrieve local peer id. {:?}", err);
+                        log::error!("[OCW-PSK] Failed to retrieve local peer id. {:?}", err);
                         return;
                     }
                 };
@@ -159,25 +163,34 @@ pub mod pallet {
                         let num_block: u64 = block_number.into();
                         let num_block_restart = num_block + BLOCK_NUM_FOR_PSK_ROTATION;
 
-                        log::info!("Block number for restart: {:?}", num_block_restart);
+                        log::info!(
+                            "[OCW-PSK] Block number for restart: {:?}",
+                            num_block_restart
+                        );
 
                         let request = PskRotationRequest {
                             peer_id: psk_creator.to_string(),
                             is_local_peer: psk_creator == local_peer_id,
                             block_num: block_number.into(),
                         };
-                        log::debug!("chosen psk creator: {:?}", request);
+                        log::debug!("[OCW-PSK] chosen psk creator: {:?}", request);
                         match Self::send_psk_rotation_request(runner_port, request) {
                             Ok(()) => {
                                 block_num_to_node_restart.set(&num_block_restart);
-                                log::info!("Psk rotation request sent")
+                                log::info!("[OCW-PSK] Psk rotation request sent")
                             }
                             Err(err) => {
-                                log::error!("Failed to send psk rotation request. {:?}", err)
+                                log::error!(
+                                    "[OCW-PSK] Failed to send psk rotation request. {:?}",
+                                    err
+                                )
                             }
                         };
                     }
-                    None => log::info!("Psk creator not chosen in block {:?}", block_number),
+                    None => log::info!(
+                        "[OCW-PSK] Psk creator not chosen in block {:?}",
+                        block_number
+                    ),
                 }
             }
         }
@@ -218,7 +231,10 @@ impl<T: Config> Pallet<T> {
             .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
-            log::error!("Unexpected http request status code: {}", response.code);
+            log::error!(
+                "[OCW-PSK] Unexpected http request status code: {}",
+                response.code
+            );
             return Err(Error::HttpFetchingError);
         }
 
@@ -227,13 +243,13 @@ impl<T: Config> Pallet<T> {
 
     fn fetch_n_parse_peers(rpc_port: u16) -> Result<Vec<String>, Error<T>> {
         let resp_bytes = Self::fetch_peers(rpc_port).map_err(|e| {
-            log::error!("fetch_peers error: {:?}", e);
+            log::error!("[OCW-PSK] fetch_peers error: {:?}", e);
             Error::HttpFetchingError
         })?;
 
         let json_res: PeerInfoResponse =
             serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
-                log::error!("Parse peers error: {:?}", e);
+                log::error!("[OCW-PSK] Parse peers error: {:?}", e);
                 Error::HttpFetchingError
             })?;
 
@@ -242,50 +258,6 @@ impl<T: Config> Pallet<T> {
             .iter()
             .map(|peer| peer.peer_id.to_string())
             .collect())
-    }
-
-    fn fetch_local_peerid(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
-        let url = format!("http://localhost:{}", rpc_port);
-
-        let mut vec_body: Vec<&[u8]> = Vec::new();
-        let data = b"{\"id\": 1, \"jsonrpc\": \"2.0\", \"method\": \"system_localPeerId\"}";
-        vec_body.push(data);
-
-        let request = Request::post(&url, vec_body);
-        let timeout = timestamp().add(Duration::from_millis(3000));
-
-        let pending = request
-            .add_header("Content-Type", "application/json")
-            .deadline(timeout)
-            .send()
-            .map_err(|_| Error::HttpFetchingError)?;
-
-        let response = pending
-            .try_wait(timeout)
-            .map_err(|_| Error::HttpFetchingError)?
-            .map_err(|_| Error::HttpFetchingError)?;
-
-        if response.code != 200 {
-            log::error!("Unexpected http request status code: {}", response.code);
-            return Err(Error::HttpFetchingError);
-        }
-
-        Ok(response.body().collect::<Vec<u8>>())
-    }
-
-    fn fetch_n_parse_local_peerid(rpc_port: u16) -> Result<String, Error<T>> {
-        let resp_bytes = Self::fetch_local_peerid(rpc_port).map_err(|e| {
-            log::error!("fetch_local_peerid error: {:?}", e);
-            Error::HttpFetchingError
-        })?;
-
-        let json_res: LocalPeerIdResponse =
-            serde_json::from_slice(&resp_bytes).map_err(|e: serde_json::Error| {
-                log::error!("Parse local peerid error: {:?}", e);
-                Error::HttpFetchingError
-            })?;
-
-        Ok(json_res.result)
     }
 
     fn send_restart_node_request(runner_port: u16) -> Result<(), Error<T>> {
@@ -303,7 +275,10 @@ impl<T: Config> Pallet<T> {
             .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
-            log::error!("Unexpected http request status code: {}", response.code);
+            log::error!(
+                "[OCW-PSK] Unexpected http request status code: {}",
+                response.code
+            );
             return Err(Error::HttpFetchingError);
         }
 
@@ -335,7 +310,10 @@ impl<T: Config> Pallet<T> {
             .map_err(|_| Error::HttpFetchingError)?;
 
         if response.code != 200 {
-            log::error!("Unexpected http request status code: {}", response.code);
+            log::error!(
+                "[OCW-PSK] Unexpected http request status code: {}",
+                response.code
+            );
             return Err(Error::HttpFetchingError);
         }
 
@@ -348,19 +326,19 @@ impl<T: Config> Pallet<T> {
         for peer_id in peer_ids {
             let xored_peer_id_hash = entropy ^ (T::Hashing::hash(peer_id.as_bytes()));
             let xored_peer_id_hash_bytes = <[u8; 32]>::try_from(xored_peer_id_hash.as_ref())
-                .expect("Hash should be 32 bytes long");
+                .expect("[OCW-PSK] Hash should be 32 bytes long");
             let difficulty_1_bytes: [u8; 16] = T::PskDifficulty1::get().to_le_bytes();
             let difficulty_2_bytes: [u8; 16] = T::PskDifficulty2::get().to_le_bytes();
             let difficulty_bytes_extended =
                 <[u8; 32]>::try_from([difficulty_1_bytes, difficulty_2_bytes].concat().as_ref())
-                    .expect("Difficulty should be 32 bytes long");
+                    .expect("[OCW-PSK] Difficulty should be 32 bytes long");
 
             if xored_peer_id_hash_bytes.gt(&difficulty_bytes_extended) {
                 chosen_peers.push(peer_id);
             }
         }
 
-        log::info!("Chosen peers num: {}", chosen_peers.len());
+        log::info!("[OCW-PSK] Chosen peers num: {}", chosen_peers.len());
         match chosen_peers.len() {
             0 => None,
             1 => Some(chosen_peers.first().unwrap().to_string()),
