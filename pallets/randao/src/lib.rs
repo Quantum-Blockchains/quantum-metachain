@@ -1,10 +1,12 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#[cfg(test)]
+mod tests;
+
 use frame_support::{
     dispatch::DispatchResult,
     ensure,
     pallet_prelude::{DispatchError, MaxEncodedLen, RuntimeDebug, TypeInfo},
-    traits::Currency,
 };
 use frame_system::offchain::{SendTransactionTypes, SubmitTransaction};
 pub use pallet::*;
@@ -50,7 +52,6 @@ pub mod pallet {
     pub trait Config: SendTransactionTypes<Call<Self>> + frame_system::Config {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
-        type Currency: Currency<Self::AccountId>;
     }
 
     #[pallet::event]
@@ -256,6 +257,10 @@ impl<T: Config> Pallet<T> {
         let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
 
+        ensure!(
+            block_num - NUM_BLOCK_FOR_CAMPAIGN == current_block_num,
+            Error::<T>::TimeLineCheck
+        );
         ensure!(
             !Campaigns::<T>::contains_key(block_num),
             Error::<T>::CampaignIsAlreadyThere
