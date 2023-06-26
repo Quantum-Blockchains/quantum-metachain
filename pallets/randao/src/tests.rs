@@ -412,3 +412,53 @@ fn should_return_secret() {
         assert_eq!(Randao::get_secret(11), Ok(secret));
     });
 }
+
+#[test]
+fn should_return_an_error_if_there_an_attempt_to_take_the_secret_before_the_campaign_closed() {
+    new_test_ext().execute_with(|| {
+        let block_num: u64 = 11;
+
+        System::set_block_number(1);
+        assert_ok!(Randao::create_new_campaign(
+            block_num,
+            COMMIT_BALKLINE,
+            COMMIT_DEADLINE
+        ));
+        System::set_block_number(10);
+        assert_err!(
+            Randao::get_secret(block_num),
+            Error::<Test>::CampaignIsNotOver
+        );
+    });
+}
+
+#[test]
+fn should_return_error_when_trying_to_get_the_secret_if_not_all_participants_have_completed_their_numbers(
+) {
+    new_test_ext().execute_with(|| {
+        let block_num: u64 = 11;
+
+        let from_1: [u8; 52] = *b"12D3KooWD3eckifWpRn9wQpMG9R9hX3sD158z7EqHWmweQAJU5SA";
+        let secret_1: u64 = 1298474330019282;
+        let hash_1 = Randao::hash_num(secret_1);
+
+        let from_2: [u8; 52] = *b"12D3KooWD3eckifWpRn9wQpMG9R9hX3sD158z7EqHWmweQAJU5QA";
+        let secret_2: u64 = 9876543;
+        let hash_2 = Randao::hash_num(secret_2);
+
+        System::set_block_number(1);
+        assert_ok!(Randao::create_new_campaign(
+            block_num,
+            COMMIT_BALKLINE,
+            COMMIT_DEADLINE
+        ));
+        System::set_block_number(3);
+        assert_ok!(Randao::commit_hash(from_1, block_num, hash_1));
+        assert_ok!(Randao::commit_hash(from_2, block_num, hash_2));
+        System::set_block_number(8);
+        assert_ok!(Randao::reveal_secret(from_1, block_num, secret_1));
+
+        System::set_block_number(11);
+        assert_err!(Randao::get_secret(11), Error::<Test>::FailedCompany);
+    });
+}

@@ -35,6 +35,8 @@ pub struct Campaign {
     pub secret: u64,
     pub commit_balkline: u64,
     pub commit_deadline: u64,
+    pub commit_num: u64,
+    pub reveals_num: u64,
 }
 
 #[frame_support::pallet]
@@ -85,6 +87,8 @@ pub mod pallet {
         IsNotAParticipant,
         SecretDoesNotMatchTheHash,
         OffchainUnsignedTxError,
+        CampaignIsNotOver,
+        FailedCompany,
     }
 
     #[pallet::storage]
@@ -246,6 +250,16 @@ impl<T: Config> Pallet<T> {
 
     pub fn get_secret(block_num: u64) -> Result<u64, DispatchError> {
         let campaigns = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
+        let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
+        let current_block_num: u64 = block.saturated_into::<u64>();
+        ensure!(
+            current_block_num >= block_num,
+            Error::<T>::CampaignIsNotOver
+        );
+        ensure!(
+            campaigns.commit_num == campaigns.reveals_num,
+            Error::<T>::FailedCompany
+        );
         Ok(campaigns.secret)
     }
 
@@ -276,6 +290,8 @@ impl<T: Config> Pallet<T> {
             secret: 0,
             commit_balkline,
             commit_deadline,
+            commit_num: 0,
+            reveals_num: 0,
         };
 
         Campaigns::<T>::insert(block_num, new_campaign);
@@ -298,7 +314,7 @@ impl<T: Config> Pallet<T> {
             Error::<T>::ParticipantIsAlreadyThere
         );
 
-        let campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
+        let mut campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
 
         ensure!(
             current_block_num >= block_num - campaign.commit_balkline,
@@ -315,6 +331,8 @@ impl<T: Config> Pallet<T> {
         };
 
         ParticipantsOfCampaigns::<T>::insert(block_num, &from, new_participant);
+        campaign.commit_num += 1;
+        Campaigns::<T>::insert(block_num, campaign);
         Self::deposit_event(Event::LogCommit {
             block_num,
             from,
@@ -359,6 +377,7 @@ impl<T: Config> Pallet<T> {
 
         participant.secret = secret;
         ParticipantsOfCampaigns::<T>::insert(block_num, &from, participant);
+        campaign.reveals_num += 1;
         Campaigns::<T>::insert(block_num, campaign);
         Self::deposit_event(Event::LogReveal {
             block_num,
