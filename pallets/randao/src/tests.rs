@@ -433,7 +433,25 @@ fn should_return_an_error_if_there_an_attempt_to_take_the_secret_before_the_camp
 }
 
 #[test]
-fn should_return_error_when_trying_to_get_the_secret_if_not_all_participants_have_completed_their_numbers(
+fn should_return_error_when_trying_to_get_the_secret_if_there_are_no_participants_in_the_campaign(
+) {
+    new_test_ext().execute_with(|| {
+        let block_num: u64 = 11;
+
+        System::set_block_number(1);
+        assert_ok!(Randao::create_new_campaign(
+            block_num,
+            COMMIT_BALKLINE,
+            COMMIT_DEADLINE
+        ));
+
+        System::set_block_number(11);
+        assert_err!(Randao::get_secret(11), Error::<Test>::FailedCompany);
+    });
+}
+
+#[test]
+fn should_return_error_when_trying_to_get_the_secret_if_half_of_the_participants_have_not_send_their_numbers(
 ) {
     new_test_ext().execute_with(|| {
         let block_num: u64 = 11;
@@ -446,6 +464,14 @@ fn should_return_error_when_trying_to_get_the_secret_if_not_all_participants_hav
         let secret_2: u64 = 9876543;
         let hash_2 = Randao::hash_num(secret_2);
 
+        let from_3: [u8; 52] = *b"12D3KooWD3eckifWpRn9wQpMG9R9hX3sD158z7EqHWmweQAJU5BB";
+        let secret_3: u64 = 1983274;
+        let hash_3 = Randao::hash_num(secret_3);
+
+        let from_4: [u8; 52] = *b"12D3KooWD3eckifWpRn9wQpMG9R9hX3sD158z7EqHWmweQAJU5QQ";
+        let secret_4: u64 = 57433558;
+        let hash_4 = Randao::hash_num(secret_4);
+
         System::set_block_number(1);
         assert_ok!(Randao::create_new_campaign(
             block_num,
@@ -455,6 +481,8 @@ fn should_return_error_when_trying_to_get_the_secret_if_not_all_participants_hav
         System::set_block_number(3);
         assert_ok!(Randao::commit_hash(from_1, block_num, hash_1));
         assert_ok!(Randao::commit_hash(from_2, block_num, hash_2));
+        assert_ok!(Randao::commit_hash(from_3, block_num, hash_3));
+        assert_ok!(Randao::commit_hash(from_4, block_num, hash_4));
         System::set_block_number(8);
         assert_ok!(Randao::reveal_secret(from_1, block_num, secret_1));
 
