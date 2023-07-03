@@ -433,8 +433,8 @@ fn should_return_an_error_if_there_an_attempt_to_take_the_secret_before_the_camp
 }
 
 #[test]
-fn should_return_error_when_trying_to_get_the_secret_if_there_are_no_participants_in_the_campaign(
-) {
+fn should_return_error_when_trying_to_get_the_secret_if_there_are_no_participants_in_the_campaign()
+{
     new_test_ext().execute_with(|| {
         let block_num: u64 = 11;
 

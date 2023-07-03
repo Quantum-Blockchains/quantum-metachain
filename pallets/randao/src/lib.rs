@@ -256,10 +256,7 @@ impl<T: Config> Pallet<T> {
             current_block_num >= block_num,
             Error::<T>::CampaignIsNotOver
         );
-        ensure!(
-            campaigns.commit_num > 0,
-            Error::<T>::FailedCompany
-        );
+        ensure!(campaigns.commit_num > 0, Error::<T>::FailedCompany);
         ensure!(
             campaigns.reveals_num >= campaigns.commit_num / 2,
             Error::<T>::FailedCompany
