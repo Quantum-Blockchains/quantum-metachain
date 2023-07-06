@@ -135,18 +135,14 @@ pub mod pallet {
 
             if number_of_block_for_restart_node == Some(0) {
                 let entropy = match <randao::Pallet<T>>::get_secret(current_block_number) {
-                    Ok(secret) => { T::Hashing::hash(&secret.to_le_bytes()) }
+                    Ok(secret) => T::Hashing::hash(&secret.to_le_bytes()),
                     Err(err) => {
                         log::debug!(
                             "[OCW-PSK] There is no random number for this block: {:?}",
                             err
                         );
                         let (ent, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-                        log::debug!(
-                            "[OCW-PSK] Entropy in block {:?}: {:?}",
-                            block_number,
-                            ent
-                        );
+                        log::debug!("[OCW-PSK] Entropy in block {:?}: {:?}", block_number, ent);
                         ent
                     }
                 };

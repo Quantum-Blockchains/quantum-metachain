@@ -23,6 +23,7 @@ frame_support::construct_runtime!(
         UncheckedExtrinsic = UncheckedExtrinsic,
     {
         System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
+        Randao: randao::{Pallet, Call, Event<T>},
         OcwPsk: ocw_psk::{Pallet, Call, Event<T>},
     }
 );
@@ -62,6 +63,19 @@ impl frame_system::Config for Test {
 impl frame_system::offchain::SigningTypes for Test {
     type Public = <Signature as Verify>::Signer;
     type Signature = Signature;
+}
+
+impl<LocalCall> frame_system::offchain::SendTransactionTypes<LocalCall> for Test
+where
+    Call: From<LocalCall>,
+{
+    type Extrinsic = UncheckedExtrinsic;
+    type OverarchingCall = Call;
+}
+
+impl randao::Config for Test {
+    type Event = Event;
+    type Call = Call;
 }
 
 impl Config for Test {
