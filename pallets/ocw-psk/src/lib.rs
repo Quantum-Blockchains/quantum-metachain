@@ -151,17 +151,6 @@ pub mod pallet {
                     }
                 };
 
-
-
-                //
-                // T::Hashing::hash
-                // let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-                // log::debug!(
-                //     "[OCW-PSK] Entropy in block {:?}: {:?}",
-                //     block_number,
-                //     entropy
-                // );
-
                 let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
                     Ok(peers) => peers,
                     Err(err) => {
