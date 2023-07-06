@@ -52,7 +52,7 @@ pub mod pallet {
     use super::*;
 
     #[pallet::config]
-    pub trait Config: frame_system::Config {
+    pub trait Config: frame_system::Config + randao::Config {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
@@ -134,12 +134,33 @@ pub mod pallet {
             }
 
             if number_of_block_for_restart_node == Some(0) {
-                let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-                log::debug!(
-                    "[OCW-PSK] Entropy in block {:?}: {:?}",
-                    block_number,
-                    entropy
-                );
+                let entropy = match <randao::Pallet<T>>::get_secret(current_block_number) {
+                    Ok(secret) => { T::Hashing::hash(&secret.to_le_bytes()) }
+                    Err(err) => {
+                        log::debug!(
+                            "[OCW-PSK] There is no random number for this block: {:?}",
+                            err
+                        );
+                        let (ent, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
+                        log::debug!(
+                            "[OCW-PSK] Entropy in block {:?}: {:?}",
+                            block_number,
+                            ent
+                        );
+                        ent
+                    }
+                };
+
+
+
+                //
+                // T::Hashing::hash
+                // let (entropy, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
+                // log::debug!(
+                //     "[OCW-PSK] Entropy in block {:?}: {:?}",
+                //     block_number,
+                //     entropy
+                // );
 
                 let mut peer_ids = match Self::fetch_n_parse_peers(rpc_port) {
                     Ok(peers) => peers,
