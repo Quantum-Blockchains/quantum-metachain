@@ -1,31 +1,22 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
-pub use pallet::*;
 use serde::Deserialize;
 use sp_core::{Decode, Encode, Hasher};
 use sp_io::offchain::timestamp;
-use sp_runtime::offchain::{http::Request, Duration};
+use sp_runtime::offchain::{Duration, http::Request};
 use sp_std::{str, vec::Vec};
+use scale_info::prelude::string::String;
+use codec::alloc::string::ToString;
+
+
+
+pub use pallet::*;
 
 use crate::Error::{DeserializeError, HttpFetchError};
 
-const ONCHAIN_COMMITS: &[u8] = b"ocw-randao::commits";
-const ONCHAIN_REVEALS: &[u8] = b"ocw-randao::reveals";
-
-#[derive(Debug, Deserialize, Encode, Decode, Default)]
-struct CommitData(u64, [u8; 32]);
-
-#[derive(Debug, Deserialize, Encode, Decode, Default)]
-struct RevealData(u64, u64);
-
-#[derive(Deserialize, Encode, Decode, Default)]
-struct QRNGResponseData {
-    result: [u64; 1],
-}
-
 #[derive(Deserialize, Encode, Decode, Default)]
 struct QRNGResponse {
-    data: QRNGResponseData,
+    result: Vec<u8>,
 }
 
 #[frame_support::pallet]
@@ -41,117 +32,81 @@ pub mod pallet {
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::config]
-    pub trait Config: frame_system::Config + randao::Config {
+    pub trait Config: frame_system::Config {
         type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
         type Call: From<Call<Self>>;
     }
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
-    where
-        u64: From<<T as frame_system::Config>::BlockNumber>,
+        where
+            u64: From<<T as frame_system::Config>::BlockNumber>,
     {
         /// RANDAO offchain worker entry point.
         fn offchain_worker(block_number: T::BlockNumber) {
             log::info!(
-                "[OCW-RANDAO] Running offchain worker in block: {:?}",
+                "Running RANDAO offchain worker in block: {:?}",
                 block_number
             );
 
-            let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
-            let rpc_port = match storage_rpc_port.get::<u16>() {
-                Ok(p) => match p {
-                    Some(port) => port,
-                    None => {
-                        log::error!(
-                            "[OCW-RANDAO] The RPC port is not passed to the offchain worker."
-                        );
-                        return;
+            let storage_qrng_api_url = StorageValueRef::persistent(b"qrng-api-url");
+
+            let qrng_api_url = match storage_qrng_api_url.get::<Vec<u8>>() {
+                Ok(Some(bytes)) => {
+                    match String::from_utf8(bytes) {
+                        Ok(url) => url,
+                        Err(err) => {
+                            log::error!("Failed to convert bytes to string: {:?}", err);
+                            return;
+                        }
                     }
-                },
+                }
+                Ok(None) => {
+                    // Use default URL if not found in storage
+                    "http://172.16.0.202:8085/qrng/hex?size=8".to_string()
+                }
                 Err(err) => {
                     log::error!(
-                        "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
-                        err
-                    );
+            "Error occurred while fetching QRNG API url. {:?}",
+            err
+        );
                     return;
                 }
             };
 
-            let local_peer_id = match support::get_local_peer_id(rpc_port) {
-                Ok(id) => id.into_bytes(),
-                Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to retrieve local peer id. {:?}", err);
-                    return;
-                }
-            };
 
-            let local_peer_id_bytes: [u8; 52] = local_peer_id
-                .try_into()
-                .expect("[OCW-RANDAO] Vector length doesn't match the target array");
-
-            let qrng_data = match Self::fetch_qrng_data() {
+            let qrng_data = match Self::fetch_qrng_data(&qrng_api_url) {
                 Ok(qrng_data) => qrng_data,
                 Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to fetch qrng data. {:?}", err);
+                    log::error!("Failed to fetch qrng data. {:?}", err);
                     return;
                 }
             };
-            let random_num = match Self::parse_qrng_data(&qrng_data) {
-                Ok(random_num) => random_num.data.result[0],
+            let random_num_vec = match Self::parse_qrng_data(&qrng_data) {
+                Ok(qrng_data) => qrng_data.result,
                 Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to parse qrng response. {:?}", err);
+                    log::error!("Failed to parse qrng response. {:?}", err);
                     return;
                 }
             };
 
+            let current_block_number = block_number.encode();
+            let storage_random_num = StorageValueRef::persistent(current_block_number.as_slice());
+
+            let bytes: [u8; 8] = random_num_vec[0..8].try_into().unwrap();
+            let random_num = u64::from_le_bytes(bytes);
+            // let random_num = match Self::hex_string_to_u64(&random_num_vec) {
+            //     Ok(random_num) => random_num,
+            //     Err(err) => {
+            //         log::error!("Failed to convert hex response to num. {:?}", err);
+            //         return;
+            //     }
+            // };
             let hashed_random_num = Self::hash_random_num(random_num);
+            storage_random_num.set(&random_num);
 
-            let block_num: u64 = block_number.into();
-            let block_number_for_commit = block_num + 2;
-            let block_num_for_reveal = block_num + 6;
-
-            let mut key_for_commit = Self::derived_key(block_number_for_commit, ONCHAIN_COMMITS);
-            let mut key_for_reveal = Self::derived_key(block_num_for_reveal, ONCHAIN_REVEALS);
-
-            let mut storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-            let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
-
-            let data_for_commit = CommitData(block_num + 10, hashed_random_num);
-            let data_for_reveal = RevealData(block_num + 10, random_num);
-            storage_ref_com.set(&data_for_commit);
-            storage_ref_rev.set(&data_for_reveal);
-
-            key_for_commit = Self::derived_key(block_num, ONCHAIN_COMMITS);
-            key_for_reveal = Self::derived_key(block_num, ONCHAIN_REVEALS);
-
-            storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-            storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
-
-            if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
-                match <randao::Pallet<T>>::commit_and_raw_unsigned(
-                    local_peer_id_bytes,
-                    data.0,
-                    data.1,
-                ) {
-                    Ok(_) => {}
-                    Err(err) => log::info!(
-                        "[OCW-RANDAO] Commit hash of random number failed: {:?}",
-                        err
-                    ),
-                }
-            }
-
-            if let Ok(Some(data)) = storage_ref_rev.get::<RevealData>() {
-                match <randao::Pallet<T>>::reveal_and_raw_unsigned(
-                    local_peer_id_bytes,
-                    data.0,
-                    data.1,
-                ) {
-                    Ok(_) => {}
-                    Err(err) => log::info!("[OCW-RANDAO] Reveal random number failed: {:?}", err),
-                }
-            }
+            log::debug!("Random num: {:?}", random_num);
+            log::info!("Hashed random num {:?}", &hashed_random_num);
         }
     }
 
@@ -169,21 +124,8 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
-    #[deny(clippy::clone_double_ref)]
-    fn derived_key(block_number: u64, prefix: &[u8]) -> Vec<u8> {
-        block_number.using_encoded(|encoded_bn| {
-            prefix
-                .iter()
-                .chain(b"/".iter())
-                .chain(encoded_bn)
-                .copied()
-                .collect::<Vec<u8>>()
-        })
-    }
-
-    fn fetch_qrng_data() -> Result<Vec<u8>, Error<T>> {
-        // TODO pass api key from config (JEQB-254)
-        let request = Request::get("https://qrng.qbck.io/<api_key>/qbck/block/long?size=1");
+    fn fetch_qrng_data(qrng_api_url: &str) -> Result<Vec<u8>, Error<T>> {
+        let request = Request::get(qrng_api_url);
         let timeout = timestamp().add(Duration::from_millis(5000));
 
         let pending = request
@@ -207,7 +149,7 @@ impl<T: Config> Pallet<T> {
     fn parse_qrng_data(qrng_data: &[u8]) -> Result<QRNGResponse, Error<T>> {
         let resp_str = str::from_utf8(qrng_data).map_err(|err| {
             log::error!(
-                "[OCW-RANDAO] Failed to deserialize qrng data: {:?} to string, err: {:?}",
+                "Failed to deserialize qrng data: {:?} to string, err: {:?}",
                 qrng_data,
                 err
             );
@@ -215,7 +157,7 @@ impl<T: Config> Pallet<T> {
         })?;
         let qrng_response: QRNGResponse = serde_json::from_str(resp_str).map_err(|err| {
             log::error!(
-                "[OCW-RANDAO] Failed to deserialize qrng data: {:?} to object, err: {:?}",
+                "Failed to deserialize qrng data: {:?} to object, err: {:?}",
                 resp_str,
                 err
             );
@@ -224,14 +166,25 @@ impl<T: Config> Pallet<T> {
         Ok(qrng_response)
     }
 
-    fn hash_random_num(num: u64) -> [u8; 32] {
+    fn hash_random_num(num: u64) -> Vec<u8> {
         let data: [u8; 8] = num.to_le_bytes();
         let hashed_random_num = <T>::Hashing::hash(&data);
-        Self::vec_to_bytes_array(hashed_random_num.encode())
+        hashed_random_num.encode()
     }
 
-    fn vec_to_bytes_array(vec: Vec<u8>) -> [u8; 32] {
-        vec.try_into()
-            .expect("[OCW-RANDAO] Vector length doesn't match the target array")
+    fn hex_string_to_u64(hex_string: &str) -> Result<u64, Error<T>> {
+        // Convert the hex string to bytes
+        let mut bytes = Vec::new();
+        for i in (0..hex_string.len()).step_by(2) {
+            let byte = u8::from_str_radix(&hex_string[i..i + 2], 16).map_err(|_| DeserializeError)?;
+            bytes.push(byte);
+        }
+
+        // Convert the bytes to u64
+        let mut array = [0u8; 8];
+        array.copy_from_slice(&bytes[0..8]);
+        let value = u64::from_be_bytes(array); // Use from_le_bytes for little-endian
+
+        Ok(value)
     }
 }
