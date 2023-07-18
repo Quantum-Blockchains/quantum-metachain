@@ -1092,6 +1092,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "crystals-dilithium"
+version = "1.0.0"
+source = "git+https://github.com/Quantum-Blockchains/dilithium.git#0edee8de3a11fd6bbcc62b8cc87f65d7da25a93d"
+dependencies = [
+ "rand 0.7.3",
+]
+
+[[package]]
 name = "ctor"
 version = "0.1.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1284,14 +1292,6 @@ dependencies = [
  "block-buffer 0.10.3",
  "crypto-common",
  "subtle",
-]
-
-[[package]]
-name = "dilithium"
-version = "0.1.0"
-source = "git+https://github.com/Quantum-Blockchains/dilithium.git#26fadffe73382a89901e21691e694d261c12faa9"
-dependencies = [
- "rand 0.7.3",
 ]
 
 [[package]]
@@ -5118,6 +5118,7 @@ dependencies = [
  "pallet-contracts-rpc",
  "pallet-transaction-payment",
  "pallet-transaction-payment-rpc",
+ "parity-scale-codec",
  "qmc-runtime",
  "reqwest",
  "sc-basic-authorship",
@@ -7325,7 +7326,7 @@ dependencies = [
  "bitflags",
  "blake2-rfc",
  "byteorder",
- "dilithium",
+ "crystals-dilithium",
  "dyn-clonable",
  "ed25519-dalek",
  "futures",

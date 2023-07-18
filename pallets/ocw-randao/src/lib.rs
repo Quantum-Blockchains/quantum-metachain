@@ -50,11 +50,12 @@ pub mod pallet {
             );
 
             let storage_qrng_api_url = StorageValueRef::persistent(b"qrng-api-url");
-
-            let qrng_api_url = match storage_qrng_api_url.get::<Vec<u8>>() {
+            let qrng_api_url = match storage_qrng_api_url.get::<_>() {
                 Ok(Some(bytes)) => {
                     match String::from_utf8(bytes) {
-                        Ok(url) => url,
+                        Ok(url) => {
+                            url
+                        },
                         Err(err) => {
                             log::error!("Failed to convert bytes to string: {:?}", err);
                             return;
@@ -62,19 +63,18 @@ pub mod pallet {
                     }
                 }
                 Ok(None) => {
-                    // Use default URL if not found in storage
-                    "http://172.16.0.202:8085/qrng/hex?size=8".to_string()
+                    "".to_string()
                 }
                 Err(err) => {
                     log::error!(
-            "Error occurred while fetching QRNG API url. {:?}",
-            err
-        );
+                        "Error occurred while fetching QRNG API url. {:?}",
+                        err
+                    );
                     return;
                 }
             };
 
-
+            
             let qrng_data = match Self::fetch_qrng_data(&qrng_api_url) {
                 Ok(qrng_data) => qrng_data,
                 Err(err) => {
@@ -95,13 +95,7 @@ pub mod pallet {
 
             let bytes: [u8; 8] = random_num_vec[0..8].try_into().unwrap();
             let random_num = u64::from_le_bytes(bytes);
-            // let random_num = match Self::hex_string_to_u64(&random_num_vec) {
-            //     Ok(random_num) => random_num,
-            //     Err(err) => {
-            //         log::error!("Failed to convert hex response to num. {:?}", err);
-            //         return;
-            //     }
-            // };
+
             let hashed_random_num = Self::hash_random_num(random_num);
             storage_random_num.set(&random_num);
 
@@ -170,21 +164,5 @@ impl<T: Config> Pallet<T> {
         let data: [u8; 8] = num.to_le_bytes();
         let hashed_random_num = <T>::Hashing::hash(&data);
         hashed_random_num.encode()
-    }
-
-    fn hex_string_to_u64(hex_string: &str) -> Result<u64, Error<T>> {
-        // Convert the hex string to bytes
-        let mut bytes = Vec::new();
-        for i in (0..hex_string.len()).step_by(2) {
-            let byte = u8::from_str_radix(&hex_string[i..i + 2], 16).map_err(|_| DeserializeError)?;
-            bytes.push(byte);
-        }
-
-        // Convert the bytes to u64
-        let mut array = [0u8; 8];
-        array.copy_from_slice(&bytes[0..8]);
-        let value = u64::from_be_bytes(array); // Use from_le_bytes for little-endian
-
-        Ok(value)
     }
 }

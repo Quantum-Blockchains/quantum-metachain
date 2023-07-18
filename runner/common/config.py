@@ -17,6 +17,7 @@ default_config = {
     "recovery_check_interval": 50,
     "key_rotation_time": 5,
     "qrng_api_key": "api_key",
+    "qrng_api_url": "",
     "peers": {
         "12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc": {
             "qkd": {

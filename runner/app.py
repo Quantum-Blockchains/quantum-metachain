@@ -25,6 +25,8 @@ params.args.startup_args.append("--runner-port")
 params.args.startup_args.append(str(common.config.config_service.config.local_server_port))
 params.args.startup_args.append("--node-key-file")
 params.args.startup_args.append(common.config.config_service.config.node_key_file_path)
+params.args.startup_args.append("--qrng-api-url")
+params.args.startup_args.append(common.config.config_service.config.qrng_api_url)
 node.node_service = NodeService(Node(params.args.startup_args))
 
 try:
