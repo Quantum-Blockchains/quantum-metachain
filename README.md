@@ -1,4 +1,4 @@
-# Quantum Meta-chain
+# Quantum Secured Blockchain (formerly called Quantum Metachain)
 
 This is a repository for Quantum Meta-chain, an implementation of a quantum node using quantum 
 and post-quantum security. It is a fork of a rust-based repository, [Substrate](https://github.com/paritytech/substrate).
@@ -169,6 +169,9 @@ To generate documentation run:
 ```bash
 cargo doc
 ```
+
+## 6. The whitepaper
+https://www.quantumblockchains.io/wp-content/uploads/2023/06/QBCK_WhitePaper.pdf 
 
 In order to display documentation go to `target/doc/<crate you want to see>` and open `index.html` file in the browser that you want to, e.g.
 #### MAC
