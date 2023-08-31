@@ -10,6 +10,7 @@ from common.logger import log, add_logs_handler_file
 from core import pre_shared_key
 from web.local_server import LocalServerWrapper
 from web.external_server import ExternalServerWrapper
+from time import sleep
 
 
 common.config.init_config(params.args.config_file)
@@ -30,7 +31,10 @@ node.node_service = NodeService(Node(params.args.startup_args))
 try:
     log.info("Starting QMC runner...")
     if not common.file.psk_file_manager.exists():
-        psk_obj = pre_shared_key.get_psk_from_peers()
+        psk_obj = None
+        while psk_obj is None:
+            psk_obj = pre_shared_key.get_psk_from_peers()
+            sleep(10)
         common.file.psk_file_manager.create(psk_obj.psk)
         common.file.psk_sig_file_manager.create(psk_obj.signature)
 

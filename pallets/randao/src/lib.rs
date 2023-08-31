@@ -145,18 +145,17 @@ pub mod pallet {
         u64: From<<T as frame_system::Config>::BlockNumber>,
     {
         fn offchain_worker(block_number: T::BlockNumber) {
-            log::info!("[RANDAO] Running offchain worker...");
             let current_block_number: u64 = block_number.into();
-
             let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
             let commit_balkline = COMMIT_BALKLINE;
             let commit_deadline = COMMIT_DEADLINE;
 
             match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
-                Ok(()) => log::info!(
+                Ok(()) => {
+                    log::info!(
                     "[RANDAO] Successful created a campaign for the block {:?}",
                     block_num
-                ),
+                )},
                 Err(err) => log::info!(
                     "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
                     block_num,
@@ -271,11 +270,10 @@ impl<T: Config> Pallet<T> {
     ) -> DispatchResult {
         let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
-
-        ensure!(
-            block_num - NUM_BLOCK_FOR_CAMPAIGN == current_block_num,
-            Error::<T>::TimeLineCheck
-        );
+        // ensure!(
+        //     block_num - NUM_BLOCK_FOR_CAMPAIGN == current_block_num,
+        //     Error::<T>::TimeLineCheck
+        // );
         ensure!(
             !Campaigns::<T>::contains_key(block_num),
             Error::<T>::CampaignIsAlreadyThere
@@ -286,7 +284,6 @@ impl<T: Config> Pallet<T> {
             current_block_num < block_num - commit_balkline,
             Error::<T>::TimeLineCheck
         );
-
         let new_campaign = Campaign {
             secret: 0,
             commit_balkline,
@@ -294,29 +291,23 @@ impl<T: Config> Pallet<T> {
             commit_num: 0,
             reveals_num: 0,
         };
-
         Campaigns::<T>::insert(block_num, new_campaign);
-
         Self::deposit_event(Event::LogCampaignAdded {
             block_num,
             commit_balkline,
             commit_deadline,
         });
-
         Ok(())
     }
 
     fn commit_hash(from: [u8; 52], block_num: u64, commitment: [u8; 32]) -> DispatchResult {
         let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
-
         ensure!(
             !ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
             Error::<T>::ParticipantIsAlreadyThere
         );
-
         let mut campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
-
         ensure!(
             current_block_num >= block_num - campaign.commit_balkline,
             Error::<T>::TimeLineCommitPhase
@@ -325,7 +316,6 @@ impl<T: Config> Pallet<T> {
             current_block_num <= block_num - campaign.commit_deadline,
             Error::<T>::TimeLineCommitPhase
         );
-
         let new_participant = Participant {
             secret: 0,
             commitment,
