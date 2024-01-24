@@ -17,3 +17,14 @@ node.log
 psk
 psk_sig
 .node_key
+reset.sh
+start1.sh
+start2.sh
+start3.sh
+start4.sh
+insertKey.sh
+venv.sh
+customSpec.json
+customSpecRaw.json
+/.config
+/tmp
