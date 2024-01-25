@@ -153,9 +153,10 @@ pub mod pallet {
             match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
                 Ok(()) => {
                     log::info!(
-                    "[RANDAO] Successful created a campaign for the block {:?}",
-                    block_num
-                )},
+                        "[RANDAO] Successful created a campaign for the block {:?}",
+                        block_num
+                    )
+                }
                 Err(err) => log::info!(
                     "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
                     block_num,

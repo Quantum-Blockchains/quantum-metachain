@@ -1,16 +1,15 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+use codec::alloc::string::ToString;
 pub use pallet::*;
+use scale_info::prelude::string::String;
 use serde::{Deserialize, Deserializer};
 use sp_core::{Decode, Encode, Hasher};
 use sp_io::offchain::timestamp;
-use sp_runtime::offchain::{http::Request, Duration};
+use sp_runtime::offchain::{http::Request, storage::StorageValueRef, Duration};
 use sp_std::{str, vec::Vec};
-use scale_info::prelude::string::String;
-use codec::alloc::string::ToString;
-use sp_runtime::offchain::storage::StorageValueRef;
 
-use crate::Error::{DeserializeError, HttpFetchError, GetNumberQRNGError};
+use crate::Error::{DeserializeError, GetNumberQRNGError, HttpFetchError};
 
 const ONCHAIN_COMMITS: &[u8] = b"ocw-randao::commits";
 const ONCHAIN_REVEALS: &[u8] = b"ocw-randao::reveals";
@@ -28,18 +27,17 @@ struct QRNGResponse {
 }
 
 pub fn de_string_to_bytes<'de, D>(de: D) -> Result<Vec<u8>, D::Error>
-	where
-	D: Deserializer<'de>,
-	{
-		let s: &str = Deserialize::deserialize(de)?;
-		Ok(s.as_bytes().to_vec())
-	}
+where
+    D: Deserializer<'de>,
+{
+    let s: &str = Deserialize::deserialize(de)?;
+    Ok(s.as_bytes().to_vec())
+}
 
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::{pallet_prelude::*, traits::Randomness};
     use frame_system::pallet_prelude::BlockNumberFor;
-
 
     use super::*;
 
@@ -99,15 +97,13 @@ pub mod pallet {
                 .expect("[OCW-RANDAO] Vector length doesn't match the target array");
 
             let random_num = match Self::get_random_numner_from_qrng() {
-                Ok(secret) => {
-                    secret
-                },
+                Ok(secret) => secret,
                 Err(err) => {
                     log::error!("[OCW-RANDAO] Failed to get qrng rundom number. {:?}", err);
                     let (random_seed, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
                     let random_number = <u64>::decode(&mut random_seed.as_ref())
-			            .expect("[OCW-RANDAO] secure hashes should always be bigger than u32; qed");
-		            random_number
+                        .expect("[OCW-RANDAO] secure hashes should always be bigger than u32; qed");
+                    random_number
                 }
             };
 
@@ -176,7 +172,6 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
-
     #[deny(clippy::clone_double_ref)]
     fn derived_key(block_number: u64, prefix: &[u8]) -> Vec<u8> {
         block_number.using_encoded(|encoded_bn| {
@@ -191,48 +186,42 @@ impl<T: Config> Pallet<T> {
 
     fn get_random_numner_from_qrng() -> Result<u64, Error<T>> {
         let storage_qrng_api_url = StorageValueRef::persistent(b"qrng-api-url");
-            let qrng_api_url = match storage_qrng_api_url.get::<_>() {
-                Ok(Some(bytes)) => {
-                    match String::from_utf8(bytes) {
-                        Ok(url) => {
-                            url
-                        },
-                        Err(err) => {
-                            log::error!("[OCW-RANDAO] Failed to convert bytes to string: {:?}", err);
-                            return Err(GetNumberQRNGError)
-                        }
-                    }
-                }
-                Ok(None) => {
-                    "".to_string()
-                }
+        let qrng_api_url = match storage_qrng_api_url.get::<_>() {
+            Ok(Some(bytes)) => match String::from_utf8(bytes) {
+                Ok(url) => url,
                 Err(err) => {
-                    log::error!(
-                        "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
-                        err
-                    );
-                    return Err(GetNumberQRNGError)
+                    log::error!("[OCW-RANDAO] Failed to convert bytes to string: {:?}", err);
+                    return Err(GetNumberQRNGError);
                 }
-            };
+            },
+            Ok(None) => "".to_string(),
+            Err(err) => {
+                log::error!(
+                    "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
+                    err
+                );
+                return Err(GetNumberQRNGError);
+            }
+        };
 
-            let qrng_data = match Self::fetch_qrng_data(&qrng_api_url) {
-                Ok(qrng_data) => qrng_data,
-                Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to fetch qrng data. {:?}", err);
-                    return Err(GetNumberQRNGError)
-                }
-            };
+        let qrng_data = match Self::fetch_qrng_data(&qrng_api_url) {
+            Ok(qrng_data) => qrng_data,
+            Err(err) => {
+                log::error!("[OCW-RANDAO] Failed to fetch qrng data. {:?}", err);
+                return Err(GetNumberQRNGError);
+            }
+        };
 
-            let random_num_vec = match Self::parse_qrng_data(&qrng_data) {
-                Ok(qrng_data) => qrng_data.result,
-                Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to parse qrng response. {:?}", err);
-                    return Err(GetNumberQRNGError)
-                }
-            };
+        let random_num_vec = match Self::parse_qrng_data(&qrng_data) {
+            Ok(qrng_data) => qrng_data.result,
+            Err(err) => {
+                log::error!("[OCW-RANDAO] Failed to parse qrng response. {:?}", err);
+                return Err(GetNumberQRNGError);
+            }
+        };
 
-            let bytes: [u8; 8] = random_num_vec[0..8].try_into().unwrap();
-            let random_num = u64::from_le_bytes(bytes);
+        let bytes: [u8; 8] = random_num_vec[0..8].try_into().unwrap();
+        let random_num = u64::from_le_bytes(bytes);
         Ok(random_num)
     }
 
