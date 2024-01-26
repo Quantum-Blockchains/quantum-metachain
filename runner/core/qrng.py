@@ -6,7 +6,8 @@ import common.config
 
 
 def generate_random_hex(length=32) -> str:
-    url = f"https://qrng.qbck.io/{common.config.config_service.config.qrng_api_key}/qbck/block/hex?size=1&length={length}"
+    url = (f"https://qrng.qbck.io/{common.config.config_service.config.qrng_api_key}"
+           f"/qbck/block/hex?size=1&length={length}")
     if not validators.url(url):
         log.error("Invalid URL, please make sure that you have correct qRNG API key configured - proceeding to "
                   "fallback random psk...")

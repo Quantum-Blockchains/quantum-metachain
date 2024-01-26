@@ -87,6 +87,7 @@ def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPsk
     except Exception as e:
         log.error(str(e))
 
+
 def __decrypt_psk(encrypted_psk: str, qkd_config: dict, qkd_key_id: str) -> str:
     qkd_provider = get_qkd_provider(qkd_config)
     _, qkd_key = qkd_provider.get_dec_key(qkd_key_id)

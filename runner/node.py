@@ -17,8 +17,6 @@ class Node:
         self.startup_args = startup_args
         self.recovery_cron = None
         self.process = None
-        
-        
 
     def start(self):
         log.info("Starting QMC node...")
