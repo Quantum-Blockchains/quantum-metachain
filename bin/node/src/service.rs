@@ -2,6 +2,7 @@
 
 use std::{sync::Arc, time::Duration};
 
+use codec::Encode;
 use qmc_runtime::{self, opaque::Block, RuntimeApi};
 use sc_client_api::{Backend, BlockBackend, ExecutorProvider};
 use sc_consensus_aura::{ImportQueueParams, SlotProportion, StartAuraParams};
@@ -233,6 +234,13 @@ pub async fn new_full(mut config: Configuration) -> Result<TaskManager, ServiceE
             };
             crate::rpc::create_full(deps).map_err(Into::into)
         })
+    };
+
+    if let Some(ref qrng) = config.qrng_api_url {
+        let tmp = qrng.encode();
+        if let Some(mut storage) = backend.offchain_storage() {
+            storage.set(STORAGE_PREFIX, b"qrng-api-url", &tmp);
+        };
     };
 
     let runner_port = config.runner_port.unwrap().to_le_bytes();

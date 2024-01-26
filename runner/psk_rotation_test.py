@@ -109,7 +109,8 @@ def check_psk_rotation(signer_name, signer_config, block_number):
     for node_name, node_config in nodes:
         if node_name != signer_name:
             if not path.exists(node_config.psk_file_path):
-                send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False, block_number)
+                send_psk_rotation_request(node_config.local_server_port, signer_config.local_peer_id, False,
+                                          block_number)
                 sleep_until_file_exists(node_config.psk_file_path)
 
             with open(node_config.psk_file_path, 'r') as file:

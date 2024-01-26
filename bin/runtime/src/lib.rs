@@ -333,6 +333,7 @@ impl ocw_psk::Config for Runtime {
 impl ocw_randao::Config for Runtime {
     type Event = Event;
     type Call = Call;
+    type Randomness = RandomnessCollectiveFlip;
 }
 
 impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
