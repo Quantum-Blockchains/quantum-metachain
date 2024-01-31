@@ -17,7 +17,12 @@ def url_type(arg):
 
 
 def qrng_type(arg):
-    # TODO JEQB-270/Check entered qrng api key
+    qrng_key = arg.split('-')
+    if qrng_key.__len__() != 5:
+        raise argparse.ArgumentTypeError('Invalid QRNG api key')
+    elif (qrng_key[0].__len__() != 8 or qrng_key[1].__len__() != 4 or qrng_key[2].__len__() != 4 or
+          qrng_key[3].__len__() != 4 or qrng_key[4].__len__() != 12):
+        raise argparse.ArgumentTypeError('Invalid QRNG api key')
     return arg
 
 
