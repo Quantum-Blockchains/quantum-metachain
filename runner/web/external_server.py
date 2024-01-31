@@ -15,6 +15,7 @@ class ExternalServerWrapper:
         self.external_server = Flask(__name__)
         init_error_handlers(self.external_server)
         self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', get_psk, methods=['GET'])
+        self.add_endpoint('/search_node/<peer_id>', 'search_node', search_node, methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -22,7 +23,8 @@ class ExternalServerWrapper:
         self.external_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
     def run(self):
-        self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False)
+        self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
+                                 threaded=True)
 
 
 # TODO add peer authorizationS
@@ -48,3 +50,24 @@ def get_psk(peer_id):
         "key_id": key_id,
         "signature": psk_sig
     })
+
+
+def search_node(peer_id):
+    log.info("Add new peer to config...")
+    if peer_id in common.config.config_service.config.peers.keys():
+        peer_config = common.config.config_service.config.peers.get(peer_id)
+        return jsonify({
+            "found": True,
+            "external_server_address": peer_config["server_addr"],
+            "peers": []
+        })
+    else:
+        addr_list = []
+        for peer_id in common.config.config_service.config.peers.keys():
+            peer_config = common.config.config_service.config.peers.get(peer_id)
+            addr_list.append(peer_config["server_addr"])
+        return jsonify({
+            "found": False,
+            "external_server_address": "",
+            "peers": addr_list
+        })
