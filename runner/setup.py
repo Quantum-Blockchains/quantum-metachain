@@ -7,6 +7,7 @@ import requests
 import argparse
 import pathlib
 from urllib.parse import urlparse
+import base58
 
 
 def url_type(arg):
@@ -27,13 +28,23 @@ def qrng_type(arg):
 
 
 def peer_type(arg):
-    #TODO prowierka
-    return arg
+    if arg.__len__() != 52:
+        raise argparse.ArgumentTypeError('Invalid peer')
+    try:
+        decoded = base58.b58decode(arg)
+        return arg
+    except base58.base58.InvalidBase58Error:
+        raise argparse.ArgumentTypeError('Invalid peer')
 
 
 def node_key_type(arg):
-    # TODO JEQB-269/Check enter node key
-    return arg
+    if arg.__len__() != 64:
+        raise argparse.ArgumentTypeError('Invalid node key')
+    try:
+        int(arg, 16)
+        return arg
+    except ValueError:
+        raise argparse.ArgumentTypeError('Invalid node key')
 
 
 def data_exchange_eith_the_selected_node(address):
@@ -94,13 +105,18 @@ if not path.exists(config_dir):
 
 if args.path_to_node_key is not None:
     print("1")
+    signing_key, _ = ed25519.create_keypair()
+    signing_key_hex = signing_key.to_ascii(encoding="hex")
+    open(path.join(config_dir, "tmp_key"), "wb").write(signing_key_hex)
 elif args.node_key is not None:
     print("2")
-    open(path.join(config_dir, "tmp_key"), "w").write(args.node_key)
+    signing_key_hex = args.node_key
+    open(path.join(config_dir, "tmp_key"), "w").write(signing_key_hex)
 else:
     print("3")
     signing_key, _ = ed25519.create_keypair()
-    open(path.join(config_dir, "tmp_key"), "wb").write(signing_key.to_ascii(encoding="hex"))
+    signing_key_hex = signing_key.to_ascii(encoding="hex")
+    open(path.join(config_dir, "tmp_key"), "wb").write(signing_key_hex)
 
 args_sub = "target/release/qmc-node" + " key" + " inspect-node-key" + " --file " + path.join(config_dir, "tmp_key")
 peer_id = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
@@ -165,7 +181,7 @@ if not path.exists(node_config_dir):
     mkdir(node_config_dir)
 
 node_key_file_path = path.join(node_config_dir, "node_key")
-open(node_key_file_path, "wb").write(signing_key.to_ascii(encoding="hex"))
+open(node_key_file_path, "w").write(signing_key_hex)
 
 config_file_path = path.join(node_config_dir, "config.json")
 json_object = json.dumps(config, indent=4)
