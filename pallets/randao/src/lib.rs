@@ -1,5 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 
+pub use pallet::*;
+
 #[cfg(test)]
 mod tests;
 
@@ -9,7 +11,7 @@ use frame_support::{
     pallet_prelude::{DispatchError, MaxEncodedLen, RuntimeDebug, TypeInfo},
 };
 use frame_system::offchain::{SendTransactionTypes, SubmitTransaction};
-pub use pallet::*;
+
 use sp_core::{Decode, Encode, Hasher};
 use sp_runtime::traits::SaturatedConversion;
 use sp_std::{str, vec::Vec};
@@ -41,10 +43,9 @@ pub struct Campaign {
 
 #[frame_support::pallet]
 pub mod pallet {
+    use super::*;
     use frame_support::pallet_prelude::*;
     use frame_system::pallet_prelude::*;
-
-    use super::*;
 
     #[pallet::pallet]
     #[pallet::generate_store(pub(super) trait Store)]
@@ -52,8 +53,8 @@ pub mod pallet {
 
     #[pallet::config]
     pub trait Config: SendTransactionTypes<Call<Self>> + frame_system::Config {
-        type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
-        type Call: From<Call<Self>>;
+        type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
+        type RuntimeCall: From<Call<Self>>;
     }
 
     #[pallet::event]
@@ -142,9 +143,9 @@ pub mod pallet {
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
     where
-        u64: From<<T as frame_system::Config>::BlockNumber>,
+        u64: From<<<<T as frame_system::Config>::Block as sp_runtime::traits::Block>::Header as sp_runtime::traits::Header>::Number>
     {
-        fn offchain_worker(block_number: T::BlockNumber) {
+        fn offchain_worker(block_number: BlockNumberFor<T>) {
             let current_block_number: u64 = block_number.into();
             let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
             let commit_balkline = COMMIT_BALKLINE;
@@ -250,7 +251,7 @@ impl<T: Config> Pallet<T> {
 
     pub fn get_secret(block_num: u64) -> Result<u64, DispatchError> {
         let campaigns = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
-        let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
+        let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         ensure!(
             current_block_num >= block_num,
@@ -269,7 +270,7 @@ impl<T: Config> Pallet<T> {
         commit_balkline: u64,
         commit_deadline: u64,
     ) -> DispatchResult {
-        let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
+        let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         // ensure!(
         //     block_num - NUM_BLOCK_FOR_CAMPAIGN == current_block_num,
@@ -302,7 +303,7 @@ impl<T: Config> Pallet<T> {
     }
 
     fn commit_hash(from: [u8; 52], block_num: u64, commitment: [u8; 32]) -> DispatchResult {
-        let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
+        let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         ensure!(
             !ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
@@ -345,7 +346,7 @@ impl<T: Config> Pallet<T> {
             Error::<T>::IsNotAParticipant
         );
 
-        let block: T::BlockNumber = frame_system::pallet::Pallet::<T>::block_number();
+        let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         let mut campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
         let mut participant = ParticipantsOfCampaigns::<T>::get(block_num, &from).unwrap();

@@ -47,18 +47,18 @@ pub mod pallet {
 
     #[pallet::config]
     pub trait Config: frame_system::Config + randao::Config {
-        type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
-        type Call: From<Call<Self>>;
-        type Randomness: Randomness<Self::Hash, Self::BlockNumber>;
+        type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
+        type RuntimeCall: From<Call<Self>>;
+        type Randomness: Randomness<Self::Hash, BlockNumberFor<Self>>;
     }
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
     where
-        u64: From<<T as frame_system::Config>::BlockNumber>,
+        u64: From<<<<T as frame_system::Config>::Block as sp_runtime::traits::Block>::Header as sp_runtime::traits::Header>::Number>
     {
         /// RANDAO offchain worker entry point.
-        fn offchain_worker(block_number: T::BlockNumber) {
+        fn offchain_worker(block_number: BlockNumberFor<T>) {
             log::info!(
                 "[OCW-RANDAO] Running offchain worker in block: {:?}",
                 block_number

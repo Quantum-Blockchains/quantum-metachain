@@ -24,7 +24,7 @@ start3.sh
 start4.sh
 insertKey.sh
 venv.sh
-customSpec.json
+d_customSpec.json
 customSpecRaw.json
 /.config
 /tmp
