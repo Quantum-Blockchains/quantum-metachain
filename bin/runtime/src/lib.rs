@@ -9,7 +9,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 use pallet_grandpa::AuthorityId as GrandpaId;
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
-use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
+use sp_core::{crypto::KeyTypeId, OpaqueMetadata, OpaquePeerId};
 use sp_runtime::{
 	create_runtime_str, generic, impl_opaque_keys,
 	traits::{
@@ -51,6 +51,7 @@ pub use pallet_template;
 pub use ocw_psk::{self, Call as OcwPskCall};
 pub use ocw_randao::{self, Call as OcwRandaoCall};
 pub use randao::{self, Call as RandaoCall};
+pub use hypercube;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -342,6 +343,12 @@ impl ocw_randao::Config for Runtime {
     type Randomness = RandomnessCollectiveFlip;
 }
 
+impl hypercube::Config for Runtime {
+	type MaxPeerIdLength = ConstU32<128u32>;
+	type MaxPeers = ConstU32<{ u32::MAX }>;
+	type RuntimeEvent = RuntimeEvent;
+}
+
 impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime
 where
     RuntimeCall: From<C>,
@@ -372,6 +379,7 @@ construct_runtime!(
 		OcwPsk: ocw_psk,
         OcwRandao: ocw_randao,
         Randao: randao,
+		Hypercube: hypercube,
 	}
 );
 
@@ -504,6 +512,15 @@ impl_runtime_apis! {
 		}
 	}
 
+	impl hypercube::HypercubeApi<Block> for Runtime {
+		fn peers() -> Vec<OpaquePeerId> {
+			Hypercube::peers().into_inner()
+		}
+		fn links(peer: Vec<u8>) -> Vec<OpaquePeerId> {
+			Hypercube::get_links(peer).expect("REASON")
+		}
+	}
+
 	impl sp_session::SessionKeys<Block> for Runtime {
 		fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
 			opaque::SessionKeys::generate(seed)
@@ -551,6 +568,8 @@ impl_runtime_apis! {
 			System::account_nonce(account)
 		}
 	}
+
+
 
     impl pallet_contracts::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash, EventRecord> for Runtime
 	{
