@@ -3,7 +3,7 @@ import json
 from flask import make_response, Flask
 from requests.exceptions import RequestException
 from common.logger import log
-from common.exceptions import PeerMisconfiguredError, PSKNotFoundError
+from common.exceptions import PeerMisconfiguredError, PSKNotFoundError, PeerIsNotInHypercube
 
 
 bad_request_response = {"error": "bad request"}
@@ -20,6 +20,7 @@ def init_error_handlers(server: Flask):
     server.register_error_handler(Exception, handle_unexpected_exception)
     server.register_error_handler(PeerMisconfiguredError, handle_peer_misconfigured_error)
     server.register_error_handler(PSKNotFoundError, handle_psk_not_found_error)
+    server.register_error_handler(PeerIsNotInHypercube, handle_peer_is_not_in_hypercube_error)
 
 
 def handle_bad_request(e):
@@ -52,3 +53,7 @@ def handle_peer_misconfigured_error(_e: PeerMisconfiguredError):
 
 def handle_psk_not_found_error(_e: PSKNotFoundError):
     return make_response(json.dumps({"message": "Pre shared key not found"}), 404)
+
+
+def handle_peer_is_not_in_hypercube_error(_e: PeerIsNotInHypercube):
+    return make_response(json.dumps({"message": "Peer is not in hypercube"}), 404)

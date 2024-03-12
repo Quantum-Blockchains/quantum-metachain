@@ -5,3 +5,7 @@ class PeerMisconfiguredError(Exception):
 
 class PSKNotFoundError(Exception):
     pass
+
+
+class PeerIsNotInHypercube(Exception):
+    pass

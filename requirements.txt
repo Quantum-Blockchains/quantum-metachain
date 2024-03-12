@@ -11,3 +11,5 @@ Werkzeug~=2.2.2
 validators~=0.20.0
 onetimepad~=1.4
 ed25519~=1.5
+substrate-interface~=1.7.7
+scalecodec~=1.2.8

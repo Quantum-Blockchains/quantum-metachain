@@ -7,6 +7,8 @@ from common.logger import log
 from core import onetimepad
 from core.qkd.provider_factory import get_qkd_provider
 from web.error_handler import init_error_handlers
+from substrateinterface import SubstrateInterface
+from scalecodec import ScaleBytes
 
 
 class ExternalServerWrapper:
@@ -16,6 +18,7 @@ class ExternalServerWrapper:
         init_error_handlers(self.external_server)
         self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', get_psk, methods=['GET'])
         self.add_endpoint('/search_node/<peer_id>', 'search_node', search_node, methods=['GET'])
+        self.add_endpoint('/get_peers_for_node/<peer_id>', 'get_peers_for_node', get_peers_for_node, methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -51,8 +54,9 @@ def get_psk(peer_id):
         "signature": psk_sig
     })
 
+
 def search_node(peer_id):
-    log.info("Add new peer to config...")
+    log.info("Search peer...")
     if peer_id in common.config.config_service.config.peers.keys():
         peer_config = common.config.config_service.config.peers.get(peer_id)
         return jsonify({
@@ -70,3 +74,31 @@ def search_node(peer_id):
             "external_server_address": "",
             "peers": addr_list
         })
+
+
+def get_peers_for_node(peer_id):
+    log.info("Get peers for node...")
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+
+    hypercube_nodes = ws_provider.query(
+        module="Hypercube",
+        storage_function="Peers",
+        params=[],
+    )
+
+    if peer_id not in hypercube_nodes:
+        log.warning("Peer is not in hypercube.")
+        raise exceptions.PeerIsNotInHypercube
+
+    encode_peer = ws_provider.encode_scale("Vec<u8>", peer_id)
+
+    peers_bytes = ws_provider.rpc_request(
+        method="state_call",
+        params=["HypercubeApi_links", encode_peer.to_hex()])["result"]
+
+    peers = ws_provider.decode_scale("Vec<Vec<u8>>", ScaleBytes(peers_bytes))
+
+    return jsonify({
+        "peers": peers
+    })
+

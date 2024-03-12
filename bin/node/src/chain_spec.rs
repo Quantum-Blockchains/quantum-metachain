@@ -148,19 +148,10 @@ fn testnet_genesis(
 		},
 		hypercube: HypercubeConfig {
 			peers: Vec::from([
-				// OpaquePeerId(bs58::decode("12D3KooWEDjpwtDUEkt82Rc7keFnuYEsGYzDLRgwFjM1uuFVnwho").into_vec().unwrap()),
-				// OpaquePeerId(bs58::decode("12D3KooWC3s3VavCbfJ2WnC62bRsbEznfe8qLircdCkAXfCxnoPf").into_vec().unwrap()),
-				// OpaquePeerId(bs58::decode("12D3KooWGyMxrfSVw6KFt6gQASYzT6H5PWxF9yQ7N9BUc1coG5jh").into_vec().unwrap()),
-				// OpaquePeerId(bs58::decode("12D3KooWHpxkQ4kw2hT6piUAMWAZU91oV5R7azDWHiv5u64wnzwB").into_vec().unwrap())
 				OpaquePeerId::new("12D3KooWEDjpwtDUEkt82Rc7keFnuYEsGYzDLRgwFjM1uuFVnwho".as_bytes().to_vec()),
 				OpaquePeerId::new("12D3KooWC3s3VavCbfJ2WnC62bRsbEznfe8qLircdCkAXfCxnoPf".as_bytes().to_vec()),
 				OpaquePeerId::new("12D3KooWGyMxrfSVw6KFt6gQASYzT6H5PWxF9yQ7N9BUc1coG5jh".as_bytes().to_vec()),
 				OpaquePeerId::new("12D3KooWHpxkQ4kw2hT6piUAMWAZU91oV5R7azDWHiv5u64wnzwB".as_bytes().to_vec())
-				// PeerId::from("12D3KooWEDjpwtDUEkt82Rc7keFnuYEsGYzDLRgwFjM1uuFVnwho")
-				// "12D3KooWEDjpwtDUEkt82Rc7keFnuYEsGYzDLRgwFjM1uuFVnwho",
-				// "12D3KooWC3s3VavCbfJ2WnC62bRsbEznfe8qLircdCkAXfCxnoPf",
-				// "12D3KooWGyMxrfSVw6KFt6gQASYzT6H5PWxF9yQ7N9BUc1coG5jh",
-				// "12D3KooWHpxkQ4kw2hT6piUAMWAZU91oV5R7azDWHiv5u64wnzwB"
 			]),
 			..Default::default()
 		},
