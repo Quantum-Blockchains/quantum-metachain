@@ -9,7 +9,7 @@ pub use pallet::*;
 use serde::{Deserialize, Serialize};
 use sp_core::Hasher;
 use sp_io::offchain::timestamp;
-use sp_runtime::{offchain::{http::Request, Duration}, SaturatedConversion, traits::Get};
+use sp_runtime::{DispatchError, offchain::{http::Request, Duration}, SaturatedConversion, traits::Get};
 use sp_core::{OpaquePeerId as PeerId, OpaquePeerId};
 use sp_runtime::offchain::storage::StorageValueRef;
 use sp_std::vec::Vec;
@@ -324,31 +324,34 @@ impl<T: Config> Pallet<T> {
     /// The resulting block number is checked.
     /// The block number must be greater than the current block number
     /// and the previous recorded number must be less than the one we are trying to record.
-    fn set_num_block_for_restart(num_block: u64) {
+    fn set_num_block_for_restart(num_block: u64) -> Result<(), DispatchError> {
         let current_block_num: u64 = Self::get_current_block_num();
         ensure!(current_block_num < num_block, Error::<T>::TimeLineCheck);
         ensure!(NumBlockForRestart::<T>::get() < current_block_num, Error::<T>::NumberBlockForRestartAlreadyExists);
         NumBlockForRestart::<T>::set(num_block);
+        Ok(())
     }
 
     /// This function writes to the blockchain the block number in which
     /// it is necessary to try to generate a new key.
     /// If num_block is less than or equal to the current number then returns an error
-    fn set_in_block(num_block: u64) {
+    fn set_in_block(num_block: u64) -> Result<(), DispatchError> {
         let current_block_num: u64 = Self::get_current_block_num();
         ensure!(current_block_num < num_block, Error::<T>::TimeLineCheck);
         if !InBlock::<T>::contains_key(num_block) {
             InBlock::<T>::insert(num_block, true);
         }
+        Ok(())
     }
 
     /// This function records the selected peer for num_block
     /// if there was no recording before
-    fn set_selected_peers(num_block: u64, peer_id: [u8; 52], selected_peer: [u8; 52]) {
+    fn set_selected_peers(num_block: u64, peer_id: [u8; 52], selected_peer: [u8; 52]) -> Result<(), DispatchError> {
         ensure!(!SelectedPeers::<T>::contains_key(num_block, peer_id),Error::<T>::SelectedPeerIsAlreadyThere);
         if !SelectedPeers::<T>::contains_key(num_block, peer_id) {
             SelectedPeers::<T>::insert(num_block, peer_id, selected_peer);
         }
+        Ok(())
     }
 
     fn get_ports() -> Result<(u16, u16), Error<T>>{
