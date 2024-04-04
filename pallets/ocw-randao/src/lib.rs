@@ -59,101 +59,101 @@ pub mod pallet {
     {
         /// RANDAO offchain worker entry point.
         fn offchain_worker(block_number: BlockNumberFor<T>) {
-            log::info!(
-                "[OCW-RANDAO] Running offchain worker in block: {:?}",
-                block_number
-            );
-
-            let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
-            let rpc_port = match storage_rpc_port.get::<u16>() {
-                Ok(p) => match p {
-                    Some(port) => port,
-                    None => {
-                        log::error!(
-                            "[OCW-RANDAO] The RPC port is not passed to the offchain worker."
-                        );
-                        return;
-                    }
-                },
-                Err(err) => {
-                    log::error!(
-                        "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
-                        err
-                    );
-                    return;
-                }
-            };
-
-            let local_peer_id = match support::get_local_peer_id(rpc_port) {
-                Ok(id) => id.into_bytes(),
-                Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to retrieve local peer id. {:?}", err);
-                    return;
-                }
-            };
-
-            let local_peer_id_bytes: [u8; 52] = local_peer_id
-                .try_into()
-                .expect("[OCW-RANDAO] Vector length doesn't match the target array");
-
-            let random_num = match Self::get_random_numner_from_qrng() {
-                Ok(secret) => secret,
-                Err(err) => {
-                    log::error!("[OCW-RANDAO] Failed to get qrng rundom number. {:?}", err);
-                    let (random_seed, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-                    let random_number = <u64>::decode(&mut random_seed.as_ref())
-                        .expect("[OCW-RANDAO] secure hashes should always be bigger than u32; qed");
-                    random_number
-                }
-            };
-
-            let hashed_random_num = Self::hash_random_num(random_num);
-
-            let block_num: u64 = block_number.into();
-            let block_number_for_commit = block_num + 2;
-            let block_num_for_reveal = block_num + 6;
-
-            let mut key_for_commit = Self::derived_key(block_number_for_commit, ONCHAIN_COMMITS);
-            let mut key_for_reveal = Self::derived_key(block_num_for_reveal, ONCHAIN_REVEALS);
-
-            let mut storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-            let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
-
-            let data_for_commit = CommitData(block_num + 10, hashed_random_num);
-            let data_for_reveal = RevealData(block_num + 10, random_num);
-            storage_ref_com.set(&data_for_commit);
-            storage_ref_rev.set(&data_for_reveal);
-
-            key_for_commit = Self::derived_key(block_num, ONCHAIN_COMMITS);
-            key_for_reveal = Self::derived_key(block_num, ONCHAIN_REVEALS);
-
-            storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-            storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
-
-            if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
-                match <randao::Pallet<T>>::commit_and_raw_unsigned(
-                    local_peer_id_bytes,
-                    data.0,
-                    data.1,
-                ) {
-                    Ok(_) => {}
-                    Err(err) => log::info!(
-                        "[OCW-RANDAO] Commit hash of random number failed: {:?}",
-                        err
-                    ),
-                }
-            }
-
-            if let Ok(Some(data)) = storage_ref_rev.get::<RevealData>() {
-                match <randao::Pallet<T>>::reveal_and_raw_unsigned(
-                    local_peer_id_bytes,
-                    data.0,
-                    data.1,
-                ) {
-                    Ok(_) => {}
-                    Err(err) => log::info!("[OCW-RANDAO] Reveal random number failed: {:?}", err),
-                }
-            }
+        //     log::info!(
+        //         "[OCW-RANDAO] Running offchain worker in block: {:?}",
+        //         block_number
+        //     );
+        //
+        //     let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
+        //     let rpc_port = match storage_rpc_port.get::<u16>() {
+        //         Ok(p) => match p {
+        //             Some(port) => port,
+        //             None => {
+        //                 log::error!(
+        //                     "[OCW-RANDAO] The RPC port is not passed to the offchain worker."
+        //                 );
+        //                 return;
+        //             }
+        //         },
+        //         Err(err) => {
+        //             log::error!(
+        //                 "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
+        //                 err
+        //             );
+        //             return;
+        //         }
+        //     };
+        //
+        //     let local_peer_id = match support::get_local_peer_id(rpc_port) {
+        //         Ok(id) => id.into_bytes(),
+        //         Err(err) => {
+        //             log::error!("[OCW-RANDAO] Failed to retrieve local peer id. {:?}", err);
+        //             return;
+        //         }
+        //     };
+        //
+        //     let local_peer_id_bytes: [u8; 52] = local_peer_id
+        //         .try_into()
+        //         .expect("[OCW-RANDAO] Vector length doesn't match the target array");
+        //
+        //     let random_num = match Self::get_random_numner_from_qrng() {
+        //         Ok(secret) => secret,
+        //         Err(err) => {
+        //             log::error!("[OCW-RANDAO] Failed to get qrng rundom number. {:?}", err);
+        //             let (random_seed, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
+        //             let random_number = <u64>::decode(&mut random_seed.as_ref())
+        //                 .expect("[OCW-RANDAO] secure hashes should always be bigger than u32; qed");
+        //             random_number
+        //         }
+        //     };
+        //
+        //     let hashed_random_num = Self::hash_random_num(random_num);
+        //
+        //     let block_num: u64 = block_number.into();
+        //     let block_number_for_commit = block_num + 2;
+        //     let block_num_for_reveal = block_num + 6;
+        //
+        //     let mut key_for_commit = Self::derived_key(block_number_for_commit, ONCHAIN_COMMITS);
+        //     let mut key_for_reveal = Self::derived_key(block_num_for_reveal, ONCHAIN_REVEALS);
+        //
+        //     let mut storage_ref_com = StorageValueRef::persistent(&key_for_commit);
+        //     let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
+        //
+        //     let data_for_commit = CommitData(block_num + 10, hashed_random_num);
+        //     let data_for_reveal = RevealData(block_num + 10, random_num);
+        //     storage_ref_com.set(&data_for_commit);
+        //     storage_ref_rev.set(&data_for_reveal);
+        //
+        //     key_for_commit = Self::derived_key(block_num, ONCHAIN_COMMITS);
+        //     key_for_reveal = Self::derived_key(block_num, ONCHAIN_REVEALS);
+        //
+        //     storage_ref_com = StorageValueRef::persistent(&key_for_commit);
+        //     storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
+        //
+        //     if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
+        //         match <randao::Pallet<T>>::commit_and_raw_unsigned(
+        //             local_peer_id_bytes,
+        //             data.0,
+        //             data.1,
+        //         ) {
+        //             Ok(_) => {}
+        //             Err(err) => log::info!(
+        //                 "[OCW-RANDAO] Commit hash of random number failed: {:?}",
+        //                 err
+        //             ),
+        //         }
+        //     }
+        //
+        //     if let Ok(Some(data)) = storage_ref_rev.get::<RevealData>() {
+        //         match <randao::Pallet<T>>::reveal_and_raw_unsigned(
+        //             local_peer_id_bytes,
+        //             data.0,
+        //             data.1,
+        //         ) {
+        //             Ok(_) => {}
+        //             Err(err) => log::info!("[OCW-RANDAO] Reveal random number failed: {:?}", err),
+        //         }
+        //     }
         }
     }
 
