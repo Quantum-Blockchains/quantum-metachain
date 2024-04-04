@@ -146,24 +146,24 @@ pub mod pallet {
         u64: From<<<<T as frame_system::Config>::Block as sp_runtime::traits::Block>::Header as sp_runtime::traits::Header>::Number>
     {
         fn offchain_worker(block_number: BlockNumberFor<T>) {
-            let current_block_number: u64 = block_number.into();
-            let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
-            let commit_balkline = COMMIT_BALKLINE;
-            let commit_deadline = COMMIT_DEADLINE;
-
-            match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
-                Ok(()) => {
-                    log::info!(
-                        "[RANDAO] Successful created a campaign for the block {:?}",
-                        block_num
-                    )
-                }
-                Err(err) => log::info!(
-                    "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
-                    block_num,
-                    err
-                ),
-            };
+            // let current_block_number: u64 = block_number.into();
+            // let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
+            // let commit_balkline = COMMIT_BALKLINE;
+            // let commit_deadline = COMMIT_DEADLINE;
+            //
+            // match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
+            //     Ok(()) => {
+            //         log::info!(
+            //             "[RANDAO] Successful created a campaign for the block {:?}",
+            //             block_num
+            //         )
+            //     }
+            //     Err(err) => log::info!(
+            //         "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
+            //         block_num,
+            //         err
+            //     ),
+            // };
         }
     }
 

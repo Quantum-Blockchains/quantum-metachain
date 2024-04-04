@@ -16,6 +16,7 @@ const LOG_TARGET: &str = "rubtime::hypercube";
 pub mod pallet {
     use super::*;
     use frame_support::pallet_prelude::*;
+    use frame_support::traits::Len;
     use frame_system::pallet_prelude::*;
     use sp_core::OpaquePeerId;
 
@@ -30,13 +31,8 @@ pub mod pallet {
         #[pallet::constant]
         type MaxPeers: Get<u32>;
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
+
     }
-
-    // #[pallet::storage]
-    // pub(super) type PeersCount<T: Config> = StorageValue<_, u64, ValueQuery>;
-
-    // #[pallet::storage]
-    // pub(super) type Peers<T: Config> = StorageMap<_, Twox64Concat, u64, [u8; 52]>;
 
     #[pallet::storage]
     #[pallet::getter(fn peers)]
@@ -121,13 +117,7 @@ pub mod pallet {
                     break;
                 }
             }
-        //     // let peers: Vec<(u64, [u8; 52])> = Peers::<T>::iter().collect();
-        //
-        //     // let num_of_peer = match peers.iter().find(|&&x| x.1 == peer){
-        //     //     Some(item) => item.0,
-        //     //     None => return Err(Error::<T>::NotFindPeer.into())
-        //     // };
-        //
+
             for i in 0..peers.len() {
                 let result_xor = i ^ num_of_peer;
                 let bin_str = format!("{:08b}", result_xor);
@@ -137,8 +127,12 @@ pub mod pallet {
                     peers_to_connect.push(PeerId::new(d.0));
                 }
             }
-        //
+
             Ok(peers_to_connect)
+        }
+
+        pub fn how_many_peers() -> u32 {
+            u32::try_from(Self::peers().len()).expect("Type cast error.")
         }
     }
 
