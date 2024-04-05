@@ -245,7 +245,7 @@ pub mod pallet {
         /// are being whitelisted and marked as valid.
         fn validate_unsigned(_source: TransactionSource, call: &Self::Call) -> TransactionValidity {
             let valid_tx = |provide| ValidTransaction::with_tag_prefix("my-pallet")
-                .priority(5) // please define `UNSIGNED_TXS_PRIORITY` before this line
+                .priority(TransactionPriority::max_value()) // please define `UNSIGNED_TXS_PRIORITY` before this line
                 .and_provides([&provide])
                 .longevity(3)
                 .propagate(true)
