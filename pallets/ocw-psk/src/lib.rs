@@ -291,7 +291,7 @@ impl<T: Config> Pallet<T> {
                     let call = crate::pallet::Call::submit_in_block { num_block: num_block_for_starting_key_rotation };
                     SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
                         .map_err(|_| {
-                            log::error!("Failed in offchain_unsigned_tx");
+                            log::error!("Failed in offchain_unsigned_tx:submit_in_block");
                         });
                 }
                 let local_peer_id_bytes:[u8; 52] = match support::get_local_peer_id(rpc_port) {
@@ -308,7 +308,7 @@ impl<T: Config> Pallet<T> {
                 let call = crate::pallet::Call::submit_selected_peers { num_block: num_block_for_starting_key_rotation, peer_id: local_peer_id_bytes, selected_peer: psk_creator_bytes };
                 SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
                     .map_err(|_| {
-                        log::error!("Failed in offchain_unsigned_tx");
+                        log::error!("Failed in offchain_unsigned_tx:submit_selected_peers");
                     });
             }
             None => {
@@ -424,11 +424,13 @@ impl<T: Config> Pallet<T> {
         log::debug!("[OCW-PSK] chosen psk creator: {:?}", request);
         match Self::send_psk_rotation_request(runner_port, request) {
             Ok(()) => {
-                let call = crate::pallet::Call::submit_num_block_for_restart { num_block: num_block_restart };
-                SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
-                    .map_err(|_| {
-                        log::error!("Failed in offchain_unsigned_tx");
-                    });
+                if psk_creator == local_peer_id {
+                    let call = crate::pallet::Call::submit_num_block_for_restart { num_block: num_block_restart };
+                    SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
+                        .map_err(|_| {
+                            log::error!("Failed in offchain_unsigned_tx:submit_num_block_for_restart");
+                        });
+                }
                 log::info!("[OCW-PSK] Psk rotation request sent")
             }
             Err(err) => {
