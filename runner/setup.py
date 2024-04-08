@@ -1,14 +1,15 @@
 import subprocess
 import json
 from os import path, mkdir, remove
-import ed25519
 from common.logger import log
 import requests
 import argparse
 import pathlib
 from urllib.parse import urlparse
 import base58
-
+from cryptography.hazmat.primitives.asymmetric import ed25519
+from cryptography.hazmat.primitives._serialization import PrivateFormat, Encoding
+from cryptography.hazmat.primitives import serialization
 
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 
@@ -44,9 +45,10 @@ def generate_node_key():
     config_dir = path.join(ROOT_DIR, ".config")
     if not path.exists(config_dir):
         mkdir(config_dir)
-    signing_key, _ = ed25519.create_keypair()
-    signing_key_hex = signing_key.to_ascii(encoding="hex")
-    open(path.join(config_dir, ".tmp_key"), "wb").write(signing_key_hex)
+
+    private_key = ed25519.Ed25519PrivateKey.generate()
+    signing_key_hex = private_key.private_bytes(Encoding.Raw, PrivateFormat.Raw, serialization.NoEncryption()).hex()
+    open(path.join(config_dir, ".tmp_key"), "w").write(signing_key_hex)
 
     args_sub = "target/release/qmc-node" + " key" + " inspect-node-key" + " --file " + path.join(config_dir, ".tmp_key")
     peer_id = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
@@ -57,7 +59,7 @@ def generate_node_key():
     if not path.exists(node_config_dir):
         mkdir(node_config_dir)
     node_key_file_path = path.join(node_config_dir, "node_key")
-    open(node_key_file_path, "wb").write(signing_key_hex)
+    open(node_key_file_path, "w").write(signing_key_hex)
 
     print("Path to key file: ", node_key_file_path)
     print("PeerID:", peer_id)
