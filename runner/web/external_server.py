@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 import common.config
 import common.file
@@ -10,7 +10,6 @@ from web.error_handler import init_error_handlers
 from substrateinterface import SubstrateInterface
 from scalecodec import ScaleBytes
 
-
 class ExternalServerWrapper:
 
     def __init__(self):
@@ -19,6 +18,7 @@ class ExternalServerWrapper:
         self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', get_psk, methods=['GET'])
         self.add_endpoint('/search_node/<peer_id>', 'search_node', search_node, methods=['GET'])
         self.add_endpoint('/get_peers_for_node/<peer_id>', 'get_peers_for_node', get_peers_for_node, methods=['GET'])
+        self.add_endpoint('/data_qkd_exchange', 'data_qkd_exchange', data_qkd_exchange, methods=['POST'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -102,3 +102,31 @@ def get_peers_for_node(peer_id):
         "peers": peers
     })
 
+
+def data_qkd_exchange():
+    # TODO sdzielac prowierki!!
+    body = request.get_json()
+    try:
+        peer_id = body["peer_id"]
+        url = body["url"]
+        server_addr = body["server_addr"]
+    except KeyError:
+        return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+    log.info(f"Data qkd exchange with peer {peer_id}")
+    qkd_info = {
+        "qkd": {
+            "provider": "etsi014",
+            "url": url,
+            "client_cert_path": "../certificates/qbck-client.crt",
+            "cert_key_path": "../certificates/qbck-client.key"
+        },
+        "server_addr": server_addr
+    }
+    common.config.config_service.config.peers[peer_id] = qkd_info
+    common.file.config_file_manager.remove()
+    common.file.config_file_manager.create(common.config.config_service.config.to_json())
+    return jsonify({
+        "peer_id": common.config.config_service.config.local_peer_id,
+        "url": common.config.config_service.config.local_qkd_url,
+        "server_addr": "http://" + common.config.config_service.config.public_ip + ":" + str(common.config.config_service.config.external_server_port)
+    })

@@ -14,7 +14,7 @@ from time import sleep
 
 
 common.config.init_config(params.args.config_file)
-common.file.initialise_file_managers()
+common.file.initialise_file_managers(params.args.config_file)
 
 create_node_info_dir()
 add_logs_handler_file()
