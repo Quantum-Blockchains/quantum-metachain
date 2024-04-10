@@ -7,6 +7,8 @@ ENV_PATH = path.join(ROOT_DIR, ".env")
 
 default_config = {
     "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
+    "local_qkd_url": "",
+    "public_ip": "127.0.0.1",
     "local_server_port": 5003,
     "external_server_port": 5004,
     "node_http_rpc_port": 9933,
@@ -43,6 +45,13 @@ class Config:
     @staticmethod
     def from_json(json_data):
         return Config(json.loads(json_data, object_hook=lambda obj: obj))
+
+    def to_json(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__,
+            sort_keys=True,
+            indent=4)
 
     @staticmethod
     def process_peers(peers):
