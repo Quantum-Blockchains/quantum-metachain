@@ -44,6 +44,8 @@ class ETSI014Provider:
 
     @staticmethod
     def __unwrap_response(response):
+        log.info("__unwrap_response")
+        log.info(f"__unwrap_response: {response}")
         key = response["keys"][0]
         key_id = key["key_ID"]
         qkd_key = key["key"]
