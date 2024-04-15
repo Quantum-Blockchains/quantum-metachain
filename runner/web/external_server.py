@@ -39,21 +39,30 @@ class ExternalServerWrapper:
 # TODO add peer authorizationS
 def get_psk(peer_id):
     log.info(f"Fetching psk for peer with id: {peer_id}...")
+    log.info("1")
     peer_config = common.config.config_service.config.peers.get(peer_id)
+    log.info("2")
     if peer_config is None or peer_config["qkd"] is None:
+        log.info("3")
         log.warning(f"Peer with id = {peer_id} is not configured")
         raise exceptions.PeerMisconfiguredError
 
     if not common.file.psk_file_manager.exists() or not common.file.psk_sig_file_manager.exists():
+        log.info("4")
         log.warning("Couldn't find psk or signature file")
         raise exceptions.PSKNotFoundError
 
+    log.info("5")
     psk = common.file.psk_file_manager.read()
+    log.info("6")
     psk_sig = common.file.psk_sig_file_manager.read()
+    log.info("7")
     qkd_provider = get_qkd_provider(peer_config['qkd'])
+    log.info("8")
     key_id, qkd_key = qkd_provider.get_enc_key()
+    log.info("9")
     xored_psk = onetimepad.encrypt(psk, qkd_key)
-
+    log.info("10")
     return jsonify({
         "key": xored_psk,
         "key_id": key_id,
