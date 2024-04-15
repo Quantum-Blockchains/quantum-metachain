@@ -113,7 +113,7 @@ def data_exchange_eith_the_selected_node(url, local_peer_id, local_qkd_url, exte
     # TODO Make a real data exchange
     body = {
         "peer_id": local_peer_id,
-        "qkd_name": local_qkd_url,
+        "qkd_name": local_qkd_name,
         "server_addr": external_address
     }
     print(url+"/data_qkd_exchange")
