@@ -123,7 +123,7 @@ def data_qkd_exchange():
         "qkd": {
             "provider": "etsi014",
             "url": common.config.config_service.config.local_qkd_url + "/api/v1/keys/" + qkd_name,
-            "client_cert_path": "../certificates/qbck-client.crt",
+            "client_cert_path": common.config.to_absolute("../certificates/qbck-client.crt"),
             "cert_key_path": "../certificates/qbck-client.key"
         },
         "server_addr": server_addr
