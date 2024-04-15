@@ -17,8 +17,14 @@ class ExternalServerWrapper:
         init_error_handlers(self.external_server)
         self.add_endpoint('/peer/<peer_id>/psk', 'get_psk', get_psk, methods=['GET'])
         self.add_endpoint('/search_node/<peer_id>', 'search_node', search_node, methods=['GET'])
-        self.add_endpoint('/get_peers_for_node/<peer_id>', 'get_peers_for_node', get_peers_for_node, methods=['GET'])
-        self.add_endpoint('/data_qkd_exchange', 'data_qkd_exchange', data_qkd_exchange, methods=['POST'])
+        self.add_endpoint('/get_peers_for_node/<peer_id>', 'get_peers_for_node',
+                          get_peers_for_node, methods=['GET'])
+        self.add_endpoint('/data_qkd_exchange', 'data_qkd_exchange', data_qkd_exchange,
+                          methods=['POST'])
+        self.add_endpoint('/get_number_block_for_restart', 'get_number_block_for_restart',
+                          get_number_block_for_restart, methods=['GET'])
+        self.add_endpoint('/get_current_number_block', 'get_current_number_block', get_current_number_block,
+                          methods=['GET'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -108,7 +114,7 @@ def data_qkd_exchange():
     body = request.get_json()
     try:
         peer_id = body["peer_id"]
-        url = body["url"]
+        qkd_name = body["qkd_name"]
         server_addr = body["server_addr"]
     except KeyError:
         return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
@@ -116,7 +122,7 @@ def data_qkd_exchange():
     qkd_info = {
         "qkd": {
             "provider": "etsi014",
-            "url": url,
+            "url": common.config.config_service.config.local_qkd_name + "/api/v1/keys/" + qkd_name,
             "client_cert_path": "../certificates/qbck-client.crt",
             "cert_key_path": "../certificates/qbck-client.key"
         },
@@ -127,6 +133,32 @@ def data_qkd_exchange():
     common.file.config_file_manager.create(common.config.config_service.config.to_json())
     return jsonify({
         "peer_id": common.config.config_service.config.local_peer_id,
-        "url": common.config.config_service.config.local_qkd_url,
+        "qkd_name": common.config.config_service.config.local_qkd_name,
         "server_addr": "http://" + common.config.config_service.config.public_ip + ":" + str(common.config.config_service.config.external_server_port)
     })
+
+
+def get_number_block_for_restart():
+    log.info("Get number block for restart...")
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+
+    block_for_restart = ws_provider.query(
+        module="OcwPsk",
+        storage_function="NumBlockForRestart",
+        params=[]
+    )
+
+    return jsonify(({
+        "num_block_for_restart": block_for_restart.value
+    }))
+
+
+def get_current_number_block():
+    log.info("Get current number block...")
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+
+    block = ws_provider.get_block()
+
+    return jsonify(({
+        "current_block": block["header"]["number"]
+    }))

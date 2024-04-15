@@ -85,6 +85,7 @@ def generate_config_node(args):
         "__type__": "Config",
         "local_peer_id": args.peer_id,
         "local_qkd_url": args.qkd_url,
+        "local_qkd_name": args.qkd_name,
         "public_ip": args.public_ip,
         "local_server_port": args.local_server_port,
         "external_server_port": args.external_server_port,
@@ -108,11 +109,11 @@ def generate_config_node(args):
     print("Path to config file: ", config_file_path)
 
 
-def data_exchange_eith_the_selected_node(url, local_peer_id, local_qkd_url, external_address):
+def data_exchange_eith_the_selected_node(url, local_peer_id, local_qkd_url, external_address, local_qkd_name):
     # TODO Make a real data exchange
     body = {
         "peer_id": local_peer_id,
-        "url": local_qkd_url,
+        "qkd_name": local_qkd_url,
         "server_addr": external_address
     }
     print(url+"/data_qkd_exchange")
@@ -125,7 +126,7 @@ def data_exchange_eith_the_selected_node(url, local_peer_id, local_qkd_url, exte
         return {
             "qkd": {
                 "provider": "etsi014",
-                "url": response_body["url"],
+                "url": local_qkd_name + "/api/v1/keys/" + response_body["qkd_name"],
                 "client_cert_path": "../certificates/qbck-client.crt",
                 "cert_key_path": "../certificates/qbck-client.key"
             },
@@ -177,7 +178,7 @@ def get_peer(args):
                             if response_body["found"]:
                                 peer_info = data_exchange_eith_the_selected_node(
                                     response_body["external_server_address"], config["local_peer_id"], config["local_qkd_url"],
-                                    "http://"+config["public_ip"]+':'+str(config["external_server_port"]))
+                                    "http://"+config["public_ip"]+':'+str(config["external_server_port"]), config["local_qkd_name"])
                                 peers_for_config[peer] = peer_info
                                 print(peer_info)
                                 tmp = False
@@ -210,6 +211,8 @@ generate_config_parser.add_argument('--peer_id', dest='peer_id', default=50, typ
                     help='PeerId.')
 generate_config_parser.add_argument('--qkd_url', dest='qkd_url', default=50, type=url_type, required=True,
                     help='Qkd url.')
+generate_config_parser.add_argument('--qkd_name', dest='qkd_name', default=50, type=str, required=True,
+                    help='Qkd name.')
 generate_config_parser.add_argument('--public_ip', dest='public_ip', default=50, type=ip_type, required=True,
                     help='Public ip.')
 generate_config_parser.add_argument('--local-server-port', dest='local_server_port', default=5001, type=int, nargs='?',

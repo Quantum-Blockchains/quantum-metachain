@@ -11,6 +11,7 @@ from core import pre_shared_key
 from web.local_server import LocalServerWrapper
 from web.external_server import ExternalServerWrapper
 from time import sleep
+import requests
 
 
 common.config.init_config(params.args.config_file)
@@ -37,6 +38,42 @@ try:
             sleep(10)
         common.file.psk_file_manager.create(psk_obj.psk)
         common.file.psk_sig_file_manager.create(psk_obj.signature)
+
+        block_for_start = None
+
+        #TODO current_block < block_for_start
+
+        peers = common.config.config_service.config.peers
+
+        while block_for_start is None:
+            for peer_id, peer_config in peers.items():
+                response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart")
+                if response.status_code != 200:
+                    log.error(f"Error request")
+                else:
+                    response_body = response.json()
+                    if response_body["num_block_for_restart"] != 0:
+                        block_for_start = response_body["num_block_for_restart"]
+                        break
+
+        log.info(f"Block for start: {block_for_start}")
+
+        tmp = True
+
+        while tmp:
+            for peer_id, peer_config in peers.items():
+                response = requests.get(f"{peer_config['server_addr']}/get_current_number_block")
+                if response.status_code != 200:
+                    log.error(f"Error request")
+                    sleep(4)
+                else:
+                    response_body = response.json()
+                    log.info(f"Current block: {response_body['current_block']}")
+                    if response_body["current_block"] >= block_for_start:
+                        tmp = False
+                        break
+                    else:
+                        sleep(4)
 
     node.node_service.current_node.start()
 

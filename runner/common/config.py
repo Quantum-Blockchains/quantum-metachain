@@ -50,7 +50,7 @@ class Config:
         return json.dumps(
             self,
             default=lambda o: o.__dict__,
-            sort_keys=True,
+            sort_keys=False,
             indent=4)
 
     @staticmethod
@@ -94,7 +94,6 @@ def create_node_info_dir():
 
     config_service.config.runner_logs_path = path.join(logs_dir, "runner.log")
     config_service.config.node_logs_path = path.join(logs_dir, "node.log")
-    config_service.config.psk_sig_file_path = path.join(peer_id_dir, "psk_sig")
 
 
 class ConfigService:

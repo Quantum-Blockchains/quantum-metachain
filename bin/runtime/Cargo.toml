@@ -60,7 +60,7 @@ randao = { path = "../../pallets/randao", default-features = false }
 hypercube = { path = "../../pallets/hypercube", default-features = false }
 
 pallet-node-authorization = { default-features = false, version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-
+log = "0.4.20"
 
 
 [build-dependencies]

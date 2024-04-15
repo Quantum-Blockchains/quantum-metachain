@@ -10,10 +10,17 @@ use serde::{Deserialize, Serialize};
 use sp_core::Hasher;
 use sp_io::offchain::timestamp;
 use sp_runtime::{
+    DispatchError,
     offchain::{http::Request, Duration},
+    SaturatedConversion,
     traits::Get,
 };
 use sp_std::vec::Vec;
+use frame_support::ensure;
+use frame_system::offchain::{
+    CreateSignedTransaction, Signer, SubmitTransaction
+};
+use frame_support::dispatch::DispatchResult;
 
 #[cfg(test)]
 mod tests;
@@ -52,7 +59,7 @@ pub mod pallet {
     use super::*;
 
     #[pallet::config]
-    pub trait Config: frame_system::Config + randao::Config {
+    pub trait Config: CreateSignedTransaction<Call<Self>> + frame_system::Config + randao::Config {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
         type RuntimeCall: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, BlockNumberFor<Self>>;
@@ -63,11 +70,20 @@ pub mod pallet {
         type PskDifficulty1: Get<u128>;
         #[pallet::constant]
         type PskDifficulty2: Get<u128>;
+
+        #[pallet::constant]
+        type UnsignedPriority: Get<TransactionPriority>;
     }
 
     #[pallet::pallet]
     #[pallet::generate_store(pub (super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
+
+     #[pallet::type_value]
+    pub(super) fn NumBlockForRestartDefault<T: Config>() -> u64 { 0u64 }
+    #[pallet::storage]
+    #[pallet::getter(fn num_block_for_restart)]
+    pub(super) type NumBlockForRestart<T> = StorageValue<Value = u64, QueryKind = ValueQuery, OnEmpty = NumBlockForRestartDefault<T>>;
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
@@ -183,6 +199,11 @@ pub mod pallet {
                         match Self::send_psk_rotation_request(runner_port, request) {
                             Ok(()) => {
                                 block_num_to_node_restart.set(&num_block_restart);
+                                let call = crate::pallet::Call::submit_num_block_for_restart { num_block: num_block_restart };
+                                SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
+                                    .map_err(|_| {
+                                        log::error!("Failed in offchain_unsigned_tx:submit_num_block_for_restart");
+                                    });
                                 log::info!("[OCW-PSK] Psk rotation request sent")
                             }
                             Err(err) => {
@@ -203,7 +224,16 @@ pub mod pallet {
     }
 
     #[pallet::call]
-    impl<T: Config> Pallet<T> {}
+    impl<T: Config> Pallet<T> {
+        #[pallet::call_index(0)]
+        #[pallet::weight({0})]
+        pub fn submit_num_block_for_restart(origin: OriginFor<T>, num_block: u64) -> DispatchResultWithPostInfo {
+            ensure_none(origin)?;
+            Self::set_num_block_for_restart(num_block.clone());
+            Ok(().into())
+        }
+
+    }
 
     #[pallet::event]
     pub enum Event<T: Config> {}
@@ -211,10 +241,54 @@ pub mod pallet {
     #[pallet::error]
     pub enum Error<T> {
         HttpFetchingError,
+        TimeLineCheck,
+        NumberBlockForRestartAlreadyExists,
     }
+
+    #[pallet::validate_unsigned]
+    impl<T: Config> ValidateUnsigned for Pallet<T> {
+        type Call = Call<T>;
+
+        /// Validate unsigned call to this module.
+        ///
+        /// By default unsigned transactions are disallowed, but implementing the validator
+        /// here we make sure that some particular calls (the ones produced by offchain worker)
+        /// are being whitelisted and marked as valid.
+        fn validate_unsigned(_source: TransactionSource, call: &Self::Call) -> TransactionValidity {
+            let valid_tx = |provide| ValidTransaction::with_tag_prefix("my-pallet")
+                .priority(TransactionPriority::max_value()) // please define `UNSIGNED_TXS_PRIORITY` before this line
+                .and_provides([&provide])
+                .longevity(3)
+                .propagate(true)
+                .build();
+            match call {
+                Call::submit_num_block_for_restart { num_block: current_block_number } => valid_tx(b"my_unsigned_tx1".to_vec()),
+                _ => InvalidTransaction::Call.into(),
+            }
+        }
+    }
+
 }
 
 impl<T: Config> Pallet<T> {
+
+    fn get_current_block_num() -> u64 {
+        let block = frame_system::Pallet::<T>::block_number();
+        block.saturated_into::<u64>()
+    }
+
+    /// This function records the block number for restarting nodes in the blockchain
+    /// The resulting block number is checked.
+    /// The block number must be greater than the current block number
+    /// and the previous recorded number must be less than the one we are trying to record.
+    fn set_num_block_for_restart(num_block: u64) -> Result<(), DispatchError> {
+        let current_block_num: u64 = Self::get_current_block_num();
+        ensure!(current_block_num < num_block, Error::<T>::TimeLineCheck);
+        ensure!(NumBlockForRestart::<T>::get() < current_block_num, Error::<T>::NumberBlockForRestartAlreadyExists);
+        NumBlockForRestart::<T>::set(num_block);
+        Ok(())
+    }
+
     fn fetch_peers(rpc_port: u16) -> Result<Vec<u8>, Error<T>> {
         let url = format!("http://localhost:{}", rpc_port);
 
