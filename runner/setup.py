@@ -126,7 +126,7 @@ def data_exchange_eith_the_selected_node(url, local_peer_id, local_qkd_url, exte
         return {
             "qkd": {
                 "provider": "etsi014",
-                "url": local_qkd_name + "/api/v1/keys/" + response_body["qkd_name"],
+                "url": local_qkd_url + "/api/v1/keys/" + response_body["qkd_name"],
                 "client_cert_path": "../certificates/qbck-client.crt",
                 "cert_key_path": "../certificates/qbck-client.key"
             },
