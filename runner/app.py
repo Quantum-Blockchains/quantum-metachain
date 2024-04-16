@@ -49,14 +49,14 @@ try:
             for peer_id, peer_config in peers.items():
                 response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart")
                 if response.status_code != 200:
-                    log.error(f"Error request")
+                    log.warning(f"Failed to get the block number to start from peer {peer_id}")
                 else:
                     response_body = response.json()
                     if response_body["num_block_for_restart"] != 0:
                         block_for_start = response_body["num_block_for_restart"]
                         break
 
-        log.info(f"Block for start: {block_for_start}")
+        log.info(f"Number of the block in which the node will start: {block_for_start}")
 
         tmp = True
 
@@ -64,11 +64,11 @@ try:
             for peer_id, peer_config in peers.items():
                 response = requests.get(f"{peer_config['server_addr']}/get_current_number_block")
                 if response.status_code != 200:
-                    log.error(f"Error request")
+                    log.error(f"Failed to get the current block number from peer {peer_id}")
                     sleep(4)
                 else:
                     response_body = response.json()
-                    log.info(f"Current block: {response_body['current_block']}")
+                    log.info(f"Current block: {response_body['current_block']}. The node will start in the block {block_for_start}")
                     if response_body["current_block"] >= block_for_start:
                         tmp = False
                         break

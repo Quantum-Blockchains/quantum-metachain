@@ -15,15 +15,10 @@ class ETSI014Provider:
     def get_enc_key(self):
         qkd_url = f"{self.config['url']}/enc_keys?size=256"
         log.info(f" get_enc_key: {qkd_url}")
-        log.info(" get_enc_key 1")
         if not validators.url(qkd_url):
-            log.info(" get_enc_key 2")
             raise requests.exceptions.InvalidURL
-        log.info(" get_enc_key 3")
         response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"))
-        log.info(" get_enc_key 4")
         log.debug(f"response from qkd: {response}")
-        log.info(" get_enc_key 5")
         return self.__unwrap_response(response)
 
     def get_dec_key(self, key_id):
@@ -44,8 +39,6 @@ class ETSI014Provider:
 
     @staticmethod
     def __unwrap_response(response):
-        log.info("__unwrap_response")
-        log.info(f"__unwrap_response: {response}")
         key = response["keys"][0]
         key_id = key["key_ID"]
         qkd_key = key["key"]
