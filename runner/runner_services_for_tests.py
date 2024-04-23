@@ -11,7 +11,7 @@ import common.file
 
 path_config = sys.argv[2]
 common.config.init_config(path_config)
-common.file.initialise_file_managers()
+common.file.initialise_file_managers(path_config)
 name = sys.argv[3]
 
 log_format_for_test()
