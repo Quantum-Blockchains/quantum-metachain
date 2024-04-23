@@ -7,11 +7,11 @@ from cli.run import run
 
 def start():
     match cli.params.args.command:
-        case 'generate_node_key':
+        case 'generate-node-key':
             generate_node_key(cli.params.args)
-        case 'generate_config_node':
+        case 'generate-config-node':
             generate_config_node(cli.params.args)
-        case 'get_peer':
+        case 'get-peer':
             get_peer(cli.params.args)
         case 'run':
             run(cli.params.args)
