@@ -9,3 +9,7 @@ class PSKNotFoundError(Exception):
 
 class PeerIsNotInHypercube(Exception):
     pass
+
+
+class NoTargetReceived(Exception):
+    pass

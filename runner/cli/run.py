@@ -11,6 +11,9 @@ from web.local_server import LocalServerWrapper
 from web.external_server import ExternalServerWrapper
 from time import sleep
 import requests
+from os import path
+
+ROOT_DIR = path.abspath(path.dirname(__file__) + "/../..")
 
 
 def run(args):
@@ -19,15 +22,20 @@ def run(args):
 
     create_node_info_dir()
     add_logs_handler_file()
-    args.startup_args.append("--rpc-port")
-    args.startup_args.append(str(common.config.config_service.config.node_http_rpc_port))
-    args.startup_args.append("--psk-file")
-    args.startup_args.append(common.config.config_service.config.psk_file_path)
-    args.startup_args.append("--runner-port")
-    args.startup_args.append(str(common.config.config_service.config.local_server_port))
-    args.startup_args.append("--node-key-file")
-    args.startup_args.append(common.config.config_service.config.node_key_file_path)
-    node.node_service = NodeService(Node(args.startup_args))
+    substrate_args = [path.join(ROOT_DIR, "target/release/qmc-node"),
+                      "--name", common.config.config_service.config.local_node_name,
+                      f"--base-path=/tmp/{common.config.config_service.config.local_node_name}",
+                      f"--chain={common.config.config_service.config.chain}",
+                      "--port", str(common.config.config_service.config.p2p_port),
+                      "--public-addr", f"/ip4/{common.config.config_service.config.public_ip}/tcp/"
+                      f"{common.config.config_service.config.p2p_port}",
+                      "--rpc-port", str(common.config.config_service.config.node_http_rpc_port),
+                      "--psk-file", common.config.config_service.config.psk_file_path,
+                      "--runner-port", str(common.config.config_service.config.local_server_port),
+                      "--node-key-file", common.config.config_service.config.node_key_file_path]
+    for arg in args.startup_args:
+        substrate_args.append(arg)
+    node.node_service = NodeService(Node(substrate_args))
 
     try:
         log.info("Starting QMC runner...")
@@ -48,7 +56,7 @@ def run(args):
             while block_for_start is None:
                 for peer_id, peer_config in peers.items():
                     try:
-                        response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart")
+                        response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart", verify=False)
                         if response.status_code != 200:
                             log.warning(f"Failed to get the block number to start from peer {peer_id}")
                         else:
@@ -66,7 +74,7 @@ def run(args):
             while tmp:
                 for peer_id, peer_config in peers.items():
                     try:
-                        response = requests.get(f"{peer_config['server_addr']}/get_current_number_block")
+                        response = requests.get(f"{peer_config['server_addr']}/get_current_number_block", verify=False)
                     except Exception as err:
                         log.error(f"Failed to get the current block number from peer {peer_id}. Error: {str(err)}")
                     if response.status_code != 200:

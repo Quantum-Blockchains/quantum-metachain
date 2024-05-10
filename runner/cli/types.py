@@ -5,11 +5,31 @@ import base58
 import shlex
 
 
+def uint_type(arg):
+    try:
+        i = int(arg)
+        if i < 0:
+            raise argparse.ArgumentTypeError("The number must be equal to or greater than 0.")
+    except Exception as err:
+        raise argparse.ArgumentTypeError("The number must be equal to or greater than 0.")
+    return i
+
+
+def port_type(arg):
+    try:
+        i = int(arg)
+        if (not i > 0) or (not i < 2 ** 16):
+            raise argparse.ArgumentTypeError("Port numbers must be integers between 0 and 2**16")
+    except Exception as err:
+        raise argparse.ArgumentTypeError("Port numbers must be integers between 0 and 2**16")
+    return i
+
+
 def ip_type(arg):
     try:
         ipaddress.ip_address(arg)
         return arg
-    except err:
+    except Exception as err:
         raise argparse.ArgumentTypeError('Invalid IP address')
 
 

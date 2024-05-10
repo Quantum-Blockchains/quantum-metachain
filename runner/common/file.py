@@ -25,7 +25,6 @@ class FileManager:
             raise FileNotFoundError
 
 
-
 global psk_file_manager, node_key_file_manager, psk_sig_file_manager, config_file_manager
 
 

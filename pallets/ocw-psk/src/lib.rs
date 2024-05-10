@@ -18,9 +18,8 @@ use sp_runtime::{
 use sp_std::vec::Vec;
 use frame_support::ensure;
 use frame_system::offchain::{
-    CreateSignedTransaction, Signer, SubmitTransaction
+    CreateSignedTransaction, SubmitTransaction
 };
-use frame_support::dispatch::DispatchResult;
 
 #[cfg(test)]
 mod tests;
@@ -76,7 +75,7 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
-    #[pallet::generate_store(pub (super) trait Store)]
+    // #[pallet::generate_store(pub (super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
 
      #[pallet::type_value]
@@ -200,7 +199,7 @@ pub mod pallet {
                             Ok(()) => {
                                 block_num_to_node_restart.set(&num_block_restart);
                                 let call = crate::pallet::Call::submit_num_block_for_restart { num_block: num_block_restart };
-                                SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
+                                let _ = SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
                                     .map_err(|_| {
                                         log::error!("Failed in offchain_unsigned_tx:submit_num_block_for_restart");
                                     });
@@ -229,7 +228,7 @@ pub mod pallet {
         #[pallet::weight({0})]
         pub fn submit_num_block_for_restart(origin: OriginFor<T>, num_block: u64) -> DispatchResultWithPostInfo {
             ensure_none(origin)?;
-            Self::set_num_block_for_restart(num_block.clone());
+            let _ = Self::set_num_block_for_restart(num_block.clone());
             Ok(().into())
         }
 
@@ -262,7 +261,7 @@ pub mod pallet {
                 .propagate(true)
                 .build();
             match call {
-                Call::submit_num_block_for_restart { num_block: current_block_number } => valid_tx(b"my_unsigned_tx1".to_vec()),
+                Call::submit_num_block_for_restart { num_block: _current_block_number } => valid_tx(b"my_unsigned_tx1".to_vec()),
                 _ => InvalidTransaction::Call.into(),
             }
         }

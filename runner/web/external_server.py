@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response, send_file, send_from_directory
 
 import common.config
 import common.file
@@ -9,6 +9,9 @@ from core.qkd.provider_factory import get_qkd_provider
 from web.error_handler import init_error_handlers
 from substrateinterface import SubstrateInterface
 from scalecodec import ScaleBytes
+import json
+from os import path, mkdir
+
 
 class ExternalServerWrapper:
 
@@ -25,6 +28,8 @@ class ExternalServerWrapper:
                           get_number_block_for_restart, methods=['GET'])
         self.add_endpoint('/get_current_number_block', 'get_current_number_block', get_current_number_block,
                           methods=['GET'])
+        self.add_endpoint('/targets_exchange', 'targets_exchange', targets_exchange,
+                          methods=['POST'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -33,7 +38,8 @@ class ExternalServerWrapper:
 
     def run(self):
          self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
-                                         threaded=True)
+                                         threaded=True, ssl_context=(common.config.config_service.config.external_cert,
+                                  common.config.config_service.config.external_key))
 
 
 # TODO add peer authorizationS
@@ -108,22 +114,40 @@ def get_peers_for_node(peer_id):
     })
 
 
+def targets_exchange():
+    if 'target' not in request.files:
+        raise exceptions.NoTargetReceived
+    target = request.files['target']
+    if target.filename == ():
+        return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+    if target:
+        if not path.exists(path.join(common.config.config_service.config.node_dir, 'targets')):
+            mkdir(path.join(common.config.config_service.config.node_dir, 'targets'))
+        target.save(path.join(common.config.config_service.config.node_dir, f'targets/{target.filename}'))
+    return send_file(common.config.config_service.config.local_qkd_target,
+                     download_name=path.basename(common.config.config_service.config.local_qkd_target))
+
+
 def data_qkd_exchange():
     # TODO sdzielac prowierki!!
+
     body = request.get_json()
+    # body = json.loads(request.form['json'])
     try:
         peer_id = body["peer_id"]
         qkd_name = body["qkd_name"]
         server_addr = body["server_addr"]
     except KeyError:
-        return Response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+        return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+
     log.info(f"Data qkd exchange with peer {peer_id}")
+
     qkd_info = {
         "qkd": {
             "provider": "etsi014",
             "url": common.config.config_service.config.local_qkd_url + "/api/v1/keys/" + qkd_name,
-            "client_cert_path": common.config.to_absolute("../certificates/qbck-client.crt"),
-            "cert_key_path":  common.config.to_absolute("../certificates/qbck-client.key")
+            "client_cert_path": common.config.config_service.config.path_to_cert_pqkd,
+            "cert_key_path":  common.config.config_service.config.path_to_key_pqkd
         },
         "server_addr": server_addr
     }

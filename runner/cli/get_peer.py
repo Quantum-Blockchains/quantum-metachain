@@ -14,7 +14,7 @@ def data_exchange_eith_the_selected_node(url, local_peer_id, local_qkd_url, exte
         "qkd_name": local_qkd_name,
         "server_addr": external_address
     }
-    response = requests.post(url+"/data_qkd_exchange", json=body)
+    response = requests.post(url+"/data_qkd_exchange", json=body, verify=False)
     if response.status_code != 200:
         log.error(f"ERROR {url}. Message: {response.json()['message']}")
     else:
@@ -47,7 +47,7 @@ def get_peer(args):
     # if not path.exists(config_file_path):
     #     print("First of all, generate a config file for the node using the command generate_config_node.")
         url = f"{args.boot_url}/get_peers_for_node/{config['local_peer_id']}"
-        get_peer_response = requests.get(url)
+        get_peer_response = requests.get(url, verify=False)
         if get_peer_response.status_code != 200:
             print(f"ERROR {url}. Message: {get_peer_response.json()['message']}")
         else:
@@ -66,7 +66,7 @@ def get_peer(args):
                             continue
                         search_peer_url = f"{a}/search_node/{peer}"
                         # print(f"Send request: {search_peer_url}")
-                        search_peer_response = requests.get(search_peer_url)
+                        search_peer_response = requests.get(search_peer_url, verify=False)
                         if search_peer_response.status_code != 200:
                             log.error(f"ERROR {search_peer_url}. Message: {search_peer_response.json()['message']}")
                         else:

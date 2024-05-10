@@ -5,12 +5,10 @@ use sp_std::{str, vec::Vec};
 pub use pallet::*;
 use log;
 use frame_support::{BoundedSlice, BoundedVec};
-use sp_std::collections::vec_deque::VecDeque;
-use sp_core::{OpaquePeerId as PeerId, OpaquePeerId};
+use sp_core::{OpaquePeerId as PeerId};
 use sp_api::decl_runtime_apis;
 use scale_info::prelude::format;
 
-const LOG_TARGET: &str = "rubtime::hypercube";
 
 #[frame_support::pallet]
 pub mod pallet {
@@ -30,6 +28,7 @@ pub mod pallet {
         #[pallet::constant]
         type MaxPeers: Get<u32>;
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
+        type ForceOrigin: EnsureOrigin<Self::RuntimeOrigin>;
     }
 
     // #[pallet::storage]
@@ -76,9 +75,10 @@ pub mod pallet {
     #[pallet::call]
     impl<T: Config> Pallet<T> {
 
-        #[pallet::weight(0)]
+        #[pallet::call_index(0)]
+        #[pallet::weight({0})]
         pub fn add_new_peer(origin: OriginFor<T>, peer: PeerId) -> DispatchResult {
-            let sender = ensure_signed(origin)?;
+            T::ForceOrigin::ensure_origin(origin)?;
             Self::add_peer(peer)?;
             Ok(())
         }
@@ -102,7 +102,7 @@ pub mod pallet {
             ensure!(peer.0.len() < T::MaxPeerIdLength::get() as usize, Error::<T>::PeerIdTooLong);
             ensure!(peers.len() < T::MaxPeers::get() as usize, Error::<T>::TooManyPeers);
             ensure!(!peers.contains(&peer), Error::<T>::AlreadyJoined);
-            peers.try_push(peer.clone());
+            let _ = peers.try_push(peer.clone());
 
             <Peers<T>>::put(peers);
             Self::deposit_event(Event::AddNewPeer {peer: peer.clone()});
