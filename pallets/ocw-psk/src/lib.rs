@@ -9,7 +9,12 @@ pub use pallet::*;
 use serde::{Deserialize, Serialize};
 use sp_core::Hasher;
 use sp_io::offchain::timestamp;
-use sp_runtime::{DispatchError, offchain::{http::Request, Duration}, SaturatedConversion, traits::Get};
+use sp_runtime::{
+    DispatchError,
+    offchain::{http::Request, Duration},
+    SaturatedConversion,
+    traits::Get,
+};
 use sp_core::{OpaquePeerId as PeerId, OpaquePeerId};
 use sp_runtime::offchain::storage::StorageValueRef;
 use sp_std::vec::Vec;
@@ -103,7 +108,7 @@ pub mod pallet {
     }
 
     #[pallet::pallet]
-    #[pallet::generate_store(pub (super) trait Store)]
+    // #[pallet::generate_store(pub (super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::type_value]

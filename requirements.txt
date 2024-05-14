@@ -12,3 +12,5 @@ validators~=0.20.0
 onetimepad~=1.4
 substrate-interface~=1.7.7
 scalecodec~=1.2.8
+pynput~=1.7.7
+colorama~=0.4.6

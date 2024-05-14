@@ -78,7 +78,7 @@ def __validate_psk(psks_with_sig: [Psk], block_number: int = None, psk_creator_p
 def __fetch_encrypted_psk(peer_id: str, peer_addr: str) -> Optional[EncryptedPskResponse]:
     try:
         get_psk_url = f"{peer_addr}/peer/{common.config.config_service.config.local_peer_id}/psk"
-        get_psk_response = requests.get(get_psk_url)
+        get_psk_response = requests.get(get_psk_url, verify=False)
         if get_psk_response.status_code != 200:
             log.error(f"{peer_id} didn't send the psk. Message: {get_psk_response.json()['message']}")
         else:

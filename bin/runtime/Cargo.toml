@@ -63,7 +63,6 @@ pallet-node-authorization = { default-features = false, version = "4.0.0-dev", g
 log = "0.4.20"
 
 
-
 [build-dependencies]
 substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2", optional = true }
 

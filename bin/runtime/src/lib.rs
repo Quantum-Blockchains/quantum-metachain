@@ -406,6 +406,7 @@ impl hypercube::Config for Runtime {
 	type MaxPeerIdLength = ConstU32<128u32>;
 	type MaxPeers = ConstU32<{ u32::MAX }>;
 	type RuntimeEvent = RuntimeEvent;
+	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
 }
 
 // impl<C> frame_system::offchain::SendTransactionTypes<C> for Runtime

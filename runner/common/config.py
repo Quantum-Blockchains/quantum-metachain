@@ -7,6 +7,8 @@ ENV_PATH = path.join(ROOT_DIR, ".env")
 
 default_config = {
     "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
+    "local_qkd_url": "",
+    "public_ip": "127.0.0.1",
     "local_server_port": 5003,
     "external_server_port": 5004,
     "node_http_rpc_port": 9933,
@@ -44,6 +46,13 @@ class Config:
     def from_json(json_data):
         return Config(json.loads(json_data, object_hook=lambda obj: obj))
 
+    def to_json(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__,
+            sort_keys=False,
+            indent=4)
+
     @staticmethod
     def process_peers(peers):
         for peer_id, peer_config in peers.items():
@@ -71,21 +80,13 @@ def init_config(config_path=None):
 
 
 def create_node_info_dir():
-    node_info_dir = to_absolute("node_info")
-    if not path.exists(node_info_dir):
-        mkdir(node_info_dir)
-
-    peer_id_dir = path.join(node_info_dir, f'{config_service.config.local_peer_id}')
-    if not path.exists(peer_id_dir):
-        mkdir(peer_id_dir)
-
-    logs_dir = path.join(peer_id_dir, 'logs')
+    logs_dir = path.join(config_service.config.node_dir, 'logs')
     if not path.exists(logs_dir):
         mkdir(logs_dir)
-
-    config_service.config.runner_logs_path = path.join(logs_dir, "runner.log")
-    config_service.config.node_logs_path = path.join(logs_dir, "node.log")
-    config_service.config.psk_sig_file_path = path.join(peer_id_dir, "psk_sig")
+    if config_service.config.runner_logs_path != "":
+        config_service.config.runner_logs_path = path.join(logs_dir, "runner.log")
+    if config_service.config.node_logs_path != "":
+        config_service.config.node_logs_path = path.join(logs_dir, "node.log")
 
 
 class ConfigService:

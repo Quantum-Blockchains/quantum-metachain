@@ -14,9 +14,9 @@ class ETSI014Provider:
 
     def get_enc_key(self):
         qkd_url = f"{self.config['url']}/enc_keys?size=256"
+        log.info(f" get_enc_key: {qkd_url}")
         if not validators.url(qkd_url):
             raise requests.exceptions.InvalidURL
-
         response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"))
         log.debug(f"response from qkd: {response}")
         return self.__unwrap_response(response)

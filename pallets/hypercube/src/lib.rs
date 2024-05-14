@@ -31,8 +31,14 @@ pub mod pallet {
         #[pallet::constant]
         type MaxPeers: Get<u32>;
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
-
+        type ForceOrigin: EnsureOrigin<Self::RuntimeOrigin>;
     }
+
+    // #[pallet::storage]
+    // pub(super) type PeersCount<T: Config> = StorageValue<_, u64, ValueQuery>;
+
+    // #[pallet::storage]
+    // pub(super) type Peers<T: Config> = StorageMap<_, Twox64Concat, u64, [u8; 52]>;
 
     #[pallet::storage]
     #[pallet::getter(fn peers)]
@@ -72,9 +78,10 @@ pub mod pallet {
     #[pallet::call]
     impl<T: Config> Pallet<T> {
 
-        #[pallet::weight(0)]
+        #[pallet::call_index(0)]
+        #[pallet::weight({0})]
         pub fn add_new_peer(origin: OriginFor<T>, peer: PeerId) -> DispatchResult {
-            let sender = ensure_signed(origin)?;
+            T::ForceOrigin::ensure_origin(origin)?;
             Self::add_peer(peer)?;
             Ok(())
         }
@@ -98,7 +105,7 @@ pub mod pallet {
             ensure!(peer.0.len() < T::MaxPeerIdLength::get() as usize, Error::<T>::PeerIdTooLong);
             ensure!(peers.len() < T::MaxPeers::get() as usize, Error::<T>::TooManyPeers);
             ensure!(!peers.contains(&peer), Error::<T>::AlreadyJoined);
-            peers.try_push(peer.clone());
+            let _ = peers.try_push(peer.clone());
 
             <Peers<T>>::put(peers);
             Self::deposit_event(Event::AddNewPeer {peer: peer.clone()});
@@ -117,7 +124,13 @@ pub mod pallet {
                     break;
                 }
             }
-
+        //     // let peers: Vec<(u64, [u8; 52])> = Peers::<T>::iter().collect();
+        //
+        //     // let num_of_peer = match peers.iter().find(|&&x| x.1 == peer){
+        //     //     Some(item) => item.0,
+        //     //     None => return Err(Error::<T>::NotFindPeer.into())
+        //     // };
+        //
             for i in 0..peers.len() {
                 let result_xor = i ^ num_of_peer;
                 let bin_str = format!("{:08b}", result_xor);
