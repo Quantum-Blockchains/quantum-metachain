@@ -115,6 +115,7 @@ def get_peers_for_node(peer_id):
 
 
 def targets_exchange():
+    log.info("Target exchange...")
     if 'target' not in request.files:
         raise exceptions.NoTargetReceived
     target = request.files['target']
@@ -157,7 +158,7 @@ def data_qkd_exchange():
     return jsonify({
         "peer_id": common.config.config_service.config.local_peer_id,
         "qkd_name": common.config.config_service.config.local_qkd_name,
-        "server_addr": "http://" + common.config.config_service.config.public_ip + ":" + str(common.config.config_service.config.external_server_port)
+        "server_addr": "https://" + common.config.config_service.config.public_ip + ":" + str(common.config.config_service.config.external_server_port)
     })
 
 

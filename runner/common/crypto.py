@@ -7,7 +7,7 @@ from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives._serialization import PublicFormat, Encoding, PrivateFormat
 from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, ec
 from cryptography.hazmat.backends import default_backend
 from cryptography import x509
 from cryptography.x509.oid import NameOID
@@ -16,18 +16,19 @@ from cryptography.hazmat.primitives import hashes
 from .logger import log
 
 
-def generate_self_signed_cert() -> (str, str):
+def generate_self_signed_cert(country_name: str, state_name: str, locality_name: str, organization_name: str,
+                              common_name: str, address: str) -> (str, str):
     key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
         backend=default_backend(),
     )
     subject = issuer = x509.Name([
-        x509.NameAttribute(NameOID.COUNTRY_NAME, "US"),
-        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, "California"),
-        x509.NameAttribute(NameOID.LOCALITY_NAME, "San Francisco"),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, "My Company"),
-        x509.NameAttribute(NameOID.COMMON_NAME, "mysite.com"),
+        x509.NameAttribute(NameOID.COUNTRY_NAME, country_name),
+        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, state_name),
+        x509.NameAttribute(NameOID.LOCALITY_NAME, locality_name),
+        x509.NameAttribute(NameOID.ORGANIZATION_NAME, organization_name),
+        x509.NameAttribute(NameOID.COMMON_NAME, common_name),
     ])
     cert = x509.CertificateBuilder().subject_name(
         subject
@@ -40,12 +41,10 @@ def generate_self_signed_cert() -> (str, str):
     ).not_valid_before(
         datetime.datetime.now(datetime.timezone.utc)
     ).not_valid_after(
-        # Our certificate will be valid for 10 days
-        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=10)
+        datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
     ).add_extension(
-        x509.SubjectAlternativeName([x509.DNSName("localhost")]),
+        x509.SubjectAlternativeName([x509.DNSName(address)]),
         critical=False,
-        # Sign our certificate with our private key
     ).sign(key, hashes.SHA256())
     cert_pem = cert.public_bytes(encoding=serialization.Encoding.PEM)
     key_pem = key.private_bytes(

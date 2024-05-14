@@ -1,3 +1,4 @@
+import time
 from os import path, mkdir, makedirs, rmdir
 import shutil
 import re
@@ -13,7 +14,10 @@ import common.config
 import common.file
 from cli.types import ip_type, url_type, qrng_type, peer_type, substrate_arguments, port_type, uint_type
 from common.crypto import generate_ed25519, generate_self_signed_cert
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/../..")
 CONFIG_DIR = path.abspath(path.dirname(__file__) + "/../../.config")
@@ -109,7 +113,7 @@ def data_exchange_with_the_selected_node(url, config):
     body = {
         "peer_id": config.local_peer_id,
         "qkd_name": config.local_qkd_name,
-        "server_addr": "http://" + config.public_ip + ':' + str(config.external_server_port)
+        "server_addr": "https://" + config.public_ip + ':' + str(config.external_server_port)
     }
     response = requests.post(url + "/data_qkd_exchange", json=body, verify=False)
     if response.status_code != 200:
@@ -264,7 +268,13 @@ def generate_config_node_wizard():
         # generate cert and key for runner
         print(f"{Fore.GREEN}<Step 12> {Fore.RESET}", end="")
         print("Generate certificate for external server.")
-        cert_pem, key_pem = generate_self_signed_cert()
+        country_name = editable_input("\tCOUNTRY NAME: ", "US", "US")
+        state_name = editable_input("\tSTATE OR PROVINCE NAME: ", "California", "California")
+        locality_name = editable_input("\tLOCALITY NAME: ", "San Francisco", "San Francisco")
+        organization_name = editable_input("\tORGANIZATION NAME: ", "My Company", "My Company")
+        common_name = editable_input("\tCOMMON NAME: ", "My node", "My node")
+        cert_pem, key_pem = generate_self_signed_cert(country_name, state_name, locality_name, organization_name,
+                                                      common_name, common.config.config_service.config.public_ip)
         if not path.exists(f"{common.config.config_service.config.node_dir}/certificates/external"):
             makedirs(f"{common.config.config_service.config.node_dir}/certificates/external")
         with open(f"{common.config.config_service.config.node_dir}/certificates/external/cert.pem", "wb") as f:
@@ -333,7 +343,6 @@ def generate_config_node_wizard():
                     break
             except Exception as err:
                 print(f"{Fore.RED}ERROR. {err}{Fore.RESET}")
-
         peers_for_config = {}
         addresses = {boot_url: False}
         for peer in peers:
@@ -344,14 +353,20 @@ def generate_config_node_wizard():
                         continue
                     search_peer_url = f"{a}/search_node/{peer}"
                     # print(f"Send request: {search_peer_url}")
-                    search_peer_response = requests.get(search_peer_url, verify=False)
+                    try:
+                        search_peer_response = requests.get(search_peer_url, verify=False)
+                    except Exception as err:
+                        print("ERROR: err")
                     if search_peer_response.status_code != 200:
                         print(f"ERROR {search_peer_url}. Message: {search_peer_response.json()['message']}")
                     else:
                         response_body = search_peer_response.json()
                         if response_body["found"]:
-                            peer_info = data_exchange_with_the_selected_node(
-                                response_body["external_server_address"], common.config.config_service.config)
+                            try:
+                                peer_info = data_exchange_with_the_selected_node(
+                                    response_body["external_server_address"], common.config.config_service.config)
+                            except Exception as err:
+                                print(f"ERROR: {err}")
                             peers_for_config[peer] = peer_info
                             print(f'Data exchange from the peer {peer} has been successfully completed.')
                             tmp = False
