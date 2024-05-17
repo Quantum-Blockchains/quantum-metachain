@@ -31,6 +31,7 @@ def run(args):
                       f"{common.config.config_service.config.p2p_port}",
                       "--rpc-port", str(common.config.config_service.config.node_http_rpc_port),
                       "--psk-file", common.config.config_service.config.psk_file_path,
+                      "--qrng-api-url", f"{common.config.config_service.config.qrng_url}/hex?size=32",
                       "--runner-port", str(common.config.config_service.config.local_server_port),
                       "--node-key-file", common.config.config_service.config.node_key_file_path]
     for arg in args.startup_args:

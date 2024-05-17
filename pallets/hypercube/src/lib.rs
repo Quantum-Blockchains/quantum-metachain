@@ -3,14 +3,14 @@
 use sp_std::{str, vec::Vec};
 
 pub use pallet::*;
-use log;
+// use log;
 use frame_support::{BoundedSlice, BoundedVec};
-use sp_std::collections::vec_deque::VecDeque;
-use sp_core::{OpaquePeerId as PeerId, OpaquePeerId};
+// use sp_std::collections::vec_deque::VecDeque;
+use sp_core::{OpaquePeerId as PeerId};
 use sp_api::decl_runtime_apis;
 use scale_info::prelude::format;
 
-const LOG_TARGET: &str = "rubtime::hypercube";
+// const LOG_TARGET: &str = "rubtime::hypercube";
 
 #[frame_support::pallet]
 pub mod pallet {

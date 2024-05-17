@@ -8,11 +8,33 @@ use sp_core::{Decode, Encode, Hasher};
 use sp_io::offchain::timestamp;
 use sp_runtime::offchain::{http::Request, storage::StorageValueRef, Duration};
 use sp_std::{str, vec::Vec};
+use sp_core::{crypto::KeyTypeId};
+use frame_system::offchain::{AppCrypto, CreateSignedTransaction, SendSignedTransaction, Signer};
 
 use crate::Error::{DeserializeError, GetNumberQRNGError, HttpFetchError};
 
 const ONCHAIN_COMMITS: &[u8] = b"ocw-randao::commits";
 const ONCHAIN_REVEALS: &[u8] = b"ocw-randao::reveals";
+pub const KEY_TYPE: KeyTypeId = KeyTypeId(*b"rand");
+
+pub mod crypto {
+	use super::KEY_TYPE;
+	use sp_core::sr25519::Signature as Sr25519Signature;
+	use sp_runtime::{
+		app_crypto::{app_crypto, sr25519},
+		traits::Verify, MultiSignature, MultiSigner
+	};
+	app_crypto!(sr25519, KEY_TYPE);
+
+	pub struct TestAuthId;
+
+	// implemented for runtime
+	impl frame_system::offchain::AppCrypto<MultiSigner, MultiSignature> for TestAuthId {
+	type RuntimeAppPublic = Public;
+	type GenericSignature = sp_core::sr25519::Signature;
+	type GenericPublic = sp_core::sr25519::Public;
+	}
+}
 
 #[derive(Debug, Deserialize, Encode, Decode, Default)]
 struct CommitData(u64, [u8; 32]);
@@ -37,7 +59,8 @@ where
 #[frame_support::pallet]
 pub mod pallet {
     use frame_support::{pallet_prelude::*, traits::Randomness};
-    use frame_system::pallet_prelude::BlockNumberFor;
+    use frame_system::ensure_signed;
+    use frame_system::pallet_prelude::{BlockNumberFor, OriginFor};
 
     use super::*;
 
@@ -46,7 +69,8 @@ pub mod pallet {
     pub struct Pallet<T>(PhantomData<T>);
 
     #[pallet::config]
-    pub trait Config: frame_system::Config + randao::Config {
+    pub trait Config: CreateSignedTransaction<Call<Self>> + frame_system::Config + randao::Config {
+        type AuthorityId: AppCrypto<Self::Public, Self::Signature>;
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
         type RuntimeCall: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, BlockNumberFor<Self>>;
@@ -59,106 +83,160 @@ pub mod pallet {
     {
         /// RANDAO offchain worker entry point.
         fn offchain_worker(block_number: BlockNumberFor<T>) {
-        //     log::info!(
-        //         "[OCW-RANDAO] Running offchain worker in block: {:?}",
-        //         block_number
-        //     );
-        //
-        //     let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
-        //     let rpc_port = match storage_rpc_port.get::<u16>() {
-        //         Ok(p) => match p {
-        //             Some(port) => port,
-        //             None => {
-        //                 log::error!(
-        //                     "[OCW-RANDAO] The RPC port is not passed to the offchain worker."
-        //                 );
-        //                 return;
-        //             }
-        //         },
-        //         Err(err) => {
-        //             log::error!(
-        //                 "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
-        //                 err
-        //             );
-        //             return;
-        //         }
-        //     };
-        //
-        //     let local_peer_id = match support::get_local_peer_id(rpc_port) {
-        //         Ok(id) => id.into_bytes(),
-        //         Err(err) => {
-        //             log::error!("[OCW-RANDAO] Failed to retrieve local peer id. {:?}", err);
-        //             return;
-        //         }
-        //     };
-        //
-        //     let local_peer_id_bytes: [u8; 52] = local_peer_id
-        //         .try_into()
-        //         .expect("[OCW-RANDAO] Vector length doesn't match the target array");
-        //
-        //     let random_num = match Self::get_random_numner_from_qrng() {
-        //         Ok(secret) => secret,
-        //         Err(err) => {
-        //             log::error!("[OCW-RANDAO] Failed to get qrng rundom number. {:?}", err);
-        //             let (random_seed, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
-        //             let random_number = <u64>::decode(&mut random_seed.as_ref())
-        //                 .expect("[OCW-RANDAO] secure hashes should always be bigger than u32; qed");
-        //             random_number
-        //         }
-        //     };
-        //
-        //     let hashed_random_num = Self::hash_random_num(random_num);
-        //
-        //     let block_num: u64 = block_number.into();
-        //     let block_number_for_commit = block_num + 2;
-        //     let block_num_for_reveal = block_num + 6;
-        //
-        //     let mut key_for_commit = Self::derived_key(block_number_for_commit, ONCHAIN_COMMITS);
-        //     let mut key_for_reveal = Self::derived_key(block_num_for_reveal, ONCHAIN_REVEALS);
-        //
-        //     let mut storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-        //     let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
-        //
-        //     let data_for_commit = CommitData(block_num + 10, hashed_random_num);
-        //     let data_for_reveal = RevealData(block_num + 10, random_num);
-        //     storage_ref_com.set(&data_for_commit);
-        //     storage_ref_rev.set(&data_for_reveal);
-        //
-        //     key_for_commit = Self::derived_key(block_num, ONCHAIN_COMMITS);
-        //     key_for_reveal = Self::derived_key(block_num, ONCHAIN_REVEALS);
-        //
-        //     storage_ref_com = StorageValueRef::persistent(&key_for_commit);
-        //     storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
-        //
-        //     if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
-        //         match <randao::Pallet<T>>::commit_and_raw_unsigned(
-        //             local_peer_id_bytes,
-        //             data.0,
-        //             data.1,
-        //         ) {
-        //             Ok(_) => {}
-        //             Err(err) => log::info!(
-        //                 "[OCW-RANDAO] Commit hash of random number failed: {:?}",
-        //                 err
-        //             ),
-        //         }
-        //     }
-        //
-        //     if let Ok(Some(data)) = storage_ref_rev.get::<RevealData>() {
-        //         match <randao::Pallet<T>>::reveal_and_raw_unsigned(
-        //             local_peer_id_bytes,
-        //             data.0,
-        //             data.1,
-        //         ) {
-        //             Ok(_) => {}
-        //             Err(err) => log::info!("[OCW-RANDAO] Reveal random number failed: {:?}", err),
-        //         }
-        //     }
+            log::info!(
+                "[OCW-RANDAO] Running offchain worker in block: {:?}",
+                block_number
+            );
+
+            let storage_rpc_port = StorageValueRef::persistent(b"rpc-port");
+            let rpc_port = match storage_rpc_port.get::<u16>() {
+                Ok(p) => match p {
+                    Some(port) => port,
+                    None => {
+                        log::error!(
+                            "[OCW-RANDAO] The RPC port is not passed to the offchain worker."
+                        );
+                        return;
+                    }
+                },
+                Err(err) => {
+                    log::error!(
+                        "[OCW-RANDAO] Error occurred while fetching RPC port from storage. {:?}",
+                        err
+                    );
+                    return;
+                }
+            };
+
+            let local_peer_id = match support::get_local_peer_id(rpc_port) {
+                Ok(id) => id.into_bytes(),
+                Err(err) => {
+                    log::error!("[OCW-RANDAO] Failed to retrieve local peer id. {:?}", err);
+                    return;
+                }
+            };
+
+            let local_peer_id_bytes: [u8; 52] = local_peer_id
+                .try_into()
+                .expect("[OCW-RANDAO] Vector length doesn't match the target array");
+
+            let random_num = match Self::get_random_numner_from_qrng() {
+                Ok(secret) => secret,
+                Err(err) => {
+                    log::error!("[OCW-RANDAO] Failed to get qrng rundom number. {:?}", err);
+                    let (random_seed, _) = T::Randomness::random(&b"PSK creator chosing"[..]);
+                    let random_number = <u64>::decode(&mut random_seed.as_ref())
+                        .expect("[OCW-RANDAO] secure hashes should always be bigger than u32; qed");
+                    random_number
+                }
+            };
+
+            let hashed_random_num = Self::hash_random_num(random_num);
+
+            let block_num: u64 = block_number.into();
+            let block_number_for_commit = block_num + 2;
+            let block_num_for_reveal = block_num + 6;
+
+            let mut key_for_commit = Self::derived_key(block_number_for_commit, ONCHAIN_COMMITS);
+            let mut key_for_reveal = Self::derived_key(block_num_for_reveal, ONCHAIN_REVEALS);
+
+            let mut storage_ref_com = StorageValueRef::persistent(&key_for_commit);
+            let mut storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
+
+            let data_for_commit = CommitData(block_num + 10, hashed_random_num);
+            let data_for_reveal = RevealData(block_num + 10, random_num);
+            storage_ref_com.set(&data_for_commit);
+            storage_ref_rev.set(&data_for_reveal);
+
+            key_for_commit = Self::derived_key(block_num, ONCHAIN_COMMITS);
+            key_for_reveal = Self::derived_key(block_num, ONCHAIN_REVEALS);
+
+            storage_ref_com = StorageValueRef::persistent(&key_for_commit);
+            storage_ref_rev = StorageValueRef::persistent(&key_for_reveal);
+
+            let signer = Signer::<T, T::AuthorityId>::all_accounts();
+
+            if let Ok(Some(data)) = storage_ref_com.get::<CommitData>() {
+                let results = signer.send_signed_transaction(|_account| {
+                    Call::commit { from: local_peer_id_bytes, block_num: data.0, commitment: data.1 }
+                });
+                for (acc, res) in &results {
+                    match res {
+                        Ok(()) => log::info!("[OCW-RANDAO] [{:?}]: submit transaction success. Commit: success.", acc.id),
+                        Err(e) => log::error!("[OCW-RANDAO] [{:?}]: submit transaction failure. Reason: {:?}, Commit: failed.", acc.id, e),
+                    }
+                }
+                // match <randao::Pallet<T>>::commit_and_raw_unsigned(
+                //     local_peer_id_bytes,
+                //     data.0,
+                //     data.1,
+                // ) {
+                //     Ok(_) => {}
+                //     Err(err) => log::info!(
+                //         "[OCW-RANDAO] Commit hash of random number failed: {:?}",
+                //         err
+                //     ),
+                // }
+            }
+
+            if let Ok(Some(data)) = storage_ref_rev.get::<RevealData>() {
+                let results = signer.send_signed_transaction(|_account| {
+                    Call::reveal { from: local_peer_id_bytes, block_num: data.0, secret: data.1 }
+                });
+                for (acc, res) in &results {
+                    match res {
+                        Ok(()) => log::info!("[OCW-RANDAO] [{:?}]: submit transaction success. Reveal: success.", acc.id),
+                        Err(e) => log::error!("[OCW-RANDAO] [{:?}]: submit transaction failure. Reason: {:?}, Reveal: failed.", acc.id, e),
+                    }
+                }
+                // match <randao::Pallet<T>>::reveal_and_raw_unsigned(
+                //     local_peer_id_bytes,
+                //     data.0,
+                //     data.1,
+                // ) {
+                //     Ok(_) => {}
+                //     Err(err) => log::info!("[OCW-RANDAO] Reveal random number failed: {:?}", err),
+                // }
+            }
         }
     }
 
     #[pallet::call]
-    impl<T: Config> Pallet<T> {}
+    impl<T: Config> Pallet<T> {
+        #[pallet::call_index(0)]
+        #[pallet::weight((
+            Weight::zero(),
+            DispatchClass::Normal,
+            Pays::No
+        ))]
+        pub fn commit(
+            origin: OriginFor<T>,
+            from: [u8; 52],
+            block_num: u64,
+            commitment: [u8; 32],
+        ) -> DispatchResult {
+            let _sender = ensure_signed(origin)?;
+            <randao::Pallet<T>>::commit_hash(from, block_num, commitment)?;
+            Ok(())
+        }
+
+        #[pallet::call_index(1)]
+        #[pallet::weight((
+            Weight::zero(),
+            DispatchClass::Normal,
+            Pays::No
+        ))]
+        pub fn reveal(
+            origin: OriginFor<T>,
+            from: [u8; 52],
+            block_num: u64,
+            secret: u64,
+        ) -> DispatchResult {
+            let _sender = ensure_signed(origin)?;
+            <randao::Pallet<T>>::reveal_secret(from, block_num, secret)?;
+            Ok(())
+        }
+    }
 
     #[pallet::event]
     pub enum Event<T: Config> {}

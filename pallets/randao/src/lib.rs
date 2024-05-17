@@ -21,6 +21,7 @@ const COMMIT_BALKLINE: u64 = 8;
 const COMMIT_DEADLINE: u64 = 4;
 const UNSIGNED_TXS_PRIORITY: u64 = 100;
 
+
 /// This is a structure that is equivalent to a random number generation participant.
 /// secret - secret number
 /// commitment - hash of secret number
@@ -115,32 +116,43 @@ pub mod pallet {
             commit_deadline: u64,
         ) -> DispatchResult {
             ensure_none(origin)?;
+            // let _sender = ensure_signed(origin)?;
             Self::create_new_campaign(block_num, commit_balkline, commit_deadline)
         }
 
-        #[pallet::call_index(1)]
-        #[pallet::weight({0})]
-        pub fn commit(
-            origin: OriginFor<T>,
-            from: [u8; 52],
-            block_num: u64,
-            commitment: [u8; 32],
-        ) -> DispatchResult {
-            ensure_none(origin)?;
-            Self::commit_hash(from, block_num, commitment)
-        }
-
-        #[pallet::call_index(2)]
-        #[pallet::weight({0})]
-        pub fn reveal(
-            origin: OriginFor<T>,
-            from: [u8; 52],
-            block_num: u64,
-            secret: u64,
-        ) -> DispatchResult {
-            ensure_none(origin)?;
-            Self::reveal_secret(from, block_num, secret)
-        }
+        // #[pallet::call_index(1)]
+        // #[pallet::weight((
+        //     Weight::zero(),
+        //     DispatchClass::Normal,
+        //     Pays::No
+        // ))]
+        // pub fn commit(
+        //     origin: OriginFor<T>,
+        //     from: [u8; 52],
+        //     block_num: u64,
+        //     commitment: [u8; 32],
+        // ) -> DispatchResult {
+        //     // ensure_none(origin)?;
+        //     let _sender = ensure_signed(origin)?;
+        //     Self::commit_hash(from, block_num, commitment)
+        // }
+        //
+        // #[pallet::call_index(2)]
+        // #[pallet::weight((
+        //     Weight::zero(),
+        //     DispatchClass::Normal,
+        //     Pays::No
+        // ))]
+        // pub fn reveal(
+        //     origin: OriginFor<T>,
+        //     from: [u8; 52],
+        //     block_num: u64,
+        //     secret: u64,
+        // ) -> DispatchResult {
+        //     // ensure_none(origin)?;
+        //     let _sender = ensure_signed(origin)?;
+        //     Self::reveal_secret(from, block_num, secret)
+        // }
     }
 
     #[pallet::hooks]
@@ -149,24 +161,24 @@ pub mod pallet {
         u64: From<<<<T as frame_system::Config>::Block as sp_runtime::traits::Block>::Header as sp_runtime::traits::Header>::Number>
     {
         fn offchain_worker(block_number: BlockNumberFor<T>) {
-            // let current_block_number: u64 = block_number.into();
-            // let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
-            // let commit_balkline = COMMIT_BALKLINE;
-            // let commit_deadline = COMMIT_DEADLINE;
-            //
-            // match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
-            //     Ok(()) => {
-            //         log::info!(
-            //             "[RANDAO] Successful created a campaign for the block {:?}",
-            //             block_num
-            //         )
-            //     }
-            //     Err(err) => log::info!(
-            //         "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
-            //         block_num,
-            //         err
-            //     ),
-            // };
+            let current_block_number: u64 = block_number.into();
+            let block_num = current_block_number + NUM_BLOCK_FOR_CAMPAIGN;
+            let commit_balkline = COMMIT_BALKLINE;
+            let commit_deadline = COMMIT_DEADLINE;
+
+            match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
+                Ok(()) => {
+                    log::info!(
+                        "[RANDAO] Successful created a campaign for the block {:?}",
+                        block_num
+                    )
+                }
+                Err(err) => log::info!(
+                    "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
+                    block_num,
+                    err
+                ),
+            };
         }
     }
 
@@ -190,16 +202,16 @@ pub mod pallet {
                     commit_balkline: _,
                     commit_deadline: _,
                 } => valid_tx(b"create".to_vec()),
-                Call::commit {
-                    from: _,
-                    block_num: _,
-                    commitment: _,
-                } => valid_tx(b"commit".to_vec()),
-                Call::reveal {
-                    from: _,
-                    block_num: _,
-                    secret: _,
-                } => valid_tx(b"reveal".to_vec()),
+                // Call::commit {
+                //     from: _,
+                //     block_num: _,
+                //     commitment: _,
+                // } => valid_tx(b"commit".to_vec()),
+                // Call::reveal {
+                //     from: _,
+                //     block_num: _,
+                //     secret: _,
+                // } => valid_tx(b"reveal".to_vec()),
                 _ => InvalidTransaction::Call.into(),
             }
         }
@@ -222,35 +234,35 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    pub fn commit_and_raw_unsigned(
-        from: [u8; 52],
-        block_num: u64,
-        commitment: [u8; 32],
-    ) -> Result<(), &'static str> {
-        let call = Call::commit {
-            from,
-            block_num,
-            commitment,
-        };
-        SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
-            .map_err(|_| "Unable to submit unsigned transaction.")?;
-        Ok(())
-    }
+    // pub fn commit_and_raw_unsigned(
+    //     from: [u8; 52],
+    //     block_num: u64,
+    //     commitment: [u8; 32],
+    // ) -> Result<(), &'static str> {
+    //     let call = Call::commit {
+    //         from,
+    //         block_num,
+    //         commitment,
+    //     };
+    //     SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
+    //         .map_err(|_| "Unable to submit unsigned transaction.")?;
+    //     Ok(())
+    // }
 
-    pub fn reveal_and_raw_unsigned(
-        from: [u8; 52],
-        block_num: u64,
-        secret: u64,
-    ) -> Result<(), &'static str> {
-        let call = Call::reveal {
-            from,
-            block_num,
-            secret,
-        };
-        SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
-            .map_err(|_| "Unable to submit unsigned transaction.")?;
-        Ok(())
-    }
+    // pub fn reveal_and_raw_unsigned(
+    //     from: [u8; 52],
+    //     block_num: u64,
+    //     secret: u64,
+    // ) -> Result<(), &'static str> {
+    //     let call = Call::reveal {
+    //         from,
+    //         block_num,
+    //         secret,
+    //     };
+    //     SubmitTransaction::<T, Call<T>>::submit_unsigned_transaction(call.into())
+    //         .map_err(|_| "Unable to submit unsigned transaction.")?;
+    //     Ok(())
+    // }
 
     pub fn get_secret(block_num: u64) -> Result<u64, DispatchError> {
         let campaigns = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
@@ -305,7 +317,7 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    fn commit_hash(from: [u8; 52], block_num: u64, commitment: [u8; 32]) -> DispatchResult {
+    pub fn commit_hash(from: [u8; 52], block_num: u64, commitment: [u8; 32]) -> DispatchResult {
         let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         ensure!(
@@ -343,7 +355,7 @@ impl<T: Config> Pallet<T> {
         Ok(())
     }
 
-    fn reveal_secret(from: [u8; 52], block_num: u64, secret: u64) -> DispatchResult {
+    pub fn reveal_secret(from: [u8; 52], block_num: u64, secret: u64) -> DispatchResult {
         ensure!(
             ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
             Error::<T>::IsNotAParticipant
@@ -369,7 +381,12 @@ impl<T: Config> Pallet<T> {
             Error::<T>::SecretDoesNotMatchTheHash
         );
 
-        campaign.secret ^= secret;
+        // if campaign.secret == 0 {
+        //     campaign.secret += secret;
+        // } else {
+        //     campaign.secret ^= secret;
+        // }
+        campaign.secret = campaign.secret ^ secret;
 
         participant.secret = secret;
         ParticipantsOfCampaigns::<T>::insert(block_num, &from, participant);
@@ -381,7 +398,7 @@ impl<T: Config> Pallet<T> {
             secret,
         });
         log::info!(
-            "[RANDAO] The account with the ID {:?} did reveal for campaign {:?}",
+            "[RANDAO] The account with the ID {:?} did reveal for campaign {:?}.",
             from,
             block_num
         );

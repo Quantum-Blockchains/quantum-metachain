@@ -49,7 +49,6 @@ pub use sp_runtime::{Perbill, Permill};
 
 /// Import the template pallet.
 pub use pallet_template;
-use sp_runtime::transaction_validity::TransactionPriority;
 pub use ocw_psk::{self, Call as OcwPskCall};
 pub use ocw_randao::{self, Call as OcwRandaoCall};
 pub use randao::{self, Call as RandaoCall};
@@ -142,7 +141,7 @@ pub const fn deposit(items: u32, bytes: u32) -> Balance {
 	items as Balance * 15 * CENTS + (bytes as Balance) * 6 * CENTS
 }
 
-const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_percent(10);
+// const AVERAGE_ON_INITIALIZE_RATIO: Perbill = Perbill::from_percent(10);
 
 /// The version information used to identify this runtime when compiled natively.
 #[cfg(feature = "std")]
@@ -397,6 +396,7 @@ impl ocw_psk::Config for Runtime {
 }
 
 impl ocw_randao::Config for Runtime {
+	type AuthorityId = ocw_randao::crypto::TestAuthId;
     type RuntimeEvent = RuntimeEvent;
     type RuntimeCall = RuntimeCall;
     type Randomness = RandomnessCollectiveFlip;
@@ -437,8 +437,8 @@ construct_runtime!(
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template,
 		OcwPsk: ocw_psk,
+		Randao: randao,
         OcwRandao: ocw_randao,
-        Randao: randao,
 		Hypercube: hypercube,
 	}
 );
