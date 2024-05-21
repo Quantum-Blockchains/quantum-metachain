@@ -36,10 +36,13 @@ class ExternalServerWrapper:
             methods = ['GET']
         self.external_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
+    # def run(self):
+    #      self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
+    #                                      threaded=True, ssl_context=(common.config.config_service.config.external_cert,
+    #                               common.config.config_service.config.external_key))
     def run(self):
          self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
-                                         threaded=True, ssl_context=(common.config.config_service.config.external_cert,
-                                  common.config.config_service.config.external_key))
+                                         threaded=True)
 
 
 # TODO add peer authorizationS
