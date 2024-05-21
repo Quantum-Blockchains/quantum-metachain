@@ -3,7 +3,7 @@ from os import path, mkdir, makedirs, rmdir
 import shutil
 import re
 import requests
-# from pynput.keyboard import Controller
+from pynput.keyboard import Controller
 from threading import Thread
 from colorama import init
 init()
@@ -15,7 +15,6 @@ import common.file
 from cli.types import ip_type, url_type, qrng_type, peer_type, substrate_arguments, port_type, uint_type
 from common.crypto import generate_ed25519, generate_self_signed_cert
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-import pyautogui
 
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -46,11 +45,10 @@ def enter_value(name_attr: str, message: str, type_val, default=None):
 
 
 def editable_input(message, value, default):
-    # keyboard = Controller()
+    keyboard = Controller()
     print(message, end="")
     print(Fore.GREEN, end="")
-    # Thread(target=keyboard.type, args=(value,)).start()
-    Thread(target=pyautogui.write, args=(value,)).start()
+    Thread(target=keyboard.type, args=(value,)).start()
     modified_input = input() or default
     print(Fore.RESET, end="")
     return modified_input
