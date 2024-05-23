@@ -9,7 +9,7 @@ COPY pallets pallets
 COPY target target
 COPY Cargo.lock .
 COPY Cargo.toml .
-COPY rust-toolchain .
+# COPY rust-toolchain .
 
 RUN rustup target add wasm32-unknown-unknown
 
@@ -20,13 +20,13 @@ ENV CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG=true
 
 RUN cargo build --release --target-dir target
 
-FROM python:3.10.10-slim
+FROM python:3.11.6
 
 WORKDIR /app
 
 EXPOSE 30333 9944 9933 5002
 
-COPY --from=builder node/target/release/qmc-node qmc-node
+COPY --from=builder node/target/release/qmc-node target/release/qmc-node
 
 COPY runner runner
 COPY requirements.txt requirements.txt

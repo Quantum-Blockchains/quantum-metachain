@@ -5,6 +5,8 @@ PROJECT_DIR = path.abspath(path.dirname(__file__))
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 ENV_PATH = path.join(ROOT_DIR, ".env")
 
+NODE_DIR = None
+
 default_config = {
     "local_peer_id": "12D3KooWT1niMg9KUXFrcrworoNBmF9DTqaswSuDpdX8tBLjAvpW",
     "local_qkd_url": "",
@@ -79,14 +81,19 @@ def init_config(config_path=None):
     config_service = ConfigService(config)
 
 
+def init_node_dir(node_path):
+    global node_dir
+    node_dir = to_absolute(node_path)
+
+
 def create_node_info_dir():
-    logs_dir = path.join(config_service.config.node_dir, 'logs')
+    logs_dir = path.join(node_dir, 'logs')
     if not path.exists(logs_dir):
         mkdir(logs_dir)
-    if config_service.config.runner_logs_path != "":
-        config_service.config.runner_logs_path = path.join(logs_dir, "runner.log")
-    if config_service.config.node_logs_path != "":
-        config_service.config.node_logs_path = path.join(logs_dir, "node.log")
+    # if config_service.config.runner_logs_path != "":
+    #     config_service.config.runner_logs_path = path.join(logs_dir, "runner.log")
+    # if config_service.config.node_logs_path != "":
+    #     config_service.config.node_logs_path = path.join(logs_dir, "node.log")
 
 
 class ConfigService:
@@ -95,3 +102,4 @@ class ConfigService:
 
 
 config_service = ConfigService(None)
+node_dir = None

@@ -1,6 +1,7 @@
 import logging
 import common.config
 import sys
+import common.file
 
 
 log_formatter = logging.Formatter('[%(asctime)s] %(levelname)s : %(message)s')
@@ -15,7 +16,7 @@ log.addHandler(consoleHandler)
 
 
 def add_logs_handler_file():
-    file_handler = logging.FileHandler(f"{common.config.config_service.config.runner_logs_path}")
+    file_handler = logging.FileHandler(f"{common.file.runner_logs_file_manager.file_path}")
     file_handler.setFormatter(log_formatter)
     log.addHandler(file_handler)
 
