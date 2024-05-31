@@ -1,0 +1,23 @@
+## Install manually
+
+1. Create jar file with dependencies 'proxy.jar' adn copy into service working path
+2. Copy service unit file 'sudo cp proxyServer.service /etc/systemd/system'
+3. Reload services daemon: 'sudo systemctl daemon-reload'
+4. Start service: 'sudo systemctl start proxyServer'
+5. Enable autostart service: 'sudo systemctl enable proxyServer'
+
+### Services maintenance:
+
+* Get service status: 'sudo systemctl status proxyServer'
+
+* Restart service: 'sudo systemctl restart proxyServer'
+
+* Stop services: 'sudo systemctl stop proxyServer'
+
+* Disable autostart service: 'sudo systemctl disable proxyServer'
+
+* Read journal 'journalctl --since "2023-01-01 08:21:00"' (from the specified time)
+
+$ systemctl --user enable myuser.service
+$ systemctl --user daemon-reload
+$ systemctl --user start myuser.service

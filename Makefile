@@ -1,3 +1,5 @@
+VENV=venv
+
 build:
 	docker build -t quantum-metachain .
 
@@ -13,3 +15,11 @@ start:
 	cp docker/local/genesis_psk docker/local/charlie/psk
 	docker-compose up
 .PHONY: start
+
+venv:
+	python3 -m venv ${VENV}
+	. ./${VENV}/bin/activate
+	venv/bin/pip3 install -r requirements.txt
+
+config:
+	${VENV}/bin/python3 runner/generate_config_node_wizard.py
