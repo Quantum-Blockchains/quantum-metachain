@@ -1,9 +1,12 @@
 from common.logger import log
-from os import path
+from os import path, makedirs
 import subprocess
 import time
 import configparser
 import socket
+import common
+import sys
+from threading import Thread
 
 
 PROXY_DIR = path.abspath(path.dirname(__file__) + "/../proxy")
@@ -27,6 +30,9 @@ class Proxy:
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+
+        write_proxy_logs_thread = Thread(target=write_logs_proxy_to_file, args=())
+        write_proxy_logs_thread.start()
 
     def restart(self):
         log.info("Restarting proxy...")
@@ -85,3 +91,22 @@ class ProxyService:
 
 
 proxy_service = ProxyService(None)
+
+
+def write_logs_proxy_to_file():
+    path_to_logs = path.join(common.config.node_dir, 'logs')
+    makedirs(path_to_logs)
+    with open(path.join(path_to_logs, "proxy.log"), 'a') as logfile:
+        logfile.write("====================================================")
+        logfile.write("=================== PROXY STARTED ===================")
+        logfile.write("====================================================\n")
+        for line in proxy_service.current_proxy.process.stdout:
+            sys.stdout.write(str(line, 'utf-8'))
+            logfile.write(str(line, 'utf-8'))
+    proxy_service.current_proxy.process.wait()
+
+
+
+
+
+

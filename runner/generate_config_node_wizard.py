@@ -1,6 +1,8 @@
 from os import path, mkdir, makedirs, rmdir
 import shutil
 import re
+from time import sleep
+
 import requests
 from colorama import init
 
@@ -539,6 +541,8 @@ try:
     print(f"Now the admin of the network you want connect to nust add your peer id "
           f"{common.config.config_service.config.local_peer_id} to the hupercube network.")
 
+
+    common.config.node_dir = node_dir
     proxy.proxy_service = proxy.Proxy(path.join(node_dir, CONFIG_PROXY_FILE))
     proxy.proxy_service.start()
 
@@ -565,6 +569,7 @@ try:
                 break
         except Exception as err:
             print(f"{Fore.RED}ERROR. {err}{Fore.RESET}")
+    sleep(10000000000)
     peers_for_config = {}
     addresses = {boot_url: False}
     for peer in peers:
