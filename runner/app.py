@@ -2,7 +2,6 @@ from threading import Thread
 
 import params
 import node
-import proxy
 import common.config
 import common.file
 from common.config import create_node_info_dir
@@ -39,8 +38,6 @@ substrate_args = [path.join(ROOT_DIR, "target/release/qmc-node"),
 for arg in params.args.startup_args:
     substrate_args.append(arg)
 node.node_service = NodeService(Node(substrate_args))
-proxy.proxy_service = proxy.ProxyService(proxy.Proxy(path.join(common.config.node_dir, "configClient.conf")))
-proxy.proxy_service.current_proxy.start()
 
 try:
     log.info("Starting QMC runner...")

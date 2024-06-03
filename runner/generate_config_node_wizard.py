@@ -1,7 +1,6 @@
 from os import path, mkdir, makedirs, rmdir
 import shutil
 import re
-from time import sleep
 
 import requests
 from colorama import init
@@ -15,11 +14,8 @@ import common.file
 from common.crypto import generate_ed25519, generate_self_signed_cert
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import base58
-import configparser
 import readline, glob
-import socket
 from urllib.parse import urlparse
-import proxy
 
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
@@ -27,7 +23,6 @@ requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 CONFIG_DIR = path.abspath(path.dirname(__file__) + "/../.config")
 
-CONFIG_PROXY_FILE = "configClient.conf"
 CONFIG_FILE = "config.json"
 NODE_KEY_FILE = "node_key"
 
@@ -106,26 +101,6 @@ def enter_value(name_attr: str, message: str, type_val, default=None):
         except Exception as err:
             print(f"{Fore.RED}ERROR: {err}{Fore.RESET}")
     setattr(common.config.config_service.config, name_attr, value)
-
-
-def enter_value_proxy(config: configparser.ConfigParser, item: str, message: str, type_val, default=None):
-    old_value = None
-    if item in config['settings']:
-        old_value = config['settings'][item]
-    while True:
-        if old_value is not None:
-            value = editable_input(f"{message}: ", str(old_value), "")
-        elif default is not None:
-            value = editable_input(f"{message} (Default value {Fore.GREEN}{default}{Fore.RESET}): ", "", default)
-        else:
-            value = editable_input(f"{message}: ", "", "")
-        try:
-            value = type_val(value)
-            break
-        except Exception as err:
-            print(f"{Fore.RED}ERROR: {err}{Fore.RESET}")
-    config['settings'][item] = str(value)
-    return config
 
 
 def enter_file(name_attr: str, message: str, to_node_dir: bool, node_dir: str, extension: str):
@@ -326,18 +301,6 @@ try:
     enter_value("local_qkd_url", "Enter the pQKD address", url_type, None)
     config_manager.create(common.config.config_service.config.to_json())
 
-    # QKD notification port
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("qkd_notification_port", "Enter the pQKD notification port", port_type, 8083)
-    config_manager.create(common.config.config_service.config.to_json())
-
-    # QKD secure port
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("qkd_secure_port", "Enter the pQKD secure port", port_type, 8084)
-    config_manager.create(common.config.config_service.config.to_json())
-
     # QKD cert and QKD key
     # tmp = common.config.config_service.config.local_qkd_url.split(":")
     # if tmp[0] == "https":
@@ -389,12 +352,6 @@ try:
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
     enter_value("external_server_port", "Enter port for external server", port_type, "5002")
-    config_manager.create(common.config.config_service.config.to_json())
-
-    # proxy-external-server-port
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("proxy_external_server_port", "Enter proxy port for external server", port_type, "6002")
     config_manager.create(common.config.config_service.config.to_json())
 
     # generate cert and key for runner
@@ -458,100 +415,15 @@ try:
     # common.config.config_service.config.peers = {}
     # config_manager.create(common.config.config_service.config.to_json())
 
-
-    server_proxy_host = "31.182.67.107"
-    server_proxy_port = "9998"
-    client_proxy_id = "Node2"
-    client_proxy_host = "192.168.8.106"
-    client_proxy_listening = "5003:Node1"
-    client_proxy_endpoint = "5003;192.168.8.106:5002"
-    server_service_host = "31.182.67.107"
-    server_service_port = "9991"
-
-    path_to_config_proxy = path.join(node_dir, CONFIG_PROXY_FILE)
-
-    if path.exists(path_to_config_proxy):
-        config_proxy = configparser.ConfigParser()
-        config_proxy.read(path_to_config_proxy)
-    else:
-        config_proxy = configparser.ConfigParser()
-        config_proxy['settings'] = {}
-
-    # config.type
-    config_proxy['settings']['config.type'] = 'client'
-
-    # server.proxy.host
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    config_proxy = enter_value_proxy(config_proxy,"server.proxy.host", "Enter server proxy host", ip_type, None)
-    with open(path.join(node_dir, CONFIG_PROXY_FILE), 'w') as configfile:
-        config_proxy.write(configfile)
-
-    # server.proxy.port
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    config_proxy = enter_value_proxy(config_proxy, "server.proxy.port", "Enter server proxy port", port_type, None)
-    with open(path.join(node_dir, CONFIG_PROXY_FILE), 'w') as configfile:
-        config_proxy.write(configfile)
-
-    # client.proxy.id
-    config_proxy['settings']['client.proxy.id'] = common.config.config_service.config.local_peer_id
-
-    # client.proxy.host
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    config_proxy = enter_value_proxy(config_proxy, "client.proxy.host", "Enter client proxy host", ip_type, None)
-    with open(path.join(node_dir, CONFIG_PROXY_FILE), 'w') as configfile:
-        config_proxy.write(configfile)
-
-    # client.proxy.listening
-    if 'client.proxy.listening' not in config_proxy['settings']:
-        config_proxy['settings']['client.proxy.listening'] = ""
-
-    # client.proxy.endpoint
-    # port for external server
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    config_proxy = enter_value_proxy(config_proxy, "client.proxy.host", "Enter port for proxy external server", ip_type, None)
-    with open(path.join(node_dir, CONFIG_PROXY_FILE), 'w') as configfile:
-        config_proxy.write(configfile)
-
-    endpoint_external_server = f'external_server;127.0.0.1:{common.config.config_service.config.external_server_port}'
-    endpoint_kme = f'kme;{url_pqkd.netloc}'
-    endpoint_notification = f'notification;{url_pqkd.hostname}:{common.config.config_service.config.qkd_notification_port}'
-    endpoint_qkd = f'qkd;{url_pqkd.hostname}:{common.config.config_service.config.qkd_secure_port}'
-
-    config_proxy['settings']['client.proxy.endpoint'] = f'{endpoint_external_server}, {endpoint_kme}, {endpoint_notification}, {endpoint_qkd}'
-
-    # server.service.host
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    config_proxy = enter_value_proxy(config_proxy, "server.service.host", "Enter server service host", ip_type, None)
-    with open(path.join(node_dir, CONFIG_PROXY_FILE), 'w') as configfile:
-        config_proxy.write(configfile)
-
-    # server.service.port
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    config_proxy = enter_value_proxy(config_proxy, "server.service.port", "Enter server service port", port_type, None)
-    with open(path.join(node_dir, CONFIG_PROXY_FILE), 'w') as configfile:
-        config_proxy.write(configfile)
-
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
     print(f"Now the admin of the network you want connect to nust add your peer id "
           f"{common.config.config_service.config.local_peer_id} to the hupercube network.")
 
-
-    common.config.node_dir = node_dir
-    proxy.proxy_service = proxy.Proxy(path.join(node_dir, CONFIG_PROXY_FILE))
-    proxy.proxy_service.start()
-
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
     while True:
-        # boot_url = str(input("Enter address of external server one node (PEER_ID): "))
-        boot_peer_id = str(input("Enter peer id of one node (PEER_ID): "))
-        boot_url = proxy.proxy_service.add_listning(boot_peer_id, "external_server")
+        boot_url = str(input("Enter address of external server one node (PEER_ID): "))
 
         if not validators.url(boot_url):
             print(f'{Fore.RED}ERROR: Inadmissible value: {boot_url}{Fore.RESET}')
@@ -569,7 +441,6 @@ try:
                 break
         except Exception as err:
             print(f"{Fore.RED}ERROR. {err}{Fore.RESET}")
-    sleep(10000000000)
     peers_for_config = {}
     addresses = {boot_url: False}
     for peer in peers:
