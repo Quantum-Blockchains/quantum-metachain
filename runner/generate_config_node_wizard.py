@@ -164,9 +164,9 @@ def data_exchange_with_the_selected_node(url, config, node_dir):
         print(f"ERROR {url}. Message: {response_target.json()['message']}")
     else:
         fname = re.findall("filename=(.+)", response_target.headers["Content-Disposition"])[0]
-        if not path.exists(path.join(config.node_dir, 'targets')):
-            mkdir(path.join(config.node_dir, 'targets'))
-        with open(path.join(config.node_dir, f'targets/{fname}'), 'wb') as fw:
+        if not path.exists(path.join(node_dir, 'pqkd/targets')):
+            makedirs(path.join(node_dir, 'pqkd/targets'))
+        with open(path.join(node_dir, f'pqkd/targets/{fname}'), 'wb') as fw:
             fw.write(response_target.content)
     body = {
         "peer_id": config.local_peer_id,

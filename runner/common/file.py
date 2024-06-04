@@ -43,4 +43,4 @@ def initialise_file_managers(node_dir):
     config_file_manager = FileManager(os.path.join(node_dir, "config"))
     node_logs_file_manager = FileManager(os.path.join(node_dir, "logs/node.log"))
     runner_logs_file_manager = FileManager(os.path.join(node_dir, "logs/runner.log"))
-    local_qkd_target_file_manager = FileManager(os.path.join(node_dir, common.config.config_service.config.local_qkd_target))
+    local_qkd_target_file_manager = FileManager(os.path.join(node_dir, f'pqkd/{common.config.config_service.config.local_qkd_target}'))
