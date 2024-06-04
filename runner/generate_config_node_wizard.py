@@ -103,13 +103,18 @@ def enter_value(name_attr: str, message: str, type_val, default=None):
     setattr(common.config.config_service.config, name_attr, value)
 
 
-def enter_file(name_attr: str, message: str, to_node_dir: bool, node_dir: str, extension: str):
+def enter_file(name_attr: str, path_to_file: str, message: str, to_node_dir: bool, node_dir: str, name_file: str, extension: str):
     old_path = None
-    if hasattr(common.config.config_service.config, name_attr):
-        attr = getattr(common.config.config_service.config, name_attr)
-        if path.exists(path.join(node_dir, attr)):
-            if path.join(node_dir, attr).endswith(extension):
-                old_path = path.join(node_dir, attr)
+    if name_attr is None:
+        if path.exists(path.join(node_dir, path_to_file)):
+            if path.join(node_dir, path_to_file).endswith(extension):
+                old_path = path.join(node_dir, path_to_file)
+    else:
+        if hasattr(common.config.config_service.config, name_attr):
+            attr = getattr(common.config.config_service.config, name_attr)
+            if path.exists(path.join(node_dir, attr)):
+                if path.join(node_dir, attr).endswith(extension):
+                    old_path = path.join(node_dir, attr)
     while True:
         if old_path is not None:
             path_file = editable_input(f"{message}: ", old_path, "")
@@ -120,9 +125,10 @@ def enter_file(name_attr: str, message: str, to_node_dir: bool, node_dir: str, e
             continue
         if path.exists(path_file) or path.exists(path_file):
             if to_node_dir and path_file != old_path:
-                path_file = shutil.copy2(path_file, node_dir)
-            tab = path_file.split("/")
-            setattr(common.config.config_service.config, name_attr, tab[tab.__len__() - 1])
+                path_file = shutil.copy2(path_file, path.join(node_dir, name_file))
+            if name_attr is not None:
+                tab = path_file.split("/")
+                setattr(common.config.config_service.config, name_attr, tab[tab.__len__() - 1])
             break
         else:
             print(f"{Fore.RED}ERROR. File {path_file} does not exist.{Fore.RESET}")
@@ -149,10 +155,10 @@ def enter_key(new: bool, path_key: str):
     return path_key, peer_id
 
 
-def data_exchange_with_the_selected_node(url, config):
+def data_exchange_with_the_selected_node(url, config, node_dir):
 
     # send target
-    target = {"target": open(config.local_qkd_target, 'rb')}
+    target = {"target": open(path.join(node_dir, f'pqkd/{config.local_qkd_target}'), 'rb')}
     response_target = requests.post(url + "/targets_exchange", files=target, verify=False)
     if response_target.status_code != 200:
         print(f"ERROR {url}. Message: {response_target.json()['message']}")
@@ -181,12 +187,19 @@ def data_exchange_with_the_selected_node(url, config):
         print(f"ERROR {url}. Message: {response.json()['message']}")
     else:
         response_body = response.json()
+        url_pqkd = urlparse(common.config.config_service.config.local_qkd_url)
+        if url_pqkd.scheme == 'https':
+            cert = common.config.PQKD_CERT_PATH
+            key = common.config.PQKD_KEY_PATH
+        else:
+            cert = ''
+            key = ''
         return {
             "qkd": {
                 "provider": "etsi014",
                 "url": config.local_qkd_url + "/api/v1/keys/" + response_body["qkd_name"],
-                "client_cert_path": config.path_to_cert_pqkd,
-                "cert_key_path": config.path_to_key_pqkd
+                "client_cert_path": cert,
+                "cert_key_path": key
             },
             "server_addr": response_body["server_addr"],
         }
@@ -240,8 +253,10 @@ try:
     old_path_to_key = None
     if hasattr(common.config.config_service.config, 'local_peer_id'):
         old_peer_id = common.config.config_service.config.local_peer_id
-    if hasattr(common.config.config_service.config, 'node_key_file_path'):
-        old_path_to_key = common.config.config_service.config.node_key_file_path
+    # if hasattr(common.config.config_service.config, 'node_key_file_path'):
+    #     old_path_to_key = common.config.config_service.config.node_key_file_path
+    if path.exists(path.join(node_dir, common.config.NODE_KEY_PATH)):
+        old_path_to_key = path.join(node_dir, common.config.NODE_KEY_PATH)
     new_key = True
     if old_peer_id is not None:
         if old_path_to_key is not None:
@@ -301,22 +316,25 @@ try:
     enter_value("local_qkd_url", "Enter the pQKD address", url_type, None)
     config_manager.create(common.config.config_service.config.to_json())
 
+    url_pqkd = urlparse(common.config.config_service.config.local_qkd_url)
+
     # QKD cert and QKD key
-    # tmp = common.config.config_service.config.local_qkd_url.split(":")
-    # if tmp[0] == "https":
-    #     if not path.exists(path.join(node_dir, "pqkd")):
-    #         mkdir(path.join(node_dir, "pqkd"))
-    #     enter_file("path_to_cert_pqkd", "Enter the path to pQKD cert path", True,
-    #                path.join(node_dir, "pqkd"), ".crt")
-    #     config_manager.create(common.config.config_service.config.to_json())
-    #     enter_file("path_to_key_pqkd", "Enter the path to pQKD key path", True,
-    #                path.join(node_dir, "pqkd"), ".key")
-    #     config_manager.create(common.config.config_service.config.to_json())
+    if url_pqkd.scheme == "https":
+        if not path.exists(path.join(node_dir, "pqkd")):
+            mkdir(path.join(node_dir, "pqkd"))
+        i += 1
+        print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+        enter_file(None, common.config.PQKD_CERT_PATH, "Enter the path to pQKD cert path", True,
+                   node_dir, common.config.PQKD_CERT_PATH, ".crt")
+        # config_manager.create(common.config.config_service.config.to_json())
+        i += 1
+        print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+        enter_file(None, common.config.PQKD_KEY_PATH, "Enter the path to pQKD key path", True,
+                   node_dir, common.config.PQKD_KEY_PATH, ".key")
+        # config_manager.create(common.config.config_service.config.to_json())
     # else:
     #     common.config.config_service.config.path_to_cert_pqkd = ""
     #     common.config.config_service.config.path_to_key_pqkd = ""
-
-    url_pqkd = urlparse(common.config.config_service.config.local_qkd_url)
 
     # QRNG address
     i += 1
@@ -330,8 +348,8 @@ try:
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
     if not path.exists(path.join(node_dir, "pqkd")):
         makedirs(path.join(node_dir, "pqkd"))
-    enter_file("local_qkd_target", "Enter the path to pQKD target", True,
-               path.join(node_dir, "pqkd"), ".target")
+    enter_file("local_qkd_target", None, "Enter the path to pQKD target", True,
+               path.join(node_dir, "pqkd"), '', ".target")
     config_manager.create(common.config.config_service.config.to_json())
 
     # Public ip
@@ -423,7 +441,7 @@ try:
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
     while True:
-        boot_url = str(input("Enter address of external server one node (PEER_ID): "))
+        boot_url = str(input("Enter address of external server one node: "))
 
         if not validators.url(boot_url):
             print(f'{Fore.RED}ERROR: Inadmissible value: {boot_url}{Fore.RESET}')
@@ -462,7 +480,7 @@ try:
                     if response_body["found"]:
                         try:
                             peer_info = data_exchange_with_the_selected_node(
-                                response_body["external_server_address"], common.config.config_service.config)
+                                response_body["external_server_address"], common.config.config_service.config, node_dir)
                         except Exception as err:
                             print(f"ERROR: {err}")
                         peers_for_config[peer] = peer_info

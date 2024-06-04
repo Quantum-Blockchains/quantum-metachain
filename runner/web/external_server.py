@@ -10,7 +10,8 @@ from web.error_handler import init_error_handlers
 from substrateinterface import SubstrateInterface
 from scalecodec import ScaleBytes
 import json
-from os import path, mkdir
+from os import path, mkdir, makedirs
+from urllib.parse import urlparse
 
 
 class ExternalServerWrapper:
@@ -125,11 +126,11 @@ def targets_exchange():
     if target.filename == ():
         return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
     if target:
-        if not path.exists(path.join(common.config.config_service.config.node_dir, 'targets')):
-            mkdir(path.join(common.config.config_service.config.node_dir, 'targets'))
-        target.save(path.join(common.config.config_service.config.node_dir, f'targets/{target.filename}'))
-    return send_file(common.config.config_service.config.local_qkd_target,
-                     download_name=path.basename(common.config.config_service.config.local_qkd_target))
+        if not path.exists(path.join(common.config.node_dir, 'pqkd/targets')):
+            makedirs(path.join(common.config.node_dir, 'pqkd/targets'))
+        target.save(path.join(common.config.node_dir, f'pqkd/targets/{target.filename}'))
+    return send_file(path.join(common.config.node_dir, f'pqkd/{common.config.config_service.config.local_qkd_target}'),
+                     download_name=path.basename(path.join(common.config.node_dir, f'pqkd/{common.config.config_service.config.local_qkd_target}')))
 
 
 def data_qkd_exchange():
@@ -145,13 +146,19 @@ def data_qkd_exchange():
         return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
 
     log.info(f"Data qkd exchange with peer {peer_id}")
-
+    url_pqkd = urlparse(common.config.config_service.config.local_qkd_url)
+    if url_pqkd.scheme == 'https':
+        cert = common.config.PQKD_CERT_PATH
+        key = common.config.PQKD_KEY_PATH
+    else:
+        cert = ''
+        key = ''
     qkd_info = {
         "qkd": {
             "provider": "etsi014",
             "url": common.config.config_service.config.local_qkd_url + "/api/v1/keys/" + qkd_name,
-            "client_cert_path": common.config.config_service.config.path_to_cert_pqkd,
-            "cert_key_path":  common.config.config_service.config.path_to_key_pqkd
+            "client_cert_path": cert,
+            "cert_key_path":  key
         },
         "server_addr": server_addr
     }

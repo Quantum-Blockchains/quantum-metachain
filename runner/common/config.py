@@ -5,6 +5,10 @@ PROJECT_DIR = path.abspath(path.dirname(__file__))
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 ENV_PATH = path.join(ROOT_DIR, ".env")
 
+PQKD_CERT_PATH = 'pqkd/client.crt'
+PQKD_KEY_PATH = 'pqkd/client.key'
+NODE_KEY_PATH = 'node_key'
+
 NODE_DIR = None
 
 default_config = {
