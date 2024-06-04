@@ -40,7 +40,7 @@ def initialise_file_managers(node_dir):
     psk_file_manager = FileManager(os.path.join(node_dir, "psk"))
     node_key_file_manager = FileManager(os.path.join(node_dir, "node_key"))
     psk_sig_file_manager = FileManager(os.path.join(node_dir, "psk_sig"))
-    config_file_manager = FileManager(os.path.join(node_dir, "config"))
+    config_file_manager = FileManager(os.path.join(node_dir, "config.json"))
     node_logs_file_manager = FileManager(os.path.join(node_dir, "logs/node.log"))
     runner_logs_file_manager = FileManager(os.path.join(node_dir, "logs/runner.log"))
     local_qkd_target_file_manager = FileManager(os.path.join(node_dir, f'pqkd/{common.config.config_service.config.local_qkd_target}'))
