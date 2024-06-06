@@ -8,6 +8,8 @@ ENV_PATH = path.join(ROOT_DIR, ".env")
 PQKD_CERT_PATH = 'pqkd/client.crt'
 PQKD_KEY_PATH = 'pqkd/client.key'
 NODE_KEY_PATH = 'node_key'
+EXTERNAL_CERT_PATH = 'external_server/cert.pem'
+EXTERNAL_KEY_PATH = 'external_server/key.pem'
 
 NODE_DIR = None
 

@@ -37,13 +37,15 @@ class ExternalServerWrapper:
             methods = ['GET']
         self.external_server.add_url_rule(endpoint, endpoint_name, handler, methods=methods, *args, **kwargs)
 
-    # def run(self):
-    #      self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
-    #                                      threaded=True, ssl_context=(common.config.config_service.config.external_cert,
-    #                               common.config.config_service.config.external_key))
     def run(self):
-         self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
-                                         threaded=True)
+        if common.config.config_service.config.external_url_scheme == 'https':
+            cert = path.join(common.config.node_dir, common.config.EXTERNAL_CERT_PATH)
+            key = path.join(common.config.node_dir, common.config.EXTERNAL_KEY_PATH)
+            self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
+                                         threaded=True, ssl_context=(cert, key))
+        else:
+            self.external_server.run("0.0.0.0", common.config.config_service.config.external_server_port, False,
+                                     threaded=True)
 
 
 # TODO add peer authorizationS
@@ -168,7 +170,7 @@ def data_qkd_exchange():
     return jsonify({
         "peer_id": common.config.config_service.config.local_peer_id,
         "qkd_name": common.config.config_service.config.local_qkd_name,
-        "server_addr": "https://" + common.config.config_service.config.public_ip + ":" + str(common.config.config_service.config.external_server_port)
+        "server_addr": f'{common.config.config_service.config.external_url_scheme}://{common.config.config_service.config.public_ip}:{str(common.config.config_service.config.external_server_port)}'
     })
 
 

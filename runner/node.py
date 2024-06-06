@@ -74,7 +74,13 @@ def write_logs_node_to_file():
         for line in node_service.current_node.process.stdout:
             sys.stdout.write(str(line, 'utf-8'))
             logfile.write(str(line, 'utf-8'))
-    node_service.current_node.process.wait()
+    try:
+        node_service.current_node.process.wait()
+    except Exception as err:
+        if not node_service.current_node.stop_event.is_set():
+            log.error(f'ERROR: {err}')
+            with open(common.file.node_logs_file_manager.file_path, 'a') as logfile:
+                logfile.write(f'ERROR: {err}')
 
 
 def validate_node_to_network_connection():

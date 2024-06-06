@@ -73,6 +73,13 @@ def peer_type(arg):
         raise Exception('Invalid peer')
 
 
+def url_scheme_type(arg):
+    if arg == 'http' or arg == 'https':
+        return arg
+    else:
+        raise Exception('Url scheme must be http or https')
+
+
 def editable_input(prompt, prefill='', default=None):
     readline.set_completer_delims(' \t\n;')
     readline.parse_and_bind("tab: complete")
@@ -171,7 +178,7 @@ def data_exchange_with_the_selected_node(url, config, node_dir):
     body = {
         "peer_id": config.local_peer_id,
         "qkd_name": config.local_qkd_name,
-        "server_addr": "https://" + config.public_ip + ':' + str(config.external_server_port)
+        "server_addr": f'{config.external_url_scheme}://{config.public_ip}:{str(config.external_server_port)}'
     }
 
 
@@ -366,31 +373,40 @@ try:
     enter_value("local_server_port", "Enter port for local server", port_type, "5001")
     config_manager.create(common.config.config_service.config.to_json())
 
+    # external http or https
+    i += 1
+    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+    enter_value("external_url_scheme", "Enter protokol for external server (http or https, default https)", url_scheme_type, "https")
+    config_manager.create(common.config.config_service.config.to_json())
+
     # external-server-port
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("external_server_port", "Enter port for external server", port_type, "5002")
+    enter_value("external_server_port", "Enter port for external server", str, "5002")
     config_manager.create(common.config.config_service.config.to_json())
 
     # generate cert and key for runner
-    # i += 1
-    # print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    # print("Generate certificate for external server.")
-    # country_name = editable_input("\tCOUNTRY NAME: ", "US", "US")
-    # state_name = editable_input("\tSTATE OR PROVINCE NAME: ", "California", "California")
-    # locality_name = editable_input("\tLOCALITY NAME: ", "San Francisco", "San Francisco")
-    # organization_name = editable_input("\tORGANIZATION NAME: ", "My Company", "My Company")
-    # common_name = editable_input("\tCOMMON NAME: ", "My node", "My node")
-    # cert_pem, key_pem = generate_self_signed_cert(country_name, state_name, locality_name, organization_name,
-    #                                               common_name, common.config.config_service.config.public_ip)
-    # if not path.exists(f"{common.config.config_service.config.node_dir}/certificates/external"):
-    #     makedirs(f"{common.config.config_service.config.node_dir}/certificates/external")
-    # with open(f"{common.config.config_service.config.node_dir}/certificates/external/cert.pem", "wb") as f:
-    #     f.write(cert_pem)
-    # with open(f"{common.config.config_service.config.node_dir}/certificates/external/key.pem", "wb") as f:
-    #     f.write(key_pem)
-    # common.config.config_service.config.external_key = f"{common.config.config_service.config.node_dir}/certificates/external/key.pem"
-    # common.config.config_service.config.external_cert = f"{common.config.config_service.config.node_dir}/certificates/external/cert.pem"
+    if common.config.config_service.config.external_url_scheme == 'https':
+        if not path.exists(path.join(node_dir, common.config.PQKD_KEY_PATH)) and not path.exists(
+                path.join(node_dir, common.config.PQKD_CERT_PATH)):
+            i += 1
+            print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+            print("Generate certificate for external server.")
+            country_name = editable_input("\tCOUNTRY NAME: ", "US", "US")
+            state_name = editable_input("\tSTATE OR PROVINCE NAME: ", "California", "California")
+            locality_name = editable_input("\tLOCALITY NAME: ", "San Francisco", "San Francisco")
+            organization_name = editable_input("\tORGANIZATION NAME: ", "My Company", "My Company")
+            common_name = editable_input("\tCOMMON NAME: ", "My node", "My node")
+            cert_pem, key_pem = generate_self_signed_cert(country_name, state_name, locality_name, organization_name,
+                                                  common_name, common.config.config_service.config.public_ip)
+            if not path.exists(f"{node_dir}/external_server"):
+                makedirs(f"{node_dir}/external_server")
+            with open(path.join(node_dir, common.config.EXTERNAL_CERT_PATH), "wb") as f:
+                f.write(cert_pem)
+            with open(path.join(node_dir, common.config.EXTERNAL_KEY_PATH), "wb") as f:
+                f.write(key_pem)
+            # common.config.config_service.config.external_key = f"{common.config.config_service.config.node_dir}/external_server/key.pem"
+            # common.config.config_service.config.external_cert = f"{common.config.config_service.config.node_dir}/external_server/cert.pem"
 
     # chain
     # i += 1
@@ -432,6 +448,37 @@ try:
     # common.config.config_service.config.runner_logs_path = path.join(node_dir, "logs/runner.log")
     # common.config.config_service.config.peers = {}
     # config_manager.create(common.config.config_service.config.to_json())
+    i += 1
+    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+    print("Generate key for ocw-psk...")
+    args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " generate" + " --scheme Sr25519 --password-interactive")
+    responce = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
+    # tmp = str(responce).split('\n')
+    str_responce = responce.decode('utf-8')
+    print(str_responce)
+    tab_responce = str_responce.split('\n')
+    tab2 = [a.split(':') for a in tab_responce]
+    secret_phrase = ''
+    for item in tab2:
+        if item[0] == 'Secret phrase':
+            secret_phrase = item[1].strip()
+
+    i += 1
+    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+    print("Add key for ocw-psk to the keystore...")
+    while True:
+        path_to_spec = editable_input("Enter path to file specification of chain: ")
+        if not path.exists(path_to_spec):
+            print(f"{Fore.RED}ERROR. File {path_to_spec} does not exist.{Fore.RESET}")
+            continue
+        if not path_to_spec.endswith('.json'):
+            print(f"{Fore.RED}ERROR. The file extension must be .json{Fore.RESET}")
+            continue
+        break
+    args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " insert" + " --base-path " +
+                path.join(node_dir, 'node') + " --chain " + path_to_spec +
+                " --scheme Sr25519" + " --suri \"" + secret_phrase + "\" --password-interactive" + " --key-type opsk")
+    responce = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
 
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
