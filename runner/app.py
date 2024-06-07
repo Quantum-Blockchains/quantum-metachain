@@ -13,9 +13,9 @@ from web.external_server import ExternalServerWrapper
 from time import sleep
 import requests
 from os import path
-import urllib3
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 
