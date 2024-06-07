@@ -359,7 +359,7 @@ try:
     # Public ip
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("public_ip", "Enter the local public ip", ip_type, None)
+    enter_value("public_ip", "Enter the local public ip", str, None)
     # print(socket.gethostbyname(socket.gethostname()))
     # common.config.config_service.config.public_ip = socket.gethostbyname(socket.gethostname())
     config_manager.create(common.config.config_service.config.to_json())
@@ -451,8 +451,7 @@ try:
     is_generate = editable_input("Do you want to generate a key for ocw-psk (yes or no): ", "", "no")
     if is_generate == "yes":
         print("Generate key for ocw-psk...")
-        args_sub = (path.join(ROOT_DIR,
-                              "target/release/qmc-node") + " key" + " generate" + "--scheme Sr25519 "
+        args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " generate" + " --scheme Sr25519 "
                                                                                   "--password-interactive")
         response = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
         # tmp = str(responce).split('\n')
@@ -479,7 +478,7 @@ try:
             break
         args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " insert" + " --base-path " +
                     path.join(node_dir, 'node') + " --chain " + path_to_spec +
-                    " --scheme Sr25519" + " --suri \"" + secret_phrase + "\" --password-interactive" + "--key-type "
+                    " --scheme Sr25519" + " --suri \"" + secret_phrase + "\" --password-interactive" + " --key-type "
                                                                                                        "opsk")
         response = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
 
