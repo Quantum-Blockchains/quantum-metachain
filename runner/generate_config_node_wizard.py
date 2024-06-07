@@ -17,7 +17,6 @@ import base58
 import readline, glob
 from urllib.parse import urlparse
 
-
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
@@ -28,7 +27,7 @@ NODE_KEY_FILE = "node_key"
 
 
 def complete(text, state):
-    return (glob.glob(text+'*')+[None])[state]
+    return (glob.glob(text + '*') + [None])[state]
 
 
 def uint_type(arg):
@@ -110,7 +109,8 @@ def enter_value(name_attr: str, message: str, type_val, default=None):
     setattr(common.config.config_service.config, name_attr, value)
 
 
-def enter_file(name_attr: str, path_to_file: str, message: str, to_node_dir: bool, node_dir: str, name_file: str, extension: str):
+def enter_file(name_attr: str, path_to_file: str, message: str, to_node_dir: bool, node_dir: str, name_file: str,
+               extension: str):
     old_path = None
     if name_attr is None:
         if path.exists(path.join(node_dir, path_to_file)):
@@ -163,7 +163,6 @@ def enter_key(new: bool, path_key: str):
 
 
 def data_exchange_with_the_selected_node(url, config, node_dir):
-
     # send target
     target = {"target": open(path.join(node_dir, f'pqkd/{config.local_qkd_target}'), 'rb')}
     response_target = requests.post(url + "/targets_exchange", files=target, verify=False)
@@ -181,13 +180,11 @@ def data_exchange_with_the_selected_node(url, config, node_dir):
         "server_addr": f'{config.external_url_scheme}://{config.public_ip}:{str(config.external_server_port)}'
     }
 
-
     # body = {
     #     "peer_id": config.local_peer_id,
     #     "qkd_name": config.local_qkd_name,
     #     "port": config.proxy_external_server_port
     # }
-
 
     response = requests.post(url + "/data_qkd_exchange", json=body, verify=False)
     if response.status_code != 200:
@@ -376,7 +373,8 @@ try:
     # external http or https
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("external_url_scheme", "Enter protokol for external server (http or https, default https)", url_scheme_type, "https")
+    enter_value("external_url_scheme", "Enter protokol for external server (http or https, default https)",
+                url_scheme_type, "https")
     config_manager.create(common.config.config_service.config.to_json())
 
     # external-server-port
@@ -387,8 +385,8 @@ try:
 
     # generate cert and key for runner
     if common.config.config_service.config.external_url_scheme == 'https':
-        if not path.exists(path.join(node_dir, common.config.PQKD_KEY_PATH)) and not path.exists(
-                path.join(node_dir, common.config.PQKD_CERT_PATH)):
+        if not path.exists(path.join(node_dir, common.config.EXTERNAL_KEY_PATH)) and not path.exists(
+                path.join(node_dir, common.config.EXTERNAL_CERT_PATH)):
             i += 1
             print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
             print("Generate certificate for external server.")
@@ -398,7 +396,7 @@ try:
             organization_name = editable_input("\tORGANIZATION NAME: ", "My Company", "My Company")
             common_name = editable_input("\tCOMMON NAME: ", "My node", "My node")
             cert_pem, key_pem = generate_self_signed_cert(country_name, state_name, locality_name, organization_name,
-                                                  common_name, common.config.config_service.config.public_ip)
+                                                          common_name, common.config.config_service.config.public_ip)
             if not path.exists(f"{node_dir}/external_server"):
                 makedirs(f"{node_dir}/external_server")
             with open(path.join(node_dir, common.config.EXTERNAL_CERT_PATH), "wb") as f:
@@ -450,35 +448,40 @@ try:
     # config_manager.create(common.config.config_service.config.to_json())
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    print("Generate key for ocw-psk...")
-    args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " generate" + " --scheme Sr25519 --password-interactive")
-    responce = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
-    # tmp = str(responce).split('\n')
-    str_responce = responce.decode('utf-8')
-    print(str_responce)
-    tab_responce = str_responce.split('\n')
-    tab2 = [a.split(':') for a in tab_responce]
-    secret_phrase = ''
-    for item in tab2:
-        if item[0] == 'Secret phrase':
-            secret_phrase = item[1].strip()
+    is_generate = editable_input("Do you want to generate a key for ocw-psk (yes or no): ", "", "no")
+    if is_generate == "yes":
+        print("Generate key for ocw-psk...")
+        args_sub = (path.join(ROOT_DIR,
+                              "target/release/qmc-node") + " key" + " generate" + "--scheme Sr25519 "
+                                                                                  "--password-interactive")
+        response = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
+        # tmp = str(responce).split('\n')
+        str_response = response.decode('utf-8')
+        print(str_response)
+        tab_responce = str_response.split('\n')
+        tab2 = [a.split(':') for a in tab_responce]
+        secret_phrase = ''
+        for item in tab2:
+            if item[0] == 'Secret phrase':
+                secret_phrase = item[1].strip()
 
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    print("Add key for ocw-psk to the keystore...")
-    while True:
-        path_to_spec = editable_input("Enter path to file specification of chain: ")
-        if not path.exists(path_to_spec):
-            print(f"{Fore.RED}ERROR. File {path_to_spec} does not exist.{Fore.RESET}")
-            continue
-        if not path_to_spec.endswith('.json'):
-            print(f"{Fore.RED}ERROR. The file extension must be .json{Fore.RESET}")
-            continue
-        break
-    args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " insert" + " --base-path " +
-                path.join(node_dir, 'node') + " --chain " + path_to_spec +
-                " --scheme Sr25519" + " --suri \"" + secret_phrase + "\" --password-interactive" + " --key-type opsk")
-    responce = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
+        i += 1
+        print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+        print("Add key for ocw-psk to the keystore...")
+        while True:
+            path_to_spec = editable_input("Enter path to file specification of chain: ")
+            if not path.exists(path_to_spec):
+                print(f"{Fore.RED}ERROR. File {path_to_spec} does not exist.{Fore.RESET}")
+                continue
+            if not path_to_spec.endswith('.json'):
+                print(f"{Fore.RED}ERROR. The file extension must be .json{Fore.RESET}")
+                continue
+            break
+        args_sub = (path.join(ROOT_DIR, "target/release/qmc-node") + " key" + " insert" + " --base-path " +
+                    path.join(node_dir, 'node') + " --chain " + path_to_spec +
+                    " --scheme Sr25519" + " --suri \"" + secret_phrase + "\" --password-interactive" + "--key-type "
+                                                                                                       "opsk")
+        response = subprocess.check_output(args_sub, shell=True, executable="/bin/bash", stderr=subprocess.STDOUT)
 
     i += 1
     print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
