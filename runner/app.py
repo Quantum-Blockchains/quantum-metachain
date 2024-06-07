@@ -13,6 +13,9 @@ from web.external_server import ExternalServerWrapper
 from time import sleep
 import requests
 from os import path
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ROOT_DIR = path.abspath(path.dirname(__file__) + "/..")
 
@@ -34,7 +37,8 @@ substrate_args = [path.join(ROOT_DIR, "target/release/qmc-node"),
                   "--psk-file", common.file.psk_file_manager.file_path,
                   "--qrng-api-url", f"{common.config.config_service.config.qrng_url}/hex?size=32",
                   "--runner-port", str(common.config.config_service.config.local_server_port),
-                  "--node-key-file", common.file.node_key_file_manager.file_path]
+                  "--node-key-file", common.file.node_key_file_manager.file_path,
+                  "--offchain-worker", "Always"]
 for arg in params.args.startup_args:
     substrate_args.append(arg)
 node.node_service = NodeService(Node(substrate_args))
