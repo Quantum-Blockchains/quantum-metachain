@@ -389,7 +389,7 @@ impl<T: Config> Pallet<T> {
         }
         // Counting of votes
         let mut map: BTreeMap<[u8; 52], u32> = BTreeMap::new();
-        for item in selected_peers {
+        for item in &selected_peers {
             if let Some(x) = map.get_mut(&item.1){
                 *x = *x + 1;
             } else {
