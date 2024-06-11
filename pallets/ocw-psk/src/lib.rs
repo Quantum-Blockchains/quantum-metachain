@@ -405,51 +405,62 @@ impl<T: Config> Pallet<T> {
                 peer = item.0;
             }
         }
-        log::info!("[OCW-PSK] {:?} nodes out of {:?} voted for peer {:?}.", tmp, peers.len(), peer);
-        if tmp < ((peers.len() / 2 ) + 1) as u32 {
-            log::info!("[OCW-PSK] Failed to start key rotation due to low number of votes.");
-            return Ok(false)
-        }
-        log::info!("[OCW-PSK] Start rotation key...");
-        let num_block_restart = current_block_number + T::BlockOfNumberBeforeRestart::get();
-        let local_peer_id = match support::get_local_peer_id(rpc_port) {
-            Ok(id) => id,
-            Err(err) => {
-                log::error!("[OCW-PSK] Failed to retrieve local peer id. {:?}", err);
-                return Err(Error::HttpFetchingError);
+        let mut selected_peer_voted: bool = false;
+        for p in selected_peers {
+            if p.0 == peer {
+                selected_peer_voted = true;
             }
-        };
-        let psk_creator = String::from_utf8(peer.to_vec()).unwrap();
-        let request = PskRotationRequest {
-            peer_id: psk_creator.to_string(),
-            is_local_peer: psk_creator == local_peer_id,
-            block_num: current_block_number,
-        };
-        match Self::send_psk_rotation_request(runner_port, request) {
-            Ok(()) => {
-                if psk_creator == local_peer_id {
-                    let signer = Signer::<T, T::AuthorityId>::all_accounts();
-                    let results = signer.send_signed_transaction(|_account| {
-                        Call::submit_num_block_for_restart { num_block: num_block_restart }
-                    });
-                    for (acc, res) in &results {
-                        match res {
-                            Ok(()) => log::info!("[OCW-PSK] [{:?}]: submit transaction success. Recording the block number {:?} for restart: success.", acc.id, num_block_restart),
-                            Err(e) => log::error!("[OCW-PSK] [{:?}]: submit transaction failure. Reason: {:?}. Recording the block number for restart: failed.", acc.id, e),
+        }
+        if !selected_peer_voted {
+            log::info!("[OCW-PSK] Failed to start key rotation, selected peer dont voted.");
+            Ok(false)
+        }
+        else {
+            log::info!("[OCW-PSK] {:?} nodes out of {:?} voted for peer {:?}.", tmp, peers.len(), peer);
+            if tmp < ((peers.len() / 2) + 1) as u32 {
+                log::info!("[OCW-PSK] Failed to start key rotation due to low number of votes.");
+                return Ok(false)
+            }
+            log::info!("[OCW-PSK] Start rotation key...");
+            let num_block_restart = current_block_number + T::BlockOfNumberBeforeRestart::get();
+            let local_peer_id = match support::get_local_peer_id(rpc_port) {
+                Ok(id) => id,
+                Err(err) => {
+                    log::error!("[OCW-PSK] Failed to retrieve local peer id. {:?}", err);
+                    return Err(Error::HttpFetchingError);
+                }
+            };
+            let psk_creator = String::from_utf8(peer.to_vec()).unwrap();
+            let request = PskRotationRequest {
+                peer_id: psk_creator.to_string(),
+                is_local_peer: psk_creator == local_peer_id,
+                block_num: current_block_number,
+            };
+            match Self::send_psk_rotation_request(runner_port, request) {
+                Ok(()) => {
+                    if psk_creator == local_peer_id {
+                        let signer = Signer::<T, T::AuthorityId>::all_accounts();
+                        let results = signer.send_signed_transaction(|_account| {
+                            Call::submit_num_block_for_restart { num_block: num_block_restart }
+                        });
+                        for (acc, res) in &results {
+                            match res {
+                                Ok(()) => log::info!("[OCW-PSK] [{:?}]: submit transaction success. Recording the block number {:?} for restart: success.", acc.id, num_block_restart),
+                                Err(e) => log::error!("[OCW-PSK] [{:?}]: submit transaction failure. Reason: {:?}. Recording the block number for restart: failed.", acc.id, e),
+                            }
                         }
                     }
-
+                    log::info!("[OCW-PSK] Psk rotation request sent")
                 }
-                log::info!("[OCW-PSK] Psk rotation request sent")
-            }
-            Err(err) => {
-                log::error!(
+                Err(err) => {
+                    log::error!(
                     "[OCW-PSK] Failed to send psk rotation request. {:?}",
                     err
                 )
-            }
-        };
-        Ok(true)
+                }
+            };
+            Ok(true)
+        }
     }
 
     fn send_restart_node_request(runner_port: u16) -> Result<(), Error<T>> {

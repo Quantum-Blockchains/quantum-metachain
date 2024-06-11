@@ -426,10 +426,10 @@ try:
     config_manager.create(common.config.config_service.config.to_json())
 
     # key-rotation-time
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("key_rotation_time", "Enter key rotation time", uint_type, "50")
-    config_manager.create(common.config.config_service.config.to_json())
+    # i += 1
+    # print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+    # enter_value("key_rotation_time", "Enter key rotation time", uint_type, "50")
+    # config_manager.create(common.config.config_service.config.to_json())
 
     # recovery-check-interval
     i += 1

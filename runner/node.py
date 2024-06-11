@@ -15,7 +15,7 @@ from time import sleep
 class Node:
     def __init__(self, startup_args):
         self.startup_args = startup_args
-        self.recovery_cron = None
+#         self.recovery_cron = None
         self.process = None
 
     def start(self):
@@ -29,8 +29,8 @@ class Node:
         write_node_logs_thread.start()
 
         self.stop_event = threading.Event()
-        self.recovery_cron = Thread(target=validate_node_to_network_connection, args=())
-        self.recovery_cron.start()
+#         self.recovery_cron = Thread(target=validate_node_to_network_connection, args=())
+#         self.recovery_cron.start()
 
     def restart(self):
         log.info("Restarting QMC node...")
@@ -83,77 +83,77 @@ def write_logs_node_to_file():
                 logfile.write(f'ERROR: {err}')
 
 
-def validate_node_to_network_connection():
-    while not node_service.current_node.stop_event.is_set():
-        time.sleep(common.config.config_service.config.recovery_check_interval)
-        url = f"http://localhost:{common.config.config_service.config.node_http_rpc_port}"
-        data = {"id": 1, "jsonrpc": "2.0", "method": "system_peers", "params": []}
-        response = requests.post(url, json=data)
-        if response.status_code == 200:
-            text = response.json()
-            peers_count = text["result"]
-            if len(peers_count) == 0:
-                log.info("Restarting the node, because it lost connection to the network")
-                if common.file.psk_file_manager.exists():
-                    common.file.psk_file_manager.remove()
-                if common.file.psk_sig_file_manager.exists():
-                    common.file.psk_sig_file_manager.remove()
-
-                psk_obj = None
-                while psk_obj is None:
-                    psk_obj = pre_shared_key.get_psk_from_peers()
-                    sleep(10)
-                common.file.psk_file_manager.create(psk_obj.psk)
-                common.file.psk_sig_file_manager.create(psk_obj.signature)
-
-                block_for_start = None
-
-                # TODO current_block < block_for_start
-
-                peers = common.config.config_service.config.peers
-
-                while block_for_start is None:
-                    for peer_id, peer_config in peers.items():
-                        try:
-                            response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart",
-                                                    verify=False)
-                            if response.status_code != 200:
-                                log.warning(f"Failed to get the block number to start from peer {peer_id}")
-                            else:
-                                response_body = response.json()
-                                if response_body["num_block_for_restart"] != 0:
-                                    block_for_start = response_body["num_block_for_restart"]
-                                    break
-                        except Exception as err:
-                            log.warning(
-                                f"Failed to get the block number to start from peer {peer_id}. Error: {str(err)}")
-
-                log.info(f"Number of the block in which the node will start: {block_for_start}")
-
-                tmp = True
-
-                while tmp:
-                    for peer_id, peer_config in peers.items():
-                        try:
-                            response = requests.get(f"{peer_config['server_addr']}/get_current_number_block",
-                                                    verify=False)
-                        except Exception as err:
-                            log.error(f"Failed to get the current block number from peer {peer_id}. Error: {str(err)}")
-                        if response.status_code != 200:
-                            log.error(f"Failed to get the current block number from peer {peer_id}")
-                            sleep(4)
-                        else:
-                            response_body = response.json()
-                            log.info(
-                                f"Current block: {response_body['current_block']}. The node will start in the block {block_for_start}")
-                            if response_body["current_block"] >= block_for_start:
-                                tmp = False
-                                break
-                            else:
-                                sleep(4)
-
-                node_service.current_node.restart()
-                break
+# def validate_node_to_network_connection():
+#     while not node_service.current_node.stop_event.is_set():
+#         time.sleep(common.config.config_service.config.recovery_check_interval)
+#         url = f"http://localhost:{common.config.config_service.config.node_http_rpc_port}"
+#         data = {"id": 1, "jsonrpc": "2.0", "method": "system_peers", "params": []}
+#         response = requests.post(url, json=data)
+#         if response.status_code == 200:
+#             text = response.json()
+#             peers_count = text["result"]
+#             if len(peers_count) == 0:
+#                 log.info("Restarting the node, because it lost connection to the network")
+#                 if common.file.psk_file_manager.exists():
+#                     common.file.psk_file_manager.remove()
+#                 if common.file.psk_sig_file_manager.exists():
+#                     common.file.psk_sig_file_manager.remove()
+#
+#                 psk_obj = None
+#                 while psk_obj is None:
+#                     psk_obj = pre_shared_key.get_psk_from_peers()
+#                     sleep(10)
+#                 common.file.psk_file_manager.create(psk_obj.psk)
+#                 common.file.psk_sig_file_manager.create(psk_obj.signature)
+#
+#                 block_for_start = None
+#
+#                 # TODO current_block < block_for_start
+#
+#                 peers = common.config.config_service.config.peers
+#
+#                 while block_for_start is None:
+#                     for peer_id, peer_config in peers.items():
+#                         try:
+#                             response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart",
+#                                                     verify=False)
+#                             if response.status_code != 200:
+#                                 log.warning(f"Failed to get the block number to start from peer {peer_id}")
+#                             else:
+#                                 response_body = response.json()
+#                                 if response_body["num_block_for_restart"] != 0:
+#                                     block_for_start = response_body["num_block_for_restart"]
+#                                     break
+#                         except Exception as err:
+#                             log.warning(
+#                                 f"Failed to get the block number to start from peer {peer_id}. Error: {str(err)}")
+#
+#                 log.info(f"Number of the block in which the node will start: {block_for_start}")
+#
+#                 tmp = True
+#
+#                 while tmp:
+#                     for peer_id, peer_config in peers.items():
+#                         try:
+#                             response = requests.get(f"{peer_config['server_addr']}/get_current_number_block",
+#                                                     verify=False)
+#                         except Exception as err:
+#                             log.error(f"Failed to get the current block number from peer {peer_id}. Error: {str(err)}")
+#                         if response.status_code != 200:
+#                             log.error(f"Failed to get the current block number from peer {peer_id}")
+#                             sleep(4)
+#                         else:
+#                             response_body = response.json()
+#                             log.info(
+#                                 f"Current block: {response_body['current_block']}. The node will start in the block {block_for_start}")
+#                             if response_body["current_block"] >= block_for_start:
+#                                 tmp = False
+#                                 break
+#                             else:
+#                                 sleep(4)
+#
+#                 node_service.current_node.restart()
+#                 break
         # else:
         #     log.info("Restarting the node, because it not answering RPC methods calls")
         #     common.file.psk_sig_file_manager.remove()
