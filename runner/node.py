@@ -106,10 +106,56 @@ def validate_node_to_network_connection():
                 common.file.psk_file_manager.create(psk_obj.psk)
                 common.file.psk_sig_file_manager.create(psk_obj.signature)
 
+                block_for_start = None
+
+                # TODO current_block < block_for_start
+
+                peers = common.config.config_service.config.peers
+
+                while block_for_start is None:
+                    for peer_id, peer_config in peers.items():
+                        try:
+                            response = requests.get(f"{peer_config['server_addr']}/get_number_block_for_restart",
+                                                    verify=False)
+                            if response.status_code != 200:
+                                log.warning(f"Failed to get the block number to start from peer {peer_id}")
+                            else:
+                                response_body = response.json()
+                                if response_body["num_block_for_restart"] != 0:
+                                    block_for_start = response_body["num_block_for_restart"]
+                                    break
+                        except Exception as err:
+                            log.warning(
+                                f"Failed to get the block number to start from peer {peer_id}. Error: {str(err)}")
+
+                log.info(f"Number of the block in which the node will start: {block_for_start}")
+
+                tmp = True
+
+                while tmp:
+                    for peer_id, peer_config in peers.items():
+                        try:
+                            response = requests.get(f"{peer_config['server_addr']}/get_current_number_block",
+                                                    verify=False)
+                        except Exception as err:
+                            log.error(f"Failed to get the current block number from peer {peer_id}. Error: {str(err)}")
+                        if response.status_code != 200:
+                            log.error(f"Failed to get the current block number from peer {peer_id}")
+                            sleep(4)
+                        else:
+                            response_body = response.json()
+                            log.info(
+                                f"Current block: {response_body['current_block']}. The node will start in the block {block_for_start}")
+                            if response_body["current_block"] >= block_for_start:
+                                tmp = False
+                                break
+                            else:
+                                sleep(4)
+
                 node_service.current_node.restart()
                 break
-        else:
-            log.info("Restarting the node, because it not answering RPC methods calls")
-            common.file.psk_sig_file_manager.remove()
-            common.file.psk_file_manager.remove()
-            node_service.current_node.restart()
+        # else:
+        #     log.info("Restarting the node, because it not answering RPC methods calls")
+        #     common.file.psk_sig_file_manager.remove()
+        #     common.file.psk_file_manager.remove()
+        #     node_service.current_node.restart()

@@ -26,8 +26,8 @@ use sp_core::{crypto::KeyTypeId};
 #[cfg(test)]
 mod tests;
 
-const BLOCK_NUM_FOR_PSK_ROTATION: u64 = 60;
-const BLOCK_NUM_FOR_STARTING_KEY_ROTATION: u64 = 10;
+// const BLOCK_NUM_FOR_PSK_ROTATION: u64 = 60;
+// const BLOCK_NUM_FOR_STARTING_KEY_ROTATION: u64 = 10;
 
 pub const KEY_TYPE: KeyTypeId = KeyTypeId(*b"opsk");
 
@@ -91,34 +91,24 @@ pub mod pallet {
         type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
         type RuntimeCall: From<Call<Self>>;
         type Randomness: Randomness<Self::Hash, BlockNumberFor<Self>>;
-
         // Max const value is u128 16 bytes, but entropy is u256 by default, hence we need to
         // concat two 16 bytes long slices to get proper difficulty
         #[pallet::constant]
         type PskDifficulty1: Get<u128>;
         #[pallet::constant]
         type PskDifficulty2: Get<u128>;
-
         #[pallet::constant]
         type UnsignedPriority: Get<TransactionPriority>;
+        type ForceOrigin: EnsureOrigin<Self::RuntimeOrigin>;
+        #[pallet::constant]
+        type BlockOfNumberBeforeStartPskRotation: Get<u64>;
+        #[pallet::constant]
+        type BlockOfNumberBeforeRestart: Get<u64>;
     }
 
     #[pallet::pallet]
     // #[pallet::generate_store(pub (super) trait Store)]
     pub struct Pallet<T>(PhantomData<T>);
-
-    #[pallet::type_value]
-    pub(super) fn NumBlockForRestartDefault<T: Config>() -> u64 { 0u64 }
-    #[pallet::storage]
-    #[pallet::getter(fn num_block_for_restart)]
-    pub(super) type NumBlockForRestart<T> = StorageValue<Value = u64, QueryKind = ValueQuery, OnEmpty = NumBlockForRestartDefault<T>>;
-
-    #[pallet::storage]
-    pub(super) type InBlock<T: Config> = StorageMap<_, Twox64Concat, u64, bool>;
-
-    #[pallet::storage]
-    pub(super) type SelectedPeers<T: Config> = StorageDoubleMap<_, Twox64Concat, u64, Twox64Concat, [u8; 52], [u8; 52]>;
-
 
     #[pallet::hooks]
     impl<T: Config> Hooks<BlockNumberFor<T>> for Pallet<T>
@@ -239,6 +229,33 @@ pub mod pallet {
     #[pallet::event]
     pub enum Event<T: Config> {}
 
+    #[pallet::type_value]
+    pub(super) fn NumBlockForRestartDefault<T: Config>() -> u64 { 0u64 }
+    #[pallet::storage]
+    #[pallet::getter(fn num_block_for_restart)]
+    pub(super) type NumBlockForRestart<T> = StorageValue<Value = u64, QueryKind = ValueQuery, OnEmpty = NumBlockForRestartDefault<T>>;
+
+    #[pallet::storage]
+    pub(super) type InBlock<T: Config> = StorageMap<_, Twox64Concat, u64, bool>;
+
+    #[pallet::storage]
+    pub(super) type SelectedPeers<T: Config> = StorageDoubleMap<_, Twox64Concat, u64, Twox64Concat, [u8; 52], [u8; 52]>;
+
+
+    // #[pallet::genesis_config]
+    // #[derive(frame_support::DefaultNoBound)]
+    // pub struct GenesisConfig<T: Config> {
+    //     pub num_blocks_before_restart: u64,
+    //     pub _config: sp_std::marker::PhantomData<T>,
+    // }
+    //
+    // #[pallet::genesis_build]
+    // impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+    //     fn build(&self) {
+    //         <NumOfBlocksBeforeRestart<T>>::put(&self.num_blocks_before_restart);
+    //     }
+    // }
+
     #[pallet::error]
     pub enum Error<T> {
         HttpFetchingError,
@@ -246,6 +263,7 @@ pub mod pallet {
         TimeLineCheck,
         NumberBlockForRestartAlreadyExists,
         SelectedPeerIsAlreadyThere,
+        ForASmallValue,
     }
 
 }
@@ -282,7 +300,7 @@ impl<T: Config> Pallet<T> {
             .collect();
         match Self::choose_psk_creator(entropy, peer_ids) {
             Some(psk_creator) => {
-                let num_block_for_starting_key_rotation = current_block_number + BLOCK_NUM_FOR_STARTING_KEY_ROTATION;
+                let num_block_for_starting_key_rotation = current_block_number + T::BlockOfNumberBeforeStartPskRotation::get();
                 log::info!("[OCW-PSK] Number block for starting key rotation {:?}.", num_block_for_starting_key_rotation);
                 if !InBlock::<T>::contains_key(current_block_number) {
                     let signer = Signer::<T, T::AuthorityId>::all_accounts();
@@ -393,7 +411,7 @@ impl<T: Config> Pallet<T> {
             return Ok(false)
         }
         log::info!("[OCW-PSK] Start rotation key...");
-        let num_block_restart = current_block_number + BLOCK_NUM_FOR_PSK_ROTATION;
+        let num_block_restart = current_block_number + T::BlockOfNumberBeforeRestart::get();
         let local_peer_id = match support::get_local_peer_id(rpc_port) {
             Ok(id) => id,
             Err(err) => {
