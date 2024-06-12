@@ -168,12 +168,12 @@ pub mod pallet {
 
             match Self::create_and_raw_unsigned(block_num, commit_balkline, commit_deadline) {
                 Ok(()) => {
-                    log::info!(
+                    log::debug!(
                         "[RANDAO] Successful created a campaign for the block {:?}",
                         block_num
                     )
                 }
-                Err(err) => log::info!(
+                Err(err) => log::debug!(
                     "[RANDAO] Failed to create a campaign for the block {:?} : {:?}",
                     block_num,
                     err
@@ -346,7 +346,7 @@ impl<T: Config> Pallet<T> {
             from,
             commitment,
         });
-        log::info!(
+        log::debug!(
             "[RANDAO] The account with the ID {:?} did commit for campaign {:?}",
             from,
             block_num
@@ -397,7 +397,7 @@ impl<T: Config> Pallet<T> {
             from,
             secret,
         });
-        log::info!(
+        log::debug!(
             "[RANDAO] The account with the ID {:?} did reveal for campaign {:?}.",
             from,
             block_num

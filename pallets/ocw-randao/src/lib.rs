@@ -83,7 +83,7 @@ pub mod pallet {
     {
         /// RANDAO offchain worker entry point.
         fn offchain_worker(block_number: BlockNumberFor<T>) {
-            log::info!(
+            log::debug!(
                 "[OCW-RANDAO] Running offchain worker in block: {:?}",
                 block_number
             );
@@ -162,7 +162,7 @@ pub mod pallet {
                 });
                 for (acc, res) in &results {
                     match res {
-                        Ok(()) => log::info!("[OCW-RANDAO] [{:?}]: submit transaction success. Commit: success.", acc.id),
+                        Ok(()) => log::debug!("[OCW-RANDAO] [{:?}]: submit transaction success. Commit: success.", acc.id),
                         Err(e) => log::error!("[OCW-RANDAO] [{:?}]: submit transaction failure. Reason: {:?}, Commit: failed.", acc.id, e),
                     }
                 }
@@ -185,7 +185,7 @@ pub mod pallet {
                 });
                 for (acc, res) in &results {
                     match res {
-                        Ok(()) => log::info!("[OCW-RANDAO] [{:?}]: submit transaction success. Reveal: success.", acc.id),
+                        Ok(()) => log::debug!("[OCW-RANDAO] [{:?}]: submit transaction success. Reveal: success.", acc.id),
                         Err(e) => log::error!("[OCW-RANDAO] [{:?}]: submit transaction failure. Reason: {:?}, Reveal: failed.", acc.id, e),
                     }
                 }

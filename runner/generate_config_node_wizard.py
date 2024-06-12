@@ -432,10 +432,10 @@ try:
     # config_manager.create(common.config.config_service.config.to_json())
 
     # recovery-check-interval
-    i += 1
-    print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
-    enter_value("recovery_check_interval", "Enter recovery check interval", uint_type, "50")
-    config_manager.create(common.config.config_service.config.to_json())
+    # i += 1
+    # print(f"{Fore.GREEN}<Step {i}> {Fore.RESET}", end="")
+    # enter_value("recovery_check_interval", "Enter recovery check interval", uint_type, "50")
+    # config_manager.create(common.config.config_service.config.to_json())
 
     # psk_file_path, psk_sig_file_path, node_logs_path, runner_logs_path, peers
     # common.config.config_service.config.psk_file_path = path.join(node_dir, "psk")
