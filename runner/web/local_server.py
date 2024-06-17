@@ -11,6 +11,7 @@ import common.config
 import common.file
 from core.pre_shared_key import Psk
 from web.error_handler import init_error_handlers
+from common.exceptions import PQKDnotSendKey
 
 
 GET_PSK_WAITING_TIME = 1
@@ -43,7 +44,10 @@ def start_thread_with_rotate_pre_shared_key():
 def restart_node():
     sleep(3)
     node.node_service.current_node.restart()
-    common.file.psk_sig_file_manager.remove()
+    try:
+        common.file.psk_sig_file_manager.remove()
+    except FileNotFoundError as err:
+        log.error(f"ERROR: {err}")
     return make_response()
 
 
@@ -66,8 +70,15 @@ def rotate_pre_shared_key(body):
         get_psk_result = None
 
         while get_psk_result is None:
-            get_psk_result = pre_shared_key.get_psk_from_peers(block_number, peer_id)
+            try:
+                get_psk_result = pre_shared_key.get_psk_from_peers(block_number, peer_id)
+            except PQKDnotSendKey as err:
+                log.error(f"Failed to get psk: {err}")
             sleep(GET_PSK_WAITING_TIME)
+            if node.node_service.current_node.process is None:
+                log.info("Failed to get psk before restarting the node.")
+                return Response(json.dumps({"message": "Failed to get psk"}), status=400, mimetype="application/json")
+
         psk = get_psk_result.psk
         signature = get_psk_result.signature
 

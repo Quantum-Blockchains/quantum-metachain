@@ -13,3 +13,7 @@ class PeerIsNotInHypercube(Exception):
 
 class NoTargetReceived(Exception):
     pass
+
+
+class PQKDnotSendKey(Exception):
+    pass

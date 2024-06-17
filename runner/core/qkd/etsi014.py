@@ -5,6 +5,7 @@ import validators
 
 from common import crypto
 from common.logger import log
+from common.exceptions import PQKDnotSendKey
 
 
 @dataclass(frozen=True)
@@ -14,7 +15,6 @@ class ETSI014Provider:
 
     def get_enc_key(self):
         qkd_url = f"{self.config['url']}/enc_keys?size=256"
-        log.info(f" get_enc_key: {qkd_url}")
         if not validators.url(qkd_url):
             raise requests.exceptions.InvalidURL
         response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"))
@@ -39,9 +39,12 @@ class ETSI014Provider:
 
     @staticmethod
     def __unwrap_response(response):
-        key = response["keys"][0]
-        key_id = key["key_ID"]
-        qkd_key = key["key"]
-        decoded_qkd_key = crypto.base64_to_hex(qkd_key)
-
+        try:
+            key = response["keys"][0]
+            key_id = key["key_ID"]
+            qkd_key = key["key"]
+            decoded_qkd_key = crypto.base64_to_hex(qkd_key)
+        except Exception as err:
+            log.info("Franek")
+            raise PQKDnotSendKey(f"{response['message']}")
         return key_id, decoded_qkd_key

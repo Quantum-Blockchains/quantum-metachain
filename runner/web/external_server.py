@@ -165,7 +165,10 @@ def data_qkd_exchange():
         "server_addr": server_addr
     }
     common.config.config_service.config.peers[peer_id] = qkd_info
-    common.file.config_file_manager.remove()
+    try:
+        common.file.config_file_manager.remove()
+    except FileNotFoundError as err:
+        log.error(f"Error: {err}")
     common.file.config_file_manager.create(common.config.config_service.config.to_json())
     return jsonify({
         "peer_id": common.config.config_service.config.local_peer_id,

@@ -45,7 +45,7 @@ def handle_unexpected_exception(e: Exception):
 
 def handle_os_exception(e: OSError):
     log.error(f"There was an OS error: {e}")
-    return make_response(json.dumps({internal_server_error_response}), 500)
+    return make_response(json.dumps(internal_server_error_response), 500)
 
 
 def handle_peer_misconfigured_error(_e: PeerMisconfiguredError):

@@ -10,6 +10,7 @@ from common.logger import log
 from core import onetimepad
 from .qkd.provider_factory import get_qkd_provider
 from .qrng import generate_random_hex
+from common.exceptions import PQKDnotSendKey
 
 EncryptedPskResponse = tuple[str, str, str]
 
@@ -46,10 +47,13 @@ def __fetch_from_peers() -> [Psk]:
     for peer_id, peer_config in peers.items():
         fetch_response = __fetch_encrypted_psk(peer_id, peer_config['server_addr'])
         if fetch_response is not None:
-            encrypted_key, qkd_key_id, signature = fetch_response
-            psk = __decrypt_psk(encrypted_key, peer_config['qkd'], qkd_key_id)
-            log.debug(f"Fetched psk: {psk} and signature: {signature}")
-            psks_with_sig.append(Psk(psk, signature=signature))
+            try:
+                encrypted_key, qkd_key_id, signature = fetch_response
+                psk = __decrypt_psk(encrypted_key, peer_config['qkd'], qkd_key_id)
+                log.debug(f"Fetched psk: {psk} and signature: {signature}")
+                psks_with_sig.append(Psk(psk, signature=signature))
+            except PQKDnotSendKey as err:
+                log.error(f"Failed to get psk: {err}")
 
     return psks_with_sig
 

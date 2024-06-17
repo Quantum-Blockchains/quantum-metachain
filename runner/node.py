@@ -15,6 +15,7 @@ from time import sleep
 class Node:
     def __init__(self, startup_args):
         self.startup_args = startup_args
+        self.status_code = None
 #         self.recovery_cron = None
         self.process = None
 
@@ -27,6 +28,9 @@ class Node:
         self.process = process
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
+
+        errors_node_thread = Thread(target=errors_node, args=())
+        errors_node_thread.start()
 
         self.stop_event = threading.Event()
 #         self.recovery_cron = Thread(target=validate_node_to_network_connection, args=())
@@ -66,6 +70,14 @@ class NodeService:
 node_service = NodeService(None)
 
 
+def errors_node():
+    while not node_service.current_node.stop_event.is_set():
+        code = node_service.current_node.process.returncode
+        if code == 1:
+            node_service.current_node.status_code = code
+            break
+
+
 def write_logs_node_to_file():
     with open(common.file.node_logs_file_manager.file_path, 'a') as logfile:
         logfile.write("====================================================")
@@ -77,10 +89,8 @@ def write_logs_node_to_file():
     try:
         node_service.current_node.process.wait()
     except Exception as err:
-        if not node_service.current_node.stop_event.is_set():
-            log.error(f'ERROR: {err}')
-            with open(common.file.node_logs_file_manager.file_path, 'a') as logfile:
-                logfile.write(f'ERROR: {err}')
+        with open(common.file.node_logs_file_manager.file_path, 'a') as logfile:
+            logfile.write("====================================================\n")
 
 
 # def validate_node_to_network_connection():

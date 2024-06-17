@@ -20,8 +20,6 @@ class FileManager:
     def remove(self):
         if self.exists():
             os.remove(self.file_path)
-        else:
-            raise FileNotFoundError
 
 
 global psk_file_manager, node_key_file_manager, psk_sig_file_manager, config_file_manager, node_logs_file_manager,\
