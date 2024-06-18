@@ -26,13 +26,16 @@ class Node:
 
         log.info(f"QMC process ID: {process.pid}")
         self.process = process
+
+        self.stop_event = threading.Event()
+
         write_node_logs_thread = Thread(target=write_logs_node_to_file, args=())
         write_node_logs_thread.start()
 
         errors_node_thread = Thread(target=errors_node, args=())
         errors_node_thread.start()
 
-        self.stop_event = threading.Event()
+
 #         self.recovery_cron = Thread(target=validate_node_to_network_connection, args=())
 #         self.recovery_cron.start()
 
