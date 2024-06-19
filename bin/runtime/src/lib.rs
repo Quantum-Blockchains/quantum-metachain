@@ -395,7 +395,7 @@ impl ocw_psk::Config for Runtime {
 	type UnsignedPriority = ConstU64<1u64>;
 	type ForceOrigin = frame_system::EnsureRoot<AccountId>;
 	type BlockOfNumberBeforeStartPskRotation = ConstU64<10u64>;
-	type BlockOfNumberBeforeRestart = ConstU64<20u64>;
+	type BlockOfNumberBeforeRestart = ConstU64<120u64>;
 }
 
 impl ocw_randao::Config for Runtime {
