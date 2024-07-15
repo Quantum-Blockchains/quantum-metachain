@@ -7,6 +7,7 @@ ENV_PATH = path.join(ROOT_DIR, ".env")
 
 PQKD_CERT_PATH = 'pqkd/client.crt'
 PQKD_KEY_PATH = 'pqkd/client.key'
+PQKD_VERIFY_PATH = 'pqkd/qbck-ca.crt'
 NODE_KEY_PATH = 'node_key'
 EXTERNAL_CERT_PATH = 'external_server/cert.pem'
 EXTERNAL_KEY_PATH = 'external_server/key.pem'
@@ -69,6 +70,8 @@ class Config:
                 qkd_config['client_cert_path'] = to_absolute(qkd_config['client_cert_path'])
             if 'cert_key_path' in qkd_config and qkd_config['cert_key_path'] is not None:
                 qkd_config['cert_key_path'] = to_absolute(qkd_config['cert_key_path'])
+            if 'verify_path' in qkd_config and qkd_config['verify_path'] is not None:
+                qkd_config['verify_path'] = to_absolute(qkd_config['verify_path'])
         return peers
 
 

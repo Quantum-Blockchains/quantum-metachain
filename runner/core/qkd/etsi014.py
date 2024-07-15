@@ -17,7 +17,8 @@ class ETSI014Provider:
         qkd_url = f"{self.config['url']}/enc_keys?size=256"
         if not validators.url(qkd_url):
             raise requests.exceptions.InvalidURL
-        response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"))
+        response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"),
+                                  self.config.get("verify_path"))
         log.debug(f"response from qkd: {response}")
         return self.__unwrap_response(response)
 
@@ -26,16 +27,18 @@ class ETSI014Provider:
         if not validators.url(qkd_url):
             raise requests.exceptions.InvalidURL
 
-        response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"))
+        response = self._call_qkd(qkd_url, self.config.get("client_cert_path"), self.config.get("cert_key_path"),
+                                  self.config.get("verify_path"))
         log.debug(f"response from qkd: {response}")
         return self.__unwrap_response(response)
 
     @staticmethod
-    def _call_qkd(qkd_url, cert_path=None, key_path=None):
+    def _call_qkd(qkd_url, cert_path=None, key_path=None, verify_path=None):
+        
         if cert_path is None or key_path is None:
             return requests.get(qkd_url).json()
         else:
-            return requests.get(qkd_url, cert=(cert_path, key_path), verify=False).json()
+            return requests.get(qkd_url, cert=(cert_path, key_path), verify=verify_path).json()
 
     @staticmethod
     def __unwrap_response(response):
