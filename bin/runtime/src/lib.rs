@@ -53,6 +53,7 @@ pub use ocw_psk::{self, Call as OcwPskCall};
 pub use ocw_randao::{self, Call as OcwRandaoCall};
 pub use randao::{self, Call as RandaoCall};
 pub use hypercube;
+pub use did;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -405,6 +406,10 @@ impl ocw_randao::Config for Runtime {
     type Randomness = RandomnessCollectiveFlip;
 }
 
+impl did::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+}
+
 impl hypercube::Config for Runtime {
 	type MaxPeerIdLength = ConstU32<128u32>;
 	type MaxPeers = ConstU32<{ u32::MAX }>;
@@ -443,6 +448,7 @@ construct_runtime!(
 		Randao: randao,
         OcwRandao: ocw_randao,
 		Hypercube: hypercube,
+		Did: did,
 	}
 );
 

@@ -64,13 +64,13 @@ try:
                 sleep(10)
             common.file.psk_file_manager.create(psk_obj.psk)
             common.file.psk_sig_file_manager.create(psk_obj.signature)
-
+    
             block_for_start = None
-
+    
             # TODO current_block < block_for_start
-
+    
             peers = common.config.config_service.config.peers
-
+    
             while block_for_start is None:
                 for peer_id, peer_config in peers.items():
                     try:
@@ -84,11 +84,11 @@ try:
                                 break
                     except Exception as err:
                         log.warning(f"Failed to get the block number to start from peer {peer_id}. Error: {str(err)}")
-
+    
             log.info(f"Number of the block in which the node will start: {block_for_start}")
-
+    
             tmp = True
-
+    
             while tmp:
                 for peer_id, peer_config in peers.items():
                     try:
@@ -107,10 +107,10 @@ try:
                             break
                         else:
                             sleep(4)
-
+    
         node.node_service.current_node.status_code = None
         node.node_service.current_node.start()
-
+    
         while True:
             if node.node_service.current_node.status_code == 1:
                 log.error("Process Node return error.")

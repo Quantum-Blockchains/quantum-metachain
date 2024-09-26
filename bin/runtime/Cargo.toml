@@ -58,6 +58,7 @@ ocw-psk = { path = "../../pallets/ocw-psk", default-features = false }
 ocw-randao = { path = "../../pallets/ocw-randao", default-features = false }
 randao = { path = "../../pallets/randao", default-features = false }
 hypercube = { path = "../../pallets/hypercube", default-features = false }
+did = { path = "../../pallets/did", default-features = false }
 
 pallet-node-authorization = { default-features = false, version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
 log = "0.4.20"
@@ -89,6 +90,7 @@ std = [
 	"ocw-randao/std",
 	"randao/std",
 	"hypercube/std",
+	"did/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",

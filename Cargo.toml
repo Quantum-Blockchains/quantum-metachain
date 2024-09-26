@@ -8,6 +8,7 @@ members = [
     "pallets/ocw-randao",
     "pallets/randao",
     "pallets/support",
-    "pallets/hypercube"
+    "pallets/hypercube",
+    "pallets/did"
 ]
 

@@ -12,6 +12,8 @@ from scalecodec import ScaleBytes
 import json
 from os import path, mkdir, makedirs
 from urllib.parse import urlparse
+from substrateinterface import Keypair, KeypairType
+from substrateinterface.exceptions import SubstrateRequestException
 
 
 class ExternalServerWrapper:
@@ -31,6 +33,14 @@ class ExternalServerWrapper:
                           methods=['GET'])
         self.add_endpoint('/targets_exchange', 'targets_exchange', targets_exchange,
                           methods=['POST'])
+
+        self.add_endpoint('/schema/<id>', 'get_shema', get_schema, methods=['GET'])
+        self.add_endpoint('/schema', 'set_schema', set_schema, methods=['POST'])
+        self.add_endpoint('/credential-definition', 'set_credential_definition', set_credential_definition, methods=['POST'])
+        self.add_endpoint('/credential-definition/<id>', 'get_credential_definition', get_credential_definition, methods=['GET'])
+        self.add_endpoint('/revocation-registry-definition', 'set_revocation_registry_definition', set_revocation_registry_definition, methods=['POST'])
+        self.add_endpoint('/revocation-registry-definition/<id>', 'get_revocation_registry_definition', get_revocation_registry_definition, methods=['GET'])
+        self.add_endpoint('/revocation-list', 'set_revocation_list', set_revocation_list, methods=['POST'])
 
     def add_endpoint(self, endpoint=None, endpoint_name=None, handler=None, methods=None, *args, **kwargs):
         if methods is None:
@@ -201,3 +211,271 @@ def get_current_number_block():
     return jsonify(({
         "current_block": block["header"]["number"]
     }))
+
+
+def get_schema(id):
+    log.info(f'Get shema. Schema id: {id}')
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    schema = ws_provider.query(
+        module="Did",
+        storage_function="Schemas",
+        params=[id]
+    )
+    if schema == None:
+        schema_json = {}
+    else:
+        schema_json = {
+            "schema_id": schema.value["schema_id"],
+            "issuer_id": schema.value["issuer_id"],
+            "attr_names": schema.value["attr_names"],
+            "name": schema.value["name"],
+            "version": schema.value["version"],
+            "ver": schema.value["ver"]
+        }
+
+    return jsonify(({
+        "schema": schema_json
+    }))
+
+
+def set_schema():
+    log.info('Set shema.')
+
+    body = request.get_json()
+    try:
+        schema = body["schema"]
+    except KeyError:
+        return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+   
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    mnemonic = "bone laugh knife column endorse despair rail track lend hope tribe quote"
+    keypair = Keypair.create_from_mnemonic(mnemonic, crypto_type=KeypairType.ED25519)
+    
+    
+    call = ws_provider.compose_call(
+        call_module="Did",
+        call_function="create_schema",
+        call_params={
+            "schema":  schema
+        },
+    )
+    extrinsic = ws_provider.create_signed_extrinsic(call=call, keypair=keypair)
+    try:
+        receipt = ws_provider.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+        print(
+            "Extrinsic '{}' sent and included in block '{}'".format(
+                receipt.extrinsic_hash, receipt.block_hash
+            )
+        )
+        return jsonify(({
+            "extrinsic_hash": receipt.extrinsic_hash,
+            "block_hash": receipt.block_hash,
+            "error": False,
+            "message_error": ""
+        })) 
+    except SubstrateRequestException as e:
+        print("Failed to send: {}".format(e))
+        return jsonify(({
+            "extrinsic_hash": "",
+            "block_hash": "",
+            "error": True,
+            "message_error": "Failed to send: {}".format(e)
+        }))
+
+
+def set_credential_definition():
+    log.info('Set credential definition.')
+    body = request.get_json()
+    try:
+        cred_def = body["cred_def"]
+    except KeyError:
+        return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    mnemonic = "bone laugh knife column endorse despair rail track lend hope tribe quote"
+    keypair = Keypair.create_from_mnemonic(mnemonic, crypto_type=KeypairType.ED25519)
+    
+    tmp = list()
+    for i in cred_def["value"]["primary"]["r"]:
+        tmp.append({"name": i, "value": cred_def["value"]["primary"]["r"][i]})
+    cred_def["value"]["primary"]["r"] = tmp
+    if not "revocation" in cred_def["value"]:
+        cred_def["value"]["revocation"] = None
+    
+    call = ws_provider.compose_call(
+        call_module="Did",
+        call_function="create_credential_definition",
+        call_params={
+            "cred_def": cred_def
+        },
+    )
+    extrinsic = ws_provider.create_signed_extrinsic(call=call, keypair=keypair)
+    try:
+        receipt = ws_provider.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+        print(
+            "Extrinsic '{}' sent and included in block '{}'".format(
+                receipt.extrinsic_hash, receipt.block_hash
+            )
+        )
+        return jsonify(({
+            "extrinsic_hash": receipt.extrinsic_hash,
+            "block_hash": receipt.block_hash,
+            "error": False,
+            "message_error": ""
+        })) 
+    except SubstrateRequestException as e:
+        print("Failed to send: {}".format(e))
+        return jsonify(({
+            "extrinsic_hash": "",
+            "block_hash": "",
+            "error": True,
+            "message_error": "Failed to send: {}".format(e)
+        }))
+
+
+def get_credential_definition(id):
+    log.info(f'Get credential definition. Id: {id}')
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    cred_def = ws_provider.query(
+        module="Did",
+        storage_function="CredentialDefinitions",
+        params=[id]
+    )
+    if cred_def == None:
+        cred_def_json = {}
+    else:
+        cred_def_json = {
+            "id": cred_def.value["cred_def_id"],
+            "schemaId": cred_def.value["schema_id"],
+            "type": cred_def.value["ttype"],
+            "tag": cred_def.value["tag"],
+            "value": cred_def.value["value"],
+            "ver": cred_def.value["ver"]
+        }
+        tmp = {}
+        for i in cred_def_json["value"]["primary"]["r"]:
+            print(5)
+            print(i)
+            tmp[i["name"]] = i["value"]
+        cred_def_json["value"]["primary"]["r"] = tmp
+        if cred_def_json["value"]["revocation"] is None:
+            del cred_def_json["value"]["revocation"]
+    return jsonify(({
+        "credential-definition": cred_def_json
+    }))
+
+
+def set_revocation_registry_definition():
+    log.info('Set revocation registry definition.')
+    body = request.get_json()
+    try:
+        rev_reg_def = body["rev_reg_def"]
+    except KeyError:
+        return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    mnemonic = "bone laugh knife column endorse despair rail track lend hope tribe quote"
+    keypair = Keypair.create_from_mnemonic(mnemonic, crypto_type=KeypairType.ED25519)
+
+    tmp = str(rev_reg_def["value"]["public_keys"])
+    # for i in rev_reg_def["value"]["public_keys"]:
+    #     tmp.append({"name": i, "value": rev_reg_def["value"]["public_keys"][i]})
+    rev_reg_def["value"]["public_keys"] = tmp
+
+    call = ws_provider.compose_call(
+        call_module="Did",
+        call_function="create_revocation_registry_definition",
+        call_params={
+            "rev_reg_def": rev_reg_def
+        },
+    )
+    extrinsic = ws_provider.create_signed_extrinsic(call=call, keypair=keypair)
+    try:
+        receipt = ws_provider.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+        print(
+            "Extrinsic '{}' sent and included in block '{}'".format(
+                receipt.extrinsic_hash, receipt.block_hash
+            )
+        )
+        return jsonify(({
+            "extrinsic_hash": receipt.extrinsic_hash,
+            "block_hash": receipt.block_hash,
+            "error": False,
+            "message_error": ""
+        })) 
+    except SubstrateRequestException as e:
+        print("Failed to send: {}".format(e))
+        return jsonify(({
+            "extrinsic_hash": "",
+            "block_hash": "",
+            "error": True,
+            "message_error": "Failed to send: {}".format(e)
+        }))
+
+
+def get_revocation_registry_definition(id):
+    log.info(f'Get revocation registry definition. Id: {id}')
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    rev_reg_def = ws_provider.query(
+        module="Did",
+        storage_function="RevocationRegistryDefinitions",
+        params=[id]
+    )
+    if rev_reg_def == None:
+        rev_reg_def_json = {}
+    else:
+        rev_reg_def_json = {
+            "rev_reg_def_id": rev_reg_def.value["rev_reg_def_id"],
+            "cred_def_id": rev_reg_def.value["cred_def_id"],
+            "rev_reg_def_type": rev_reg_def.value["rev_reg_def_type"],
+            "tag": rev_reg_def.value["tag"],
+            "value": rev_reg_def.value["value"],
+            "ver": rev_reg_def.value["ver"]
+        }
+        rev_reg_def_json["value"]["public_keys"] = json.load(rev_reg_def_json["value"]["public_keys"])
+    return jsonify(({
+        "revocation-registry-definition": rev_reg_def_json
+    }))
+
+
+def set_revocation_list():
+    log.info('Set revocation list.')
+    body = request.get_json()
+    try:
+        rev_list = body["rev_list"]
+    except KeyError:
+        return make_response(json.dumps({"message": "Bad request"}), status=400, mimetype="application/json")
+    ws_provider = SubstrateInterface(f"ws://127.0.0.1:{common.config.config_service.config.node_http_rpc_port}")
+    mnemonic = "bone laugh knife column endorse despair rail track lend hope tribe quote"
+    keypair = Keypair.create_from_mnemonic(mnemonic, crypto_type=KeypairType.ED25519)
+
+    if not "timestamp" in rev_list:
+        rev_list["timestamp"] = None
+
+    call = ws_provider.compose_call(
+        call_module="Did",
+        call_function="create_revocation_list",
+        call_params={
+            "rev_list": rev_list
+        },
+    )
+    extrinsic = ws_provider.create_signed_extrinsic(call=call, keypair=keypair)
+    try:
+        receipt = ws_provider.submit_extrinsic(extrinsic, wait_for_inclusion=True)
+        print(
+            "Extrinsic '{}' sent and included in block '{}'".format(
+                receipt.extrinsic_hash, receipt.block_hash
+            )
+        )
+        return jsonify(({
+            "extrinsic_hash": receipt.extrinsic_hash,
+            "block_hash": receipt.block_hash,
+            "error": False,
+            "message_error": ""
+        })) 
+    except SubstrateRequestException as e:
+        print("Failed to send: {}".format(e))
+        return jsonify(({
+            "extrinsic_hash": "",
+            "block_hash": "",
+            "error": True,
+            "message_error": "Failed to send: {}".format(e)
+        }))

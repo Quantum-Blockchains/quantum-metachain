@@ -321,7 +321,7 @@ impl<T: Config> Pallet<T> {
         let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         ensure!(
-            !ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
+            !ParticipantsOfCampaigns::<T>::contains_key(block_num, from),
             Error::<T>::ParticipantIsAlreadyThere
         );
         let mut campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
@@ -338,7 +338,7 @@ impl<T: Config> Pallet<T> {
             commitment,
         };
 
-        ParticipantsOfCampaigns::<T>::insert(block_num, &from, new_participant);
+        ParticipantsOfCampaigns::<T>::insert(block_num, from, new_participant);
         campaign.commit_num += 1;
         Campaigns::<T>::insert(block_num, campaign);
         Self::deposit_event(Event::LogCommit {
@@ -357,14 +357,14 @@ impl<T: Config> Pallet<T> {
 
     pub fn reveal_secret(from: [u8; 52], block_num: u64, secret: u64) -> DispatchResult {
         ensure!(
-            ParticipantsOfCampaigns::<T>::contains_key(block_num, &from),
+            ParticipantsOfCampaigns::<T>::contains_key(block_num, from),
             Error::<T>::IsNotAParticipant
         );
 
         let block = frame_system::Pallet::<T>::block_number();
         let current_block_num: u64 = block.saturated_into::<u64>();
         let mut campaign = Campaigns::<T>::get(block_num).ok_or(Error::<T>::IncorrectId)?;
-        let mut participant = ParticipantsOfCampaigns::<T>::get(block_num, &from).unwrap();
+        let mut participant = ParticipantsOfCampaigns::<T>::get(block_num, from).unwrap();
 
         ensure!(
             current_block_num > block_num - campaign.commit_deadline,
@@ -386,10 +386,10 @@ impl<T: Config> Pallet<T> {
         // } else {
         //     campaign.secret ^= secret;
         // }
-        campaign.secret = campaign.secret ^ secret;
+        campaign.secret ^= secret;
 
         participant.secret = secret;
-        ParticipantsOfCampaigns::<T>::insert(block_num, &from, participant);
+        ParticipantsOfCampaigns::<T>::insert(block_num, from, participant);
         campaign.reveals_num += 1;
         Campaigns::<T>::insert(block_num, campaign);
         Self::deposit_event(Event::LogReveal {

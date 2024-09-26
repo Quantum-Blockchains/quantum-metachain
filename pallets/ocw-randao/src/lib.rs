@@ -19,10 +19,9 @@ pub const KEY_TYPE: KeyTypeId = KeyTypeId(*b"rand");
 
 pub mod crypto {
 	use super::KEY_TYPE;
-	use sp_core::sr25519::Signature as Sr25519Signature;
 	use sp_runtime::{
 		app_crypto::{app_crypto, sr25519},
-		traits::Verify, MultiSignature, MultiSigner
+		MultiSignature, MultiSigner
 	};
 	app_crypto!(sr25519, KEY_TYPE);
 
@@ -250,7 +249,6 @@ pub mod pallet {
 }
 
 impl<T: Config> Pallet<T> {
-    #[deny(clippy::clone_double_ref)]
     fn derived_key(block_number: u64, prefix: &[u8]) -> Vec<u8> {
         block_number.using_encoded(|encoded_bn| {
             prefix
