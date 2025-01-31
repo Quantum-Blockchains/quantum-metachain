@@ -20,54 +20,54 @@ name = "qmc-node"
 clap = { version = "4.2.5", features = ["derive"] }
 futures = { version = "0.3.21", features = ["thread-pool"]}
 
-sc-cli = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-core = { version = "21.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-executor = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-network = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-service = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-telemetry = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-transaction-pool = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-transaction-pool-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-offchain = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-statement-store = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-consensus-aura = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-consensus-aura = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-consensus = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-consensus-grandpa = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-consensus-grandpa = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-client-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-runtime = { version = "24.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-io = { version = "23.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-timestamp = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-inherents = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-keyring = { version = "24.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-frame-system = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+sc-cli = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-core = { version = "21.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-executor = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-network = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-service = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-telemetry = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-transaction-pool = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-transaction-pool-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-offchain = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-statement-store = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-consensus-aura = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-consensus-aura = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-consensus = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-consensus-grandpa = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-consensus-grandpa = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-client-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-runtime = { version = "24.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-io = { version = "23.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-timestamp = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-inherents = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-keyring = { version = "24.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+frame-system = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 codec = { package = "parity-scale-codec", version = "3.6.1", default-features = false }
 bs58 = { version = "0.4.0" }
 
 # These dependencies are used for the node template's RPCs
 jsonrpsee = { version = "0.16.2", features = ["server"] }
-sp-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-rpc-api = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-blockchain = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-block-builder = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sc-basic-authorship = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-substrate-frame-rpc-system = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-transaction-payment-rpc = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+sp-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-rpc-api = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-blockchain = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-block-builder = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sc-basic-authorship = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+substrate-frame-rpc-system = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-transaction-payment-rpc = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 # These dependencies are used for runtime benchmarking
-frame-benchmarking = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-frame-benchmarking-cli = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+frame-benchmarking = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+frame-benchmarking-cli = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 # Local Dependencies
 qmc-runtime = { version = "0.0.1", path = "../runtime" }
 
 # CLI-specific dependencies
-try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 [build-dependencies]
-substrate-build-script-utils = { version = "3.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+substrate-build-script-utils = { version = "3.0.0", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 [features]
 default = []

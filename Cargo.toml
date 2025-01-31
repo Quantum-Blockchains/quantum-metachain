@@ -2,13 +2,10 @@
 resolver = "2"
 
 members = [
-	"bin/node",
-	"bin/runtime",
-    "pallets/ocw-psk",
-    "pallets/ocw-randao",
-    "pallets/randao",
-    "pallets/support",
-    "pallets/hypercube",
-    "pallets/did"
+  "bin/node",
+  "bin/runtime",
+  "pallets/ocw-randao",
+  "pallets/randao",
+  "pallets/support",
+  "pallets/did",
 ]
-

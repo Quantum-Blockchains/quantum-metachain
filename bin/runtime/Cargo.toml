@@ -13,127 +13,123 @@ repository = "https://github.com/Quantum-Blockchains/quantum-metachain"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-codec = { package = "parity-scale-codec", version = "3.6.1", default-features = false, features = ["derive"] }
-scale-info = { version = "2.5.0", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "3.6.1", default-features = false, features = [
+  "derive",
+] }
+scale-info = { version = "2.5.0", default-features = false, features = [
+  "derive",
+] }
 
-pallet-aura = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-insecure-randomness-collective-flip = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-sudo = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-frame-try-runtime = { version = "0.10.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2", optional = true }
-pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-frame-executive = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-block-builder = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2"}
-sp-consensus-aura = { version = "0.10.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-consensus-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-core = { version = "21.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2"}
-sp-offchain = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-session = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-sp-version = { version = "22.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+pallet-aura = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-balances = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+frame-support = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-insecure-randomness-collective-flip = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-sudo = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+frame-system = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+frame-try-runtime = { version = "0.10.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3", optional = true }
+pallet-timestamp = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-transaction-payment = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+frame-executive = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-block-builder = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-consensus-aura = { version = "0.10.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-consensus-grandpa = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-core = { version = "21.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-inherents = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-offchain = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-runtime = { version = "24.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-session = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-std = { version = "8.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-transaction-pool = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+sp-version = { version = "22.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 # Used for the node template's RPCs
-frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+frame-system-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-transaction-payment-rpc-runtime-api = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 # Used for runtime benchmarking
-frame-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2", optional = true }
-frame-system-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2", optional = true }
+frame-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3", optional = true }
+frame-system-benchmarking = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3", optional = true }
 
 #Contracts specific packages
-pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-pallet-contracts-primitives = { version = "24.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+pallet-contracts = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
+pallet-contracts-primitives = { version = "24.0.0", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 
 # Local Dependencies
-pallet-template = { version = "4.0.0-dev", default-features = false, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
-ocw-psk = { path = "../../pallets/ocw-psk", default-features = false }
 ocw-randao = { path = "../../pallets/ocw-randao", default-features = false }
 randao = { path = "../../pallets/randao", default-features = false }
-hypercube = { path = "../../pallets/hypercube", default-features = false }
 did = { path = "../../pallets/did", default-features = false }
 
-pallet-node-authorization = { default-features = false, version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2" }
+pallet-node-authorization = { default-features = false, version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 log = "0.4.20"
 
 
 [build-dependencies]
-substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.2", optional = true }
+substrate-wasm-builder = { version = "5.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3", optional = true }
 
 [features]
 default = ["std"]
 std = [
-	"frame-try-runtime?/std",
-	"frame-system-benchmarking?/std",
-	"frame-benchmarking?/std",
-	"codec/std",
-	"scale-info/std",
-	"frame-executive/std",
-	"frame-support/std",
-	"frame-system-rpc-runtime-api/std",
-	"frame-system/std",
-	"frame-try-runtime/std",
-	"pallet-aura/std",
-	"pallet-balances/std",
-	"pallet-node-authorization/std",
-	"pallet-grandpa/std",
-	"pallet-sudo/std",
-	"pallet-template/std",
-	"ocw-psk/std",
-	"ocw-randao/std",
-	"randao/std",
-	"hypercube/std",
-	"did/std",
-	"pallet-timestamp/std",
-	"pallet-transaction-payment-rpc-runtime-api/std",
-	"pallet-transaction-payment/std",
-	"pallet-contracts/std",
-    "pallet-contracts-primitives/std",
-	"sp-api/std",
-	"sp-block-builder/std",
-	"sp-consensus-aura/std",
-	"sp-consensus-grandpa/std",
-	"sp-core/std",
-	"pallet-insecure-randomness-collective-flip/std",
-	"sp-inherents/std",
-	"sp-offchain/std",
-	"sp-runtime/std",
-	"sp-session/std",
-	"sp-std/std",
-	"sp-transaction-pool/std",
-	"sp-version/std",
-	"substrate-wasm-builder",
+  "frame-try-runtime?/std",
+  "frame-system-benchmarking?/std",
+  "frame-benchmarking?/std",
+  "codec/std",
+  "scale-info/std",
+  "frame-executive/std",
+  "frame-support/std",
+  "frame-system-rpc-runtime-api/std",
+  "frame-system/std",
+  "frame-try-runtime/std",
+  "pallet-aura/std",
+  "pallet-balances/std",
+  "pallet-node-authorization/std",
+  "pallet-grandpa/std",
+  "pallet-sudo/std",
+  "ocw-randao/std",
+  "randao/std",
+  "did/std",
+  "pallet-timestamp/std",
+  "pallet-transaction-payment-rpc-runtime-api/std",
+  "pallet-transaction-payment/std",
+  "pallet-contracts/std",
+  "pallet-contracts-primitives/std",
+  "sp-api/std",
+  "sp-block-builder/std",
+  "sp-consensus-aura/std",
+  "sp-consensus-grandpa/std",
+  "sp-core/std",
+  "pallet-insecure-randomness-collective-flip/std",
+  "sp-inherents/std",
+  "sp-offchain/std",
+  "sp-runtime/std",
+  "sp-session/std",
+  "sp-std/std",
+  "sp-transaction-pool/std",
+  "sp-version/std",
+  "substrate-wasm-builder",
 ]
 runtime-benchmarks = [
-	"frame-benchmarking/runtime-benchmarks",
-	"frame-support/runtime-benchmarks",
-	"frame-system-benchmarking/runtime-benchmarks",
-	"frame-system/runtime-benchmarks",
-	"pallet-balances/runtime-benchmarks",
-	"pallet-grandpa/runtime-benchmarks",
-	"pallet-sudo/runtime-benchmarks",
-	"pallet-template/runtime-benchmarks",
-	"pallet-timestamp/runtime-benchmarks",
-	"sp-runtime/runtime-benchmarks",
+  "frame-benchmarking/runtime-benchmarks",
+  "frame-support/runtime-benchmarks",
+  "frame-system-benchmarking/runtime-benchmarks",
+  "frame-system/runtime-benchmarks",
+  "pallet-balances/runtime-benchmarks",
+  "pallet-grandpa/runtime-benchmarks",
+  "pallet-sudo/runtime-benchmarks",
+  "pallet-timestamp/runtime-benchmarks",
+  "sp-runtime/runtime-benchmarks",
 ]
 try-runtime = [
-	"frame-try-runtime/try-runtime",
-	"frame-executive/try-runtime",
-	"frame-system/try-runtime",
-	"frame-support/try-runtime",
-	"pallet-aura/try-runtime",
-	"pallet-balances/try-runtime",
-	"pallet-grandpa/try-runtime",
-	"pallet-sudo/try-runtime",
-	"pallet-template/try-runtime",
-	"pallet-timestamp/try-runtime",
-	"pallet-transaction-payment/try-runtime",
-	"pallet-insecure-randomness-collective-flip/try-runtime",
+  "frame-try-runtime/try-runtime",
+  "frame-executive/try-runtime",
+  "frame-system/try-runtime",
+  "frame-support/try-runtime",
+  "pallet-aura/try-runtime",
+  "pallet-balances/try-runtime",
+  "pallet-grandpa/try-runtime",
+  "pallet-sudo/try-runtime",
+  "pallet-timestamp/try-runtime",
+  "pallet-transaction-payment/try-runtime",
+  "pallet-insecure-randomness-collective-flip/try-runtime",
 ]
