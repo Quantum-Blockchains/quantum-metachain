@@ -5,14 +5,6 @@
 # Node
 target/
 
-# Runner
-certificates
-*.config.json
-venv/
-__pycache__
-runner.log
-node.log
-
 # Other
 psk
 psk_sig
