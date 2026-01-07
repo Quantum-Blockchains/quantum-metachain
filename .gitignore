@@ -5,27 +5,10 @@
 # Node
 target/
 
-# Runner
-certificates
-*.config.json
-venv/
-__pycache__
-runner.log
-node.log
-
 # Other
-psk
-psk_sig
-.node_key
-scripts/reset.sh
-scripts/start1.sh
-scripts/start2.sh
-scripts/start3.sh
-scripts/start4.sh
-scripts/insertKey.sh
-venv.sh
-d_customSpec.json
-customSpecRaw.json
-/.config
-/tmp
-/scripts/
+node_key_*
+/data
+
+customSpec*
+qmc-node.old
+inserKeys.sh

@@ -51,6 +51,7 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 pub use did;
+pub use storage_did;
 /// Import the template pallet.
 pub use ocw_randao::{self, Call as OcwRandaoCall};
 pub use randao::{self, Call as RandaoCall};
@@ -402,6 +403,10 @@ impl did::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
 }
 
+impl storage_did::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+}
+
 impl randao::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type RuntimeCall = RuntimeCall;
@@ -423,6 +428,7 @@ construct_runtime!(
         Randao: randao,
         OcwRandao: ocw_randao,
         Did: did,
+        StorageDid: storage_did,
     }
 );
 

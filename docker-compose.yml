@@ -1,128 +1,121 @@
 version: '3'
 services:
-  alice:
-    image: quantum-metachain
+  node1:
+    build:
+      context: .
+      dockerfile: Dockerfile
     tty: true
     ports:
       - '30333:30333'
-      - '9944:9944'
       - '9933:9933'
-      - '5002:5002'
     volumes:
-      - ./docker/local/alice/config.json:/app/runner/config.json:ro
-      - ./docker/local/alice/node_key:/app/runner/node_key:ro
-      - ./docker/local/alice/psk:/app/runner/psk
-      - ./runner/certificates:/app/runner/certificates:ro
-      - alice_data:/data
+      - ./data/customSpecRaw.json:/app/customSpecRaw.json:ro
+      - ./data/node1/node_key:/app/node_key:ro
+      - ./data/node1/node:/app/node
     command: >
-      python3 runner/app.py --config-file config.json --process './qmc-node
-      --alice
-      --name alice
-      --chain=local
-      --base-path=/data/alice
-      --port 30333
-      --ws-port 9944
-      --rpc-port 9933
+      qmc-node
+      --name node1
+      --chain=customSpecRaw.json
       --rpc-cors all
       --validator
       --rpc-methods=Unsafe
-      --unsafe-ws-external'
-
-  bob:
-    image: quantum-metachain
+      --unsafe-rpc-external
+      --password="validator_1"
+      --no-mdns
+      --base-path ./node
+      --port 30333
+      --rpc-port 9933
+      --node-key-file ./node_key
+      --offchain-worker Always
+      --sae-id Test_1SAE
+      --addr-pqkd http://172.16.0.101:3000
+  node2:
+    build:
+      context: .
+      dockerfile: Dockerfile
     tty: true
-    depends_on:
-      - alice
     ports:
       - '30334:30333'
-      - '9945:9944'
       - '9934:9933'
-      - '5004:5002'
     volumes:
-      - ./docker/local/bob/config.json:/app/runner/config.json:ro
-      - ./docker/local/bob/node_key:/app/runner/node_key:ro
-      - ./docker/local/bob/psk:/app/runner/psk
-      - ./runner/certificates:/app/runner/certificates:ro
-      - bob_data:/data
+      - ./data/customSpecRaw.json:/app/customSpecRaw.json:ro
+      - ./data/node2/node_key:/app/node_key:ro
+      - ./data/node2/node:/app/node
     command: >
-      python3 runner/app.py --config-file config.json --process './qmc-node
-      --bob
-      --name bob
-      --chain=local
-      --base-path=/data/bob
-      --port 30333
-      --ws-port 9944
-      --rpc-port 9933
+      qmc-node
+      --name node2
+      --chain=customSpecRaw.json
       --rpc-cors all
       --validator
       --rpc-methods=Unsafe
-      --unsafe-ws-external
-      --bootnodes=/ip4/172.20.0.2/tcp/30333/p2p/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc'
-  dave:
-    image: quantum-metachain
+      --unsafe-rpc-external
+      --password="validator_2"
+      --no-mdns
+      --base-path ./node
+      --port 30333
+      --rpc-port 9933
+      --node-key-file ./node_key
+      --offchain-worker Always
+      --sae-id Test_2SAE
+      --addr-pqkd http://172.16.0.102:3000
+  node3:
+    build:
+      context: .
+      dockerfile: Dockerfile
     tty: true
-    depends_on:
-      - alice
     ports:
       - '30335:30333'
-      - '9946:9944'
       - '9935:9933'
-      - '5005:5002'
     volumes:
-      - ./docker/local/dave/config.json:/app/runner/config.json:ro
-      - ./docker/local/dave/node_key:/app/runner/node_key:ro
-      - ./docker/local/dave/psk:/app/runner/psk
-      - ./runner/certificates:/app/runner/certificates:ro
-      - dave_data:/data
+      - ./data/customSpecRaw.json:/app/customSpecRaw.json:ro
+      - ./data/node3/node_key:/app/node_key:ro
+      - ./data/node3/node:/app/node
     command: >
-      python3 runner/app.py --config-file config.json --process './qmc-node
-      --dave
-      --name dave
-      --chain=local
-      --base-path=/data/dave
-      --port 30333
-      --ws-port 9944
-      --rpc-port 9933
+      qmc-node
+      --name node3
+      --chain=customSpecRaw.json
       --rpc-cors all
       --validator
       --rpc-methods=Unsafe
-      --unsafe-ws-external
-      --bootnodes=/ip4/172.20.0.2/tcp/30333/p2p/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc'
-  charlie:
-    image: quantum-metachain
+      --unsafe-rpc-external
+      --password="validator_3"
+      --no-mdns
+      --base-path ./node
+      --port 30333
+      --rpc-port 9933
+      --node-key-file ./node_key
+      --offchain-worker Always
+      --sae-id BobSAE
+      --addr-pqkd http://172.16.0.103:3000
+  node4:
+    build:
+      context: .
+      dockerfile: Dockerfile
     tty: true
-    depends_on:
-      - alice
     ports:
       - '30336:30333'
-      - '9947:9944'
       - '9936:9933'
-      - '5006:5002'
     volumes:
-      - ./docker/local/charlie/config.json:/app/runner/config.json:ro
-      - ./docker/local/charlie/node_key:/app/runner/node_key:ro
-      - ./docker/local/charlie/psk:/app/runner/psk
-      - ./runner/certificates:/app/runner/certificates:ro
-      - charlie_data:/data
+      - ./data/customSpecRaw.json:/app/customSpecRaw.json:ro
+      - ./data/node4/node_key:/app/node_key:ro
+      - ./data/node4/node:/app/node
     command: >
-      python3 runner/app.py --config-file config.json --process './qmc-node
-      --charlie
-      --name charlie
-      --chain=local
-      --base-path=/data/dave
-      --port 30333
-      --ws-port 9944
-      --rpc-port 9933
+      qmc-node
+      --name node4
+      --chain=customSpecRaw.json
       --rpc-cors all
       --validator
       --rpc-methods=Unsafe
-      --unsafe-ws-external
-      --bootnodes=/ip4/172.20.0.2/tcp/30333/p2p/12D3KooWKzWKFojk7A1Hw23dpiQRbLs6HrXFf4EGLsN4oZ1WsWCc'
-volumes:
-  alice_data:
-  bob_data:
-  dave_data:
-  charlie_data:
+      --unsafe-rpc-external
+      --password="validator_4"
+      --no-mdns
+      --base-path ./node
+      --port 30333
+      --rpc-port 9933
+      --node-key-file ./node_key
+      --offchain-worker Always
+      --sae-id Validator_2SAE
+      --addr-pqkd http://172.16.0.104:3000
 
 networks:
   default:

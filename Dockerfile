@@ -1,12 +1,16 @@
-FROM rustlang/rust:nightly as builder
+FROM rust:1.81.0 AS builder
 
 WORKDIR /node
 
 RUN apt-get update && apt-get -y install clang cmake protobuf-compiler
 
+RUN apt-get update && apt-get install -y \
+    libssl-dev \
+    ca-certificates
+
 COPY bin bin
 COPY pallets pallets
-COPY target target
+# COPY target target
 COPY Cargo.lock .
 COPY Cargo.toml .
 # COPY rust-toolchain .
@@ -18,18 +22,18 @@ ENV CARGO_PROFILE_RELEASE_BUILD_OVERRIDE_DEBUG=true
 
 #CMD ["/bin/bash"]
 
-RUN cargo build --release --target-dir target
+RUN cargo build --release
 
-FROM python:3.11.6
+# FROM python:3.11.6
+FROM ubuntu:24.04
 
 WORKDIR /app
 
-EXPOSE 30333 9944 9933 5002
+RUN apt-get update && apt-get install -y \
+    libssl3 \
+    ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder node/target/release/qmc-node target/release/qmc-node
+ENV RUST_BACKTRACE=1
 
-COPY runner runner
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-
-ENV PYTHONPATH "${PYTHONPATH}:/runner/app.py"
+COPY --from=builder node/target/release/qmc-node /usr/local/bin/qmc-node

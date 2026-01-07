@@ -8,4 +8,5 @@ members = [
   "pallets/randao",
   "pallets/support",
   "pallets/did",
+  "pallets/storage_did",
 ]
