@@ -51,9 +51,6 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 pub use did;
-/// Import the template pallet.
-pub use ocw_randao::{self, Call as OcwRandaoCall};
-pub use randao::{self, Call as RandaoCall};
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -391,20 +388,8 @@ where
     type OverarchingCall = RuntimeCall;
 }
 
-impl ocw_randao::Config for Runtime {
-    type AuthorityId = ocw_randao::crypto::TestAuthId;
-    type RuntimeEvent = RuntimeEvent;
-    type RuntimeCall = RuntimeCall;
-    type Randomness = RandomnessCollectiveFlip;
-}
-
 impl did::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
-}
-
-impl randao::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type RuntimeCall = RuntimeCall;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
@@ -419,9 +404,6 @@ construct_runtime!(
         Sudo: pallet_sudo,
         Contracts: pallet_contracts,
         RandomnessCollectiveFlip: pallet_insecure_randomness_collective_flip,
-        // Include the custom logic from the pallet-template in the runtime.
-        Randao: randao,
-        OcwRandao: ocw_randao,
         Did: did,
     }
 );

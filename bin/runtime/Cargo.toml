@@ -60,6 +60,7 @@ pallet-contracts-primitives = { version = "24.0.0", default-features = false, gi
 ocw-randao = { path = "../../pallets/ocw-randao", default-features = false }
 randao = { path = "../../pallets/randao", default-features = false }
 did = { path = "../../pallets/did", default-features = false }
+storage_did = { path = "../../pallets/storage_did", default-features = false }
 
 pallet-node-authorization = { default-features = false, version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 log = "0.4.20"
@@ -89,6 +90,7 @@ std = [
   "ocw-randao/std",
   "randao/std",
   "did/std",
+  "storage_did/std",
   "pallet-timestamp/std",
   "pallet-transaction-payment-rpc-runtime-api/std",
   "pallet-transaction-payment/std",
