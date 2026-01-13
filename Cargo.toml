@@ -4,9 +4,5 @@ resolver = "2"
 members = [
   "bin/node",
   "bin/runtime",
-  "pallets/ocw-randao",
-  "pallets/randao",
-  "pallets/support",
   "pallets/did",
-  "pallets/storage_did",
 ]
