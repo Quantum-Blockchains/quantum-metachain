@@ -8,6 +8,7 @@
 use std::sync::Arc;
 
 use jsonrpsee::{core::RpcResult, proc_macros::rpc, RpcModule};
+use did_runtime_api::DidRuntimeApi;
 use qmc_runtime::{opaque::Block, AccountId, Balance, Nonce};
 use sc_transaction_pool_api::TransactionPool;
 use sp_api::ProvideRuntimeApi;
@@ -35,13 +36,13 @@ impl<C> DidRpc<C> {
 
 impl<C> DidApiServer for DidRpc<C>
 where
-	C: ProvideRuntimeApi<Block> + HeaderBackend<Block>,
+	C: ProvideRuntimeApi<Block> + HeaderBackend<Block> + 'static,
 	C::Api: did_runtime_api::DidRuntimeApi<Block>,
 {
 	fn did_by_string(&self, did: String) -> RpcResult<Option<did::DidDetails>> {
 		let api = self.client.runtime_api();
-		let at = BlockId::hash(self.client.info().best_hash);
-		api.did_by_string(&at, did.into_bytes())
+		let at = self.client.info().best_hash;
+		api.did_by_string(at, did.into_bytes())
 			.map_err(|e| jsonrpsee::core::Error::Custom(format!("Runtime API error: {:?}", e)))
 	}
 }
@@ -77,7 +78,7 @@ where
 	let FullDeps { client, pool, deny_unsafe } = deps;
 
 	module.merge(System::new(client.clone(), pool, deny_unsafe).into_rpc())?;
-	module.merge(TransactionPayment::new(client).into_rpc())?;
+	module.merge(TransactionPayment::new(client.clone()).into_rpc())?;
 	module.merge(DidApiServer::into_rpc(DidRpc::new(client)))?;
 
 	// Extend this RPC with a custom API by using the following syntax.
