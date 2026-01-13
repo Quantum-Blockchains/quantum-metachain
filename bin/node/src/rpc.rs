@@ -7,14 +7,44 @@
 
 use std::sync::Arc;
 
-use jsonrpsee::RpcModule;
+use jsonrpsee::{core::RpcResult, proc_macros::rpc, RpcModule};
 use qmc_runtime::{opaque::Block, AccountId, Balance, Nonce};
 use sc_transaction_pool_api::TransactionPool;
 use sp_api::ProvideRuntimeApi;
 use sp_block_builder::BlockBuilder;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
+use sp_runtime::generic::BlockId;
 
 pub use sc_rpc_api::DenyUnsafe;
+
+#[rpc(server)]
+pub trait DidApi {
+	#[method(name = "did_getByString")]
+	fn did_by_string(&self, did: String) -> RpcResult<Option<did::DidDetails>>;
+}
+
+pub struct DidRpc<C> {
+	client: Arc<C>,
+}
+
+impl<C> DidRpc<C> {
+	pub fn new(client: Arc<C>) -> Self {
+		Self { client }
+	}
+}
+
+impl<C> DidApiServer for DidRpc<C>
+where
+	C: ProvideRuntimeApi<Block> + HeaderBackend<Block>,
+	C::Api: did_runtime_api::DidRuntimeApi<Block>,
+{
+	fn did_by_string(&self, did: String) -> RpcResult<Option<did::DidDetails>> {
+		let api = self.client.runtime_api();
+		let at = BlockId::hash(self.client.info().best_hash);
+		api.did_by_string(&at, did.into_bytes())
+			.map_err(|e| jsonrpsee::core::Error::Custom(format!("Runtime API error: {:?}", e)))
+	}
+}
 
 /// Full client dependencies.
 pub struct FullDeps<C, P> {
@@ -36,6 +66,7 @@ where
 	C: Send + Sync + 'static,
 	C::Api: substrate_frame_rpc_system::AccountNonceApi<Block, AccountId, Nonce>,
 	C::Api: pallet_transaction_payment_rpc::TransactionPaymentRuntimeApi<Block, Balance>,
+	C::Api: did_runtime_api::DidRuntimeApi<Block>,
 	C::Api: BlockBuilder<Block>,
 	P: TransactionPool + 'static,
 {
@@ -47,6 +78,7 @@ where
 
 	module.merge(System::new(client.clone(), pool, deny_unsafe).into_rpc())?;
 	module.merge(TransactionPayment::new(client).into_rpc())?;
+	module.merge(DidApiServer::into_rpc(DidRpc::new(client)))?;
 
 	// Extend this RPC with a custom API by using the following syntax.
 	// `YourRpcStruct` should have a reference to a client, which is needed

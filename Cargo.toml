@@ -5,4 +5,5 @@ members = [
   "bin/node",
   "bin/runtime",
   "pallets/did",
+  "pallets/did-runtime-api",
 ]

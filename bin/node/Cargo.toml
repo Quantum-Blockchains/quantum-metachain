@@ -47,7 +47,7 @@ codec = { package = "parity-scale-codec", version = "3.6.1", default-features = 
 bs58 = { version = "0.4.0" }
 
 # These dependencies are used for the node template's RPCs
-jsonrpsee = { version = "0.16.2", features = ["server"] }
+jsonrpsee = { version = "0.16.2", features = ["macros", "server"] }
 sp-api = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 sc-rpc-api = { version = "0.10.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 sp-blockchain = { version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
@@ -62,6 +62,8 @@ frame-benchmarking-cli = { version = "4.0.0-dev", git = "https://github.com/Quan
 
 # Local Dependencies
 qmc-runtime = { version = "0.0.1", path = "../runtime" }
+did = { path = "../../pallets/did" }
+did-runtime-api = { path = "../../pallets/did-runtime-api" }
 
 # CLI-specific dependencies
 try-runtime-cli = { version = "0.10.0-dev", optional = true, git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }

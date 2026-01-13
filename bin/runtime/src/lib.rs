@@ -586,6 +586,12 @@ impl_runtime_apis! {
         }
     }
 
+    impl did_runtime_api::DidRuntimeApi<Block> for Runtime {
+        fn did_by_string(did: Vec<u8>) -> Option<did::DidDetails> {
+            did::Pallet::<Runtime>::get_did(did).ok()
+        }
+    }
+
 
 
     impl pallet_contracts::ContractsApi<Block, AccountId, Balance, BlockNumber, Hash, EventRecord> for Runtime

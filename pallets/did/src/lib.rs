@@ -17,6 +17,7 @@ pub mod pallet {
     const DID_MATERIAL_PREFIX: &[u8] = b"QSB_DID";
     const DID_CREATE_PREFIX: &[u8] = b"QSB_DID_CREATE";
 
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
     #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo)]
     pub enum KeyRole {
         Authentication,
@@ -26,6 +27,7 @@ pub mod pallet {
         CapabilityDelegation,
     }
 
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
     #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo)]
     pub struct DidKey {
         pub public_key: Vec<u8>,
@@ -33,6 +35,7 @@ pub mod pallet {
         pub revoked: bool,
     }
 
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
     #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo)]
     pub struct ServiceEndpoint {
         pub id: Vec<u8>,
@@ -40,12 +43,14 @@ pub mod pallet {
         pub endpoint: Vec<u8>,
     }
 
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
     #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo)]
     pub struct MetadataEntry {
         pub key: Vec<u8>,
         pub value: Vec<u8>,
     }
 
+    #[cfg_attr(feature = "std", derive(serde::Serialize, serde::Deserialize))]
     #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo)]
     pub struct DidDetails {
         pub version: u64,
