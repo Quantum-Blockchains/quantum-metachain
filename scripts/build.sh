@@ -2,6 +2,8 @@
 
 cd ../
 mkdir .build_extension && cd .build_extension
+
+echo "Step 1. Build API"
 git clone https://github.com/Quantum-Blockchains/api.git
 cd api
 git checkout kostia/v10.9.1
@@ -51,6 +53,7 @@ cp -r node_modules/@polkadot/wasm-util ../../extension/node_modules/@polkadot/wa
 cd ../
 rm -r -f api
 
+echo "Step 2. Build UI"
 git clone https://github.com/Quantum-Blockchains/ui.git
 cd ui
 git checkout kostia/v3.5.1
@@ -72,6 +75,7 @@ cp -r packages/ui-shared/build ../../extension/node_modules/@polkadot/ui-shared
 cd ../
 rm -r -f ui
 
+echo "Step 3. Build COMMON"
 git clone https://github.com/Quantum-Blockchains/common.git
 cd common
 git checkout kostia/v12.3.2
@@ -110,4 +114,5 @@ cd ../../
 rm -r -f .build_extension
 cd extension
 
+echo "Step 4. Build EXTENSION"
 yarn build:extension

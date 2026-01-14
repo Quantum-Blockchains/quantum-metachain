@@ -4,7 +4,7 @@
 /* global chrome */
 /* eslint-disable no-redeclare */
 
-import type { AccountJson, AllowedPath, AuthorizeRequest, ConnectedTabsUrlResponse, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
+import type { AccountJson, AllowedPath, AuthorizeRequest, ConnectedTabsUrlResponse, DidRecord, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
 import type { Message } from '@polkadot/extension-base/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -217,6 +217,14 @@ export async function subscribeSigningRequests (cb: (accounts: SigningRequest[])
 
 export async function validateSeed (suri: string, type?: KeypairType): Promise<{ address: string; suri: string }> {
   return sendMessage('pri(seed.validate)', { suri, type });
+}
+
+export async function createDid (accountAddress: string, name: string, password: string): Promise<DidRecord> {
+  return sendMessage('pri(dids.create)', { accountAddress, name, password });
+}
+
+export async function didsList (): Promise<DidRecord[]> {
+  return sendMessage('pri(dids.list)', null);
 }
 
 export async function validateDerivationPath (parentAddress: string, suri: string, parentPassword: string): Promise<ResponseDeriveValidate> {

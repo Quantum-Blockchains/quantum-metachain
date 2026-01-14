@@ -55,6 +55,14 @@ export type AccountsContext = {
   setSelectedAccounts?: (address: AccountJson['address'][]) => void;
 }
 
+export interface DidRecord {
+  did: string;
+  accountAddress: string;
+  genesisHash: HexString;
+  name?: string;
+  publicKey: HexString;
+}
+
 export interface AuthorizeRequest {
   id: string;
   request: RequestAuthorizeTab;
@@ -92,6 +100,8 @@ export interface RequestSignatures {
   'pri(accounts.subscribe)': [RequestAccountSubscribe, boolean, AccountJson[]];
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
+  'pri(dids.create)': [RequestDidCreate, DidRecord];
+  'pri(dids.list)': [null, DidRecord[]];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
   'pri(authorize.requests)': [RequestAuthorizeSubscribe, boolean, AuthorizeRequest[]];
@@ -126,6 +136,7 @@ export interface RequestSignatures {
   'pub(accounts.unsubscribe)': [RequestAccountUnsubscribe, boolean];
   'pub(authorize.tab)': [RequestAuthorizeTab, Promise<AuthResponse>];
   'pub(bytes.sign)': [SignerPayloadRaw, ResponseSigning];
+  'pub(dids.list)': [null, DidRecord[]];
   'pub(extrinsic.sign)': [SignerPayloadJSON, ResponseSigning];
   'pub(metadata.list)': [null, InjectedMetadataKnown[]];
   'pub(metadata.provide)': [MetadataDef, boolean];
@@ -209,6 +220,12 @@ export interface RequestAccountChangePassword {
   address: string;
   oldPass: string;
   newPass: string;
+}
+
+export interface RequestDidCreate {
+  accountAddress: string;
+  name: string;
+  password: string;
 }
 
 export interface RequestAccountEdit {

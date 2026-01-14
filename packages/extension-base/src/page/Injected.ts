@@ -5,12 +5,15 @@ import type { Injected } from '@polkadot/extension-inject/types';
 import type { SendRequest } from './types.js';
 
 import Accounts from './Accounts.js';
+import Dids from './Dids.js';
 import Metadata from './Metadata.js';
 import PostMessageProvider from './PostMessageProvider.js';
 import Signer from './Signer.js';
 
 export default class implements Injected {
   public readonly accounts: Accounts;
+
+  public readonly dids: Dids;
 
   public readonly metadata: Metadata;
 
@@ -20,6 +23,7 @@ export default class implements Injected {
 
   constructor (sendRequest: SendRequest) {
     this.accounts = new Accounts(sendRequest);
+    this.dids = new Dids(sendRequest);
     this.metadata = new Metadata(sendRequest);
     this.provider = new PostMessageProvider(sendRequest);
     this.signer = new Signer(sendRequest);

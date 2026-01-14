@@ -8,26 +8,30 @@ import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/
 import type { Registry, SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { AccountJson, AllowedPath, AuthorizeRequest, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestActiveTabsUrlUpdate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types.js';
+import type { AccountJson, AllowedPath, AuthorizeRequest, DidRecord, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestActiveTabsUrlUpdate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestDidCreate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types.js';
 import type { AuthorizedAccountsDiff } from './State.js';
 import type State from './State.js';
 
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { ALLOWED_PATH, PASSWORD_EXPIRY_MS } from '@polkadot/extension-base/defaults';
 import { metadataExpand } from '@polkadot/extension-chains';
+import { Keyring } from '@polkadot/keyring';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
-import { assert, isHex } from '@polkadot/util';
-import { keyExtractSuri, mnemonicGenerate, mnemonicValidate } from '@polkadot/util-crypto';
+import { assert, isHex, stringToU8a, u8aConcat, u8aToHex } from '@polkadot/util';
+import { base58Encode, blake2AsU8a, cryptoWaitReady, keyExtractSuri, mldsa44PairFromSeed, mnemonicGenerate, mnemonicValidate, randomAsU8a } from '@polkadot/util-crypto';
 
 import { withErrorLog } from './helpers.js';
 import { createSubscription, unsubscribe } from './subscriptions.js';
+import { DidsStore } from '../../stores/index.js';
 
 type CachedUnlocks = Record<string, number>;
 
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
 const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
+const QSB_POSEIDON_ENDPOINT = 'wss://qsb.qbck.io:9945';
 
 function getSuri (seed: string, type?: KeypairType): string {
   return type === 'ethereum'
@@ -43,10 +47,12 @@ export default class Extension {
   readonly #cachedUnlocks: CachedUnlocks;
 
   readonly #state: State;
+  readonly #didsStore: DidsStore;
 
   constructor (state: State) {
     this.#cachedUnlocks = {};
     this.#state = state;
+    this.#didsStore = new DidsStore();
   }
 
   private transformAccounts (accounts: SubjectInfo): AccountJson[] {
@@ -534,6 +540,137 @@ export default class Extension {
     return this.#state.getConnectedTabsUrl();
   }
 
+  private async didsCreate ({ accountAddress, name, password }: RequestDidCreate): Promise<DidRecord> {
+    await cryptoWaitReady();
+
+    const signerPair = keyring.getPair(accountAddress);
+
+    assert(signerPair, 'Unable to find signing account');
+    assert(!signerPair.meta.isExternal && !signerPair.meta.isHardware, 'Account cannot sign transactions');
+
+    if (signerPair.isLocked) {
+      if (!password) {
+        throw new Error('Password needed to unlock the account');
+      }
+
+      try {
+        signerPair.decodePkcs8(password);
+      } catch {
+        throw new Error('Wrong password');
+      }
+    }
+
+    const provider = new WsProvider(QSB_POSEIDON_ENDPOINT);
+    const api = await ApiPromise.create({ provider });
+
+    const didPair = mldsa44PairFromSeed(randomAsU8a(32));
+    const genesisHash = api.genesisHash.toU8a();
+    const didId = blake2AsU8a(
+      u8aConcat(
+        stringToU8a('QSB_DID'),
+        genesisHash,
+        didPair.publicKey
+      ),
+      256
+    );
+    const did = `did:qsb:${base58Encode(didId)}`;
+    const publicKeyHex = u8aToHex(didPair.publicKey);
+    const genesisHashHex = api.genesisHash.toHex();
+
+    try {
+      await new Promise<void>(async (resolve, reject) => {
+        let unsub: (() => void) | undefined;
+
+        try {
+          unsub = await api.tx['did']
+            ['createDid'](publicKeyHex, u8aToHex(new Uint8Array()))
+            .signAndSend(signerPair, (result): void => {
+              if (result.dispatchError) {
+                if (unsub) {
+                  unsub();
+                }
+
+                if (result.dispatchError.isModule) {
+                  const decoded = api.registry.findMetaError(result.dispatchError.asModule);
+                  const message = decoded.section && decoded.name
+                    ? `${decoded.section}.${decoded.name}`
+                    : decoded.name;
+
+                  reject(new Error(message));
+                } else {
+                  reject(new Error(result.dispatchError.toString()));
+                }
+
+                return;
+              }
+
+              if (result.status.isInBlock || result.status.isFinalized) {
+                if (unsub) {
+                  unsub();
+                }
+
+                resolve();
+              }
+            });
+        } catch (error) {
+          if (unsub) {
+            unsub();
+          }
+
+          reject(error as Error);
+        }
+      });
+    } finally {
+      signerPair.lock();
+      await api.disconnect();
+    }
+
+    const didKeyring = new Keyring({ type: 'mldsa44' });
+    const didKeypair = didKeyring.createFromPair(
+      didPair,
+      {
+        accountAddress,
+        did,
+        genesisHash: genesisHashHex,
+        name,
+        publicKey: publicKeyHex
+      },
+      'mldsa44'
+    );
+    const json = didKeypair.toJson(password);
+
+    this.#didsStore.set(`did:${did}`, json);
+
+    return {
+      accountAddress,
+      did,
+      genesisHash: genesisHashHex,
+      name,
+      publicKey: publicKeyHex
+    };
+  }
+
+  private async didsList (): Promise<DidRecord[]> {
+    return new Promise((resolve) => {
+      this.#didsStore.allMap((map) => {
+        const records = Object.values(map)
+          .map(({ meta }) => meta as unknown as Partial<DidRecord> | undefined)
+          .filter((meta): meta is DidRecord =>
+            Boolean(meta && meta.did && meta.accountAddress && meta.genesisHash && meta.publicKey)
+          )
+          .map((meta) => ({
+            accountAddress: meta.accountAddress,
+            did: meta.did,
+            genesisHash: meta.genesisHash,
+            name: meta.name,
+            publicKey: meta.publicKey
+          }));
+
+        resolve(records);
+      });
+    });
+  }
+
   // Weird thought, the eslint override is not needed in Tabs
   // eslint-disable-next-line @typescript-eslint/require-await
   public async handle<TMessageType extends MessageTypes> (id: string, type: TMessageType, request: RequestTypes[TMessageType], port?: chrome.runtime.Port): Promise<ResponseType<TMessageType>> {
@@ -618,6 +755,12 @@ export default class Extension {
 
       case 'pri(derivation.validate)':
         return this.derivationValidate(request as RequestDeriveValidate);
+
+      case 'pri(dids.create)':
+        return this.didsCreate(request as RequestDidCreate);
+
+      case 'pri(dids.list)':
+        return this.didsList();
 
       case 'pri(json.restore)':
         return this.jsonRestore(request as RequestJsonRestore);

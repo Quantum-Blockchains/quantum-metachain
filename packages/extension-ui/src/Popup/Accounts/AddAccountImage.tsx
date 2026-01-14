@@ -20,7 +20,17 @@ interface Props extends ThemeProps {
 
 function AddAccountImage ({ className, onClick }: Props): React.ReactElement<Props> {
   return (
-    <svg className={className} width='265' height='265' viewBox='0 0 265 265' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <svg
+      className={className}
+      width='265'
+      height='265'
+      viewBox='0 0 265 265'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+      onClick={onClick}
+      role='button'
+      tabIndex={0}
+    >
       <mask
         id='mask0'
         maskUnits='userSpaceOnUse'
@@ -86,6 +96,8 @@ function AddAccountImage ({ className, onClick }: Props): React.ReactElement<Pro
 }
 
 export default React.memo(styled(AddAccountImage)(({ theme }: Props) => `
+  cursor: pointer;
+
   circle, path {
     cursor: pointer;
   }

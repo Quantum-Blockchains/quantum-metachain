@@ -9,7 +9,7 @@ import type { KeyringPair } from '@polkadot/keyring/types';
 import type { JsonRpcResponse } from '@polkadot/rpc-provider/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
-import type { MessageTypes, RequestAccountList, RequestAccountUnsubscribe, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestTypes, ResponseRpcListProviders, ResponseSigning, ResponseTypes, SubscriptionMessageTypes } from '../types.js';
+import type { DidRecord, MessageTypes, RequestAccountList, RequestAccountUnsubscribe, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestTypes, ResponseRpcListProviders, ResponseSigning, ResponseTypes, SubscriptionMessageTypes } from '../types.js';
 import type { AuthResponse } from './State.js';
 import type State from './State.js';
 
@@ -19,6 +19,7 @@ import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/
 import { assert, isNumber } from '@polkadot/util';
 
 import { PHISHING_PAGE_REDIRECT } from '../../defaults.js';
+import { DidsStore } from '../../stores/index.js';
 import { canDerive } from '../../utils/index.js';
 import RequestBytesSign from '../RequestBytesSign.js';
 import RequestExtrinsicSign from '../RequestExtrinsicSign.js';
@@ -47,10 +48,13 @@ function transformAccounts (accounts: SubjectInfo, anyType = false): InjectedAcc
 export default class Tabs {
   readonly #accountSubs: Record<string, AccountSub> = {};
 
+  readonly #didsStore: DidsStore;
+
   readonly #state: State;
 
   constructor (state: State) {
     this.#state = state;
+    this.#didsStore = new DidsStore();
   }
 
   private filterForAuthorizedAccounts (accounts: InjectedAccount[], url: string): InjectedAccount[] {
@@ -141,6 +145,27 @@ export default class Tabs {
       genesisHash,
       specVersion
     }));
+  }
+
+  private async didsList (): Promise<DidRecord[]> {
+    return new Promise((resolve) => {
+      this.#didsStore.allMap((map) => {
+        const records = Object.values(map)
+          .map(({ meta }) => meta as unknown as Partial<DidRecord> | undefined)
+          .filter((meta): meta is DidRecord =>
+            Boolean(meta && meta.did && meta.accountAddress && meta.genesisHash && meta.publicKey)
+          )
+          .map((meta) => ({
+            accountAddress: meta.accountAddress,
+            did: meta.did,
+            genesisHash: meta.genesisHash,
+            name: meta.name,
+            publicKey: meta.publicKey
+          }));
+
+        resolve(records);
+      });
+    });
   }
 
   private rpcListProviders (): Promise<ResponseRpcListProviders> {
@@ -236,6 +261,9 @@ export default class Tabs {
 
       case 'pub(bytes.sign)':
         return this.bytesSign(url, request as SignerPayloadRaw);
+
+      case 'pub(dids.list)':
+        return this.didsList();
 
       case 'pub(extrinsic.sign)':
         return this.extrinsicSign(url, request as SignerPayloadJSON);

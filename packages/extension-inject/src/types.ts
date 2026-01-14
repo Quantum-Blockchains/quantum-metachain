@@ -79,6 +79,18 @@ export interface InjectedMetadata {
   provide: (definition: MetadataDef) => Promise<boolean>;
 }
 
+export interface DidRecord {
+  did: string;
+  accountAddress: string;
+  genesisHash: HexString;
+  name?: string;
+  publicKey: HexString;
+}
+
+export interface InjectedDids {
+  list: () => Promise<DidRecord[]>;
+}
+
 export type ProviderList = Record<string, ProviderMeta>
 
 export interface InjectedProvider extends ProviderInterface {
@@ -94,6 +106,7 @@ export interface InjectedProviderWithMeta {
 
 export interface Injected {
   accounts: InjectedAccounts;
+  dids?: InjectedDids;
   metadata?: InjectedMetadata;
   provider?: InjectedProvider;
   signer: InjectedSigner;

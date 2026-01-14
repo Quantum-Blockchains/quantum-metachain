@@ -22,6 +22,7 @@ import AuthList from './AuthManagement/index.js';
 import Authorize from './Authorize/index.js';
 import CreateAccount from './CreateAccount/index.js';
 import Derive from './Derive/index.js';
+import CreateDid from './Dids/CreateDid.js';
 import ImportSeed from './ImportSeed/index.js';
 import Metadata from './Metadata/index.js';
 import Signing from './Signing/index.js';
@@ -160,6 +161,7 @@ export default function Popup (): React.ReactElement {
                         <Route path='/account/restore-json'>{wrapWithErrorBoundary(<RestoreJson />, 'restore-json')}</Route>
                         <Route path='/account/derive/:address/locked'>{wrapWithErrorBoundary(<Derive isLocked />, 'derived-address-locked')}</Route>
                         <Route path='/account/derive/:address'>{wrapWithErrorBoundary(<Derive />, 'derive-address')}</Route>
+                        <Route path='/did/create'>{wrapWithErrorBoundary(<CreateDid />, 'did-create')}</Route>
                         <Route path='/url/manage/:url'>{wrapWithErrorBoundary(<AccountManagement />, 'manage-url')}</Route>
                         <Route path={`${PHISHING_PAGE_REDIRECT}/:website`}>{wrapWithErrorBoundary(<PhishingDetected />, 'phishing-page-redirect')}</Route>
                         <Route

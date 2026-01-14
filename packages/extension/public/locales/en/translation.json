@@ -172,5 +172,22 @@
   "all accounts": "",
   "Message signing is not supported for hardware wallets.": "",
   "\"Allow use on any network\" is not supported to show a QR code. You must associate this account with a network.": "",
-  "An error occurred": ""
+  "An error occurred": "",
+  "Generate DID": "",
+  "Generated sr25519 keypair.": "",
+  "sr25519 public key": "",
+  "sr25519 secret key": "",
+  "Generated mldsa44 keypair.": "",
+  "mldsa44 public key": "",
+  "mldsa44 secret key": "",
+  "Missing genesis hash for DID calculation.": "",
+  "Generated DID.": "",
+  "Generated DID": "",
+  "DID": "",
+  "Select an account to sign the DID creation.": "",
+  "DID created on chain.": "",
+  "No accounts available. Add an account to sign the DID creation.": "",
+  "DID creation failed.": "",
+  "DID name": "",
+  "Password for selected account": ""
 }
