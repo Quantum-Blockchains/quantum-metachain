@@ -51,6 +51,8 @@ pub use sp_runtime::BuildStorage;
 pub use sp_runtime::{Perbill, Permill};
 
 pub use did;
+pub use revocation_list;
+pub use schema;
 
 /// An index to a block.
 pub type BlockNumber = u32;
@@ -392,6 +394,14 @@ impl did::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
 }
 
+impl schema::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+}
+
+impl revocation_list::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously configured.
 construct_runtime!(
     pub struct Runtime {
@@ -406,6 +416,8 @@ construct_runtime!(
         RandomnessCollectiveFlip: pallet_insecure_randomness_collective_flip,
         // Include the custom logic from the pallet-template in the runtime.
         Did: did,
+        Schema: schema,
+        RevocationList: revocation_list,
     }
 );
 

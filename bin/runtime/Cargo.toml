@@ -59,6 +59,8 @@ pallet-contracts-primitives = { version = "24.0.0", default-features = false, gi
 # Local Dependencies
 did = { path = "../../pallets/did", default-features = false }
 did-runtime-api = { path = "../../pallets/did-runtime-api", default-features = false }
+schema = { path = "../../pallets/schema", default-features = false }
+revocation-list = { path = "../../pallets/revocation-list", default-features = false }
 
 pallet-node-authorization = { default-features = false, version = "4.0.0-dev", git = "https://github.com/Quantum-Blockchains/substrate.git", branch = "qmc-v0.0.3" }
 log = "0.4.20"
@@ -87,6 +89,8 @@ std = [
   "pallet-sudo/std",
   "did/std",
   "did-runtime-api/std",
+  "schema/std",
+  "revocation-list/std",
   "pallet-timestamp/std",
   "pallet-transaction-payment-rpc-runtime-api/std",
   "pallet-transaction-payment/std",

@@ -6,4 +6,6 @@ members = [
   "bin/runtime",
   "pallets/did",
   "pallets/did-runtime-api",
+  "pallets/schema",
+  "pallets/revocation-list",
 ]
