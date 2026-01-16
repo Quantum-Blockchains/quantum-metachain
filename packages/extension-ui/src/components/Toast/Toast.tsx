@@ -23,15 +23,19 @@ function Toast ({ className, content }: Props): React.ReactElement<Props> {
 export default styled(Toast)<{visible: boolean}>`
   position: fixed;
   display: ${({ visible }): string => visible ? 'block' : 'none'};
-  height: 40px;
+  max-width: 280px;
+  padding: 10px 16px;
   text-align: center;
-  vertical-align: middle;
-  line-height: 7px;
-  top: 460px;
-  left: calc(50% - 50px);
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   && {
     margin: auto;
     border-radius: 25px;
     background: ${({ theme }: ThemeProps): string => theme.highlightedAreaBackground};
+  }
+
+  .snackbar-content {
+    margin: 0;
   }
 `;

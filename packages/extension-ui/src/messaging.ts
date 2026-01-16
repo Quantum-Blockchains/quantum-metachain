@@ -4,7 +4,7 @@
 /* global chrome */
 /* eslint-disable no-redeclare */
 
-import type { AccountJson, AllowedPath, AuthorizeRequest, ConnectedTabsUrlResponse, DidRecord, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
+import type { AccountJson, AllowedPath, AuthorizeRequest, ConnectedTabsUrlResponse, DidRecord, DidSigningRequest, MessageTypes, MessageTypesWithNoSubscriptions, MessageTypesWithNullRequest, MessageTypesWithSubscriptions, MetadataRequest, RequestTypes, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSigningIsLocked, ResponseTypes, SeedLengths, SigningRequest, SubscriptionMessageTypes } from '@polkadot/extension-base/background/types';
 import type { Message } from '@polkadot/extension-base/types';
 import type { Chain } from '@polkadot/extension-chains/types';
 import type { MetadataDef } from '@polkadot/extension-inject/types';
@@ -98,8 +98,8 @@ export async function forgetAccount (address: string): Promise<boolean> {
   return sendMessage('pri(accounts.forget)', { address });
 }
 
-export async function approveAuthRequest (id: string, authorizedAccounts: string[]): Promise<boolean> {
-  return sendMessage('pri(authorize.approve)', { authorizedAccounts, id });
+export async function approveAuthRequest (id: string, authorizedAccounts: string[], authorizedDids: string[]): Promise<boolean> {
+  return sendMessage('pri(authorize.approve)', { authorizedAccounts, authorizedDids, id });
 }
 
 export async function approveMetaRequest (id: string): Promise<boolean> {
@@ -199,8 +199,8 @@ export async function removeAuthorization (url: string): Promise<ResponseAuthori
   return sendMessage('pri(authorize.remove)', url);
 }
 
-export async function updateAuthorization (authorizedAccounts: string[], url: string): Promise<void> {
-  return sendMessage('pri(authorize.update)', { authorizedAccounts, url });
+export async function updateAuthorization (authorizedAccounts: string[], url: string, authorizedDids?: string[]): Promise<void> {
+  return sendMessage('pri(authorize.update)', { authorizedAccounts, authorizedDids, url });
 }
 
 export async function deleteAuthRequest (requestId: string): Promise<void> {
@@ -215,16 +215,40 @@ export async function subscribeSigningRequests (cb: (accounts: SigningRequest[])
   return sendMessage('pri(signing.requests)', null, cb);
 }
 
+export async function subscribeDidSigningRequests (cb: (requests: DidSigningRequest[]) => void): Promise<boolean> {
+  return sendMessage('pri(dids.sign.requests)', null, cb);
+}
+
 export async function validateSeed (suri: string, type?: KeypairType): Promise<{ address: string; suri: string }> {
   return sendMessage('pri(seed.validate)', { suri, type });
 }
 
-export async function createDid (accountAddress: string, name: string, password: string): Promise<DidRecord> {
-  return sendMessage('pri(dids.create)', { accountAddress, name, password });
+export async function createDid (accountAddress: string, name: string, accountPassword: string, didPassword: string): Promise<DidRecord> {
+  return sendMessage('pri(dids.create)', { accountAddress, name, accountPassword, didPassword });
+}
+
+export async function deactivateDid (did: string, accountAddress: string, accountPassword: string, didPassword: string): Promise<boolean> {
+  return sendMessage('pri(dids.deactivate)', { accountAddress, accountPassword, did, didPassword });
+}
+
+export async function exportDid (did: string, password: string): Promise<{ exportedJson: KeyringPair$Json }> {
+  return sendMessage('pri(dids.export)', { did, password });
+}
+
+export async function removeDid (did: string): Promise<boolean> {
+  return sendMessage('pri(dids.remove)', { did });
 }
 
 export async function didsList (): Promise<DidRecord[]> {
   return sendMessage('pri(dids.list)', null);
+}
+
+export async function approveDidSignPassword (id: string, password: string): Promise<boolean> {
+  return sendMessage('pri(dids.sign.approve)', { id, password });
+}
+
+export async function cancelDidSignRequest (id: string): Promise<boolean> {
+  return sendMessage('pri(dids.sign.cancel)', { id });
 }
 
 export async function validateDerivationPath (parentAddress: string, suri: string, parentPassword: string): Promise<ResponseDeriveValidate> {

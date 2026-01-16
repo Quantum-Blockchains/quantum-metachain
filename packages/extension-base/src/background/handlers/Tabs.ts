@@ -9,7 +9,7 @@ import type { KeyringPair } from '@polkadot/keyring/types';
 import type { JsonRpcResponse } from '@polkadot/rpc-provider/types';
 import type { SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
-import type { DidRecord, MessageTypes, RequestAccountList, RequestAccountUnsubscribe, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestTypes, ResponseRpcListProviders, ResponseSigning, ResponseTypes, SubscriptionMessageTypes } from '../types.js';
+import type { DidRecord, MessageTypes, RequestAccountList, RequestAccountUnsubscribe, RequestAuthorizeTab, RequestDidSign, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestTypes, ResponseDidSign, ResponseRpcListProviders, ResponseSigning, ResponseTypes, SubscriptionMessageTypes } from '../types.js';
 import type { AuthResponse } from './State.js';
 import type State from './State.js';
 
@@ -67,6 +67,17 @@ export default class Tabs {
           ? auth.authorizedAccounts.includes(allAcc.address)
           // if no authorizedAccounts and isAllowed return all - these are old converted urls
           : auth.isAllowed
+    );
+  }
+
+  private filterForAuthorizedDids (dids: DidRecord[], url: string): DidRecord[] {
+    const auth = this.#state.authUrls[this.#state.stripUrl(url)];
+
+    return dids.filter(
+      (did) =>
+        auth.authorizedDids !== undefined
+          ? auth.authorizedDids.includes(did.did)
+          : true
     );
   }
 
@@ -136,6 +147,24 @@ export default class Tabs {
     return this.#state.sign(url, new RequestExtrinsicSign(request), { address, ...pair.meta });
   }
 
+  private async didsSignAuthorized (url: string, request: RequestDidSign): Promise<ResponseDidSign> {
+    const auth = this.#state.authUrls[this.#state.stripUrl(url)];
+
+    if (!auth || !auth.authorizedDids || !auth.authorizedDids.includes(request.did)) {
+      throw new Error('The DID is not authorized for this site.');
+    }
+
+    const name = await new Promise<string | undefined>((resolve): void => {
+      this.#didsStore.get(`did:${request.did}`, (json) => {
+        const meta = json?.meta as { name?: string } | undefined;
+
+        resolve(meta?.name);
+      });
+    });
+
+    return this.#state.didSign(url, new RequestExtrinsicSign(request.payload), request.did, name);
+  }
+
   private metadataProvide (url: string, request: MetadataDef): Promise<boolean> {
     return this.#state.injectMetadata(url, request);
   }
@@ -147,8 +176,8 @@ export default class Tabs {
     }));
   }
 
-  private async didsList (): Promise<DidRecord[]> {
-    return new Promise((resolve) => {
+  private async didsListAuthorized (url: string): Promise<DidRecord[]> {
+    const dids = await new Promise<DidRecord[]>((resolve) => {
       this.#didsStore.allMap((map) => {
         const records = Object.values(map)
           .map(({ meta }) => meta as unknown as Partial<DidRecord> | undefined)
@@ -166,6 +195,8 @@ export default class Tabs {
         resolve(records);
       });
     });
+
+    return this.filterForAuthorizedDids(dids, url);
   }
 
   private rpcListProviders (): Promise<ResponseRpcListProviders> {
@@ -263,7 +294,10 @@ export default class Tabs {
         return this.bytesSign(url, request as SignerPayloadRaw);
 
       case 'pub(dids.list)':
-        return this.didsList();
+        return this.didsListAuthorized(url);
+
+      case 'pub(dids.sign)':
+        return this.didsSignAuthorized(url, request as RequestDidSign);
 
       case 'pub(extrinsic.sign)':
         return this.extrinsicSign(url, request as SignerPayloadJSON);

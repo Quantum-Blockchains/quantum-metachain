@@ -5,7 +5,7 @@
 
 import type { MetadataDef, ProviderMeta } from '@polkadot/extension-inject/types';
 import type { JsonRpcResponse, ProviderInterface, ProviderInterfaceCallback } from '@polkadot/rpc-provider/types';
-import type { AccountJson, AuthorizeRequest, AuthUrlInfo, AuthUrls, MetadataRequest, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestSign, ResponseRpcListProviders, ResponseSigning, SigningRequest } from '../types.js';
+import type { AccountJson, AuthorizeRequest, AuthUrlInfo, AuthUrls, DidSigningRequest, MetadataRequest, RequestAuthorizeTab, RequestRpcSend, RequestRpcSubscribe, RequestRpcUnsubscribe, RequestSign, ResponseDidSign, ResponseRpcListProviders, ResponseSigning, SigningRequest } from '../types.js';
 
 import { BehaviorSubject } from 'rxjs';
 
@@ -30,7 +30,7 @@ interface AuthRequest extends Resolver<AuthResponse> {
   url: string;
 }
 
-export type AuthorizedAccountsDiff = [url: string, authorizedAccounts: AuthUrlInfo['authorizedAccounts']][]
+export type AuthorizedAccountsDiff = [url: string, authorizedAccounts: AuthUrlInfo['authorizedAccounts'], authorizedDids?: AuthUrlInfo['authorizedDids']][]
 
 interface MetaRequest extends Resolver<boolean> {
   id: string;
@@ -41,6 +41,7 @@ interface MetaRequest extends Resolver<boolean> {
 export interface AuthResponse {
   result: boolean;
   authorizedAccounts: string[];
+  authorizedDids: string[];
 }
 
 // List of providers passed into constructor. This is the list of providers
@@ -55,6 +56,14 @@ type Providers = Record<string, {
 interface SignRequest extends Resolver<ResponseSigning> {
   account: AccountJson;
   id: string;
+  request: RequestSign;
+  url: string;
+}
+
+interface DidSignRequest extends Resolver<ResponseDidSign> {
+  did: string;
+  id: string;
+  name?: string;
   request: RequestSign;
   url: string;
 }
@@ -133,6 +142,7 @@ export default class State {
   readonly #injectedProviders = new Map<chrome.runtime.Port, ProviderInterface>();
 
   readonly #metaRequests: Record<string, MetaRequest> = {};
+  readonly #didSignRequests: Record<string, DidSignRequest> = {};
 
   #notification = settings.notification;
 
@@ -150,6 +160,8 @@ export default class State {
   public readonly metaSubject: BehaviorSubject<MetadataRequest[]> = new BehaviorSubject<MetadataRequest[]>([]);
 
   public readonly signSubject: BehaviorSubject<SigningRequest[]> = new BehaviorSubject<SigningRequest[]>([]);
+
+  public readonly didSignSubject: BehaviorSubject<DidSigningRequest[]> = new BehaviorSubject<DidSigningRequest[]>([]);
 
   public defaultAuthAccountSelection: string[] = [];
 
@@ -187,6 +199,10 @@ export default class State {
     return Object.keys(this.#signRequests).length;
   }
 
+  public get numDidSignRequests (): number {
+    return Object.keys(this.#didSignRequests).length;
+  }
+
   public get allAuthRequests (): AuthorizeRequest[] {
     return Object
       .values(this.#authRequests)
@@ -203,6 +219,12 @@ export default class State {
     return Object
       .values(this.#signRequests)
       .map(({ account, id, request, url }): SigningRequest => ({ account, id, request, url }));
+  }
+
+  public get allDidSignRequests (): DidSigningRequest[] {
+    return Object
+      .values(this.#didSignRequests)
+      .map(({ did, id, name, request, url }): DidSigningRequest => ({ did, id, name, request, url }));
   }
 
   public get authUrls (): AuthUrls {
@@ -230,11 +252,12 @@ export default class State {
   }
 
   private authComplete = (id: string, resolve: (resValue: AuthResponse) => void, reject: (error: Error) => void): Resolver<AuthResponse> => {
-    const complete = (authorizedAccounts: string[] = []) => {
+    const complete = (authorizedAccounts: string[] = [], authorizedDids: string[] = []) => {
       const { idStr, request: { origin }, url } = this.#authRequests[id];
 
       this.#authUrls[this.stripUrl(url)] = {
         authorizedAccounts,
+        authorizedDids,
         count: 0,
         id: idStr,
         origin,
@@ -252,9 +275,9 @@ export default class State {
         complete();
         reject(error);
       },
-      resolve: ({ authorizedAccounts, result }: AuthResponse): void => {
-        complete(authorizedAccounts);
-        resolve({ authorizedAccounts, result });
+      resolve: ({ authorizedAccounts, authorizedDids, result }: AuthResponse): void => {
+        complete(authorizedAccounts, authorizedDids);
+        resolve({ authorizedAccounts, authorizedDids, result });
       }
     };
   };
@@ -338,6 +361,24 @@ export default class State {
     };
   };
 
+  private didSignComplete = (id: string, resolve: (result: ResponseDidSign) => void, reject: (error: Error) => void): Resolver<ResponseDidSign> => {
+    const complete = (): void => {
+      delete this.#didSignRequests[id];
+      this.updateIconDidSign(true);
+    };
+
+    return {
+      reject: (error: Error): void => {
+        complete();
+        reject(error);
+      },
+      resolve: (result: ResponseDidSign): void => {
+        complete();
+        resolve(result);
+      }
+    };
+  };
+
   public stripUrl (url: string): string {
     assert(url && (url.startsWith('http:') || url.startsWith('https:') || url.startsWith('ipfs:') || url.startsWith('ipns:')), `Invalid url ${url}, expected to start with http: or https: or ipfs: or ipns:`);
 
@@ -349,7 +390,7 @@ export default class State {
   private updateIcon (shouldClose?: boolean): void {
     const authCount = this.numAuthRequests;
     const metaCount = this.numMetaRequests;
-    const signCount = this.numSignRequests;
+    const signCount = this.numSignRequests + this.numDidSignRequests;
     const text = (
       authCount
         ? 'Auth'
@@ -391,9 +432,17 @@ export default class State {
     this.updateIcon(shouldClose);
   }
 
+  private updateIconDidSign (shouldClose?: boolean): void {
+    this.didSignSubject.next(this.allDidSignRequests);
+    this.updateIcon(shouldClose);
+  }
+
   public updateAuthorizedAccounts (authorizedAccountDiff: AuthorizedAccountsDiff): void {
-    authorizedAccountDiff.forEach(([url, authorizedAccountDiff]) => {
+    authorizedAccountDiff.forEach(([url, authorizedAccountDiff, authorizedDids]) => {
       this.#authUrls[url].authorizedAccounts = authorizedAccountDiff;
+      if (authorizedDids !== undefined) {
+        this.#authUrls[url].authorizedDids = authorizedDids;
+      }
     });
 
     this.saveCurrentAuthList();
@@ -415,6 +464,7 @@ export default class State {
 
       return {
         authorizedAccounts: [],
+        authorizedDids: [],
         result: false
       };
     }
@@ -469,6 +519,10 @@ export default class State {
 
   public getSignRequest (id: string): SignRequest {
     return this.#signRequests[id];
+  }
+
+  public getDidSignRequest (id: string): DidSignRequest {
+    return this.#didSignRequests[id];
   }
 
   // List all providers the extension is exposing
@@ -564,6 +618,24 @@ export default class State {
       };
 
       this.updateIconSign();
+      this.popupOpen();
+    });
+  }
+
+  public didSign (url: string, request: RequestSign, did: string, name?: string): Promise<ResponseDidSign> {
+    const id = getId();
+
+    return new Promise((resolve, reject): void => {
+      this.#didSignRequests[id] = {
+        ...this.didSignComplete(id, resolve, reject),
+        did,
+        id,
+        name,
+        request,
+        url
+      };
+
+      this.updateIconDidSign();
       this.popupOpen();
     });
   }

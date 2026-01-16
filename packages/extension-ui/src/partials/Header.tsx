@@ -7,8 +7,8 @@ import { faArrowLeft, faCog, faPlusCircle, faSearch } from '@fortawesome/free-so
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import logo from '../assets/pjs.svg';
-import { ActionContext } from '../components/index.js';
+import logo from '../assets/wallet.svg';
+import { ActionContext, Menu } from '../components/index.js';
 import InputFilter from '../components/InputFilter.js';
 import Link from '../components/Link.js';
 import useOutsideClick from '../hooks/useOutsideClick.js';
@@ -19,8 +19,11 @@ import MenuAdd from './MenuAdd.js';
 import MenuSettings from './MenuSettings.js';
 
 interface Props extends ThemeProps {
+  addMenuItems?: React.ReactNode;
   children?: React.ReactNode;
   className?: string;
+  connectedPathMulti?: string;
+  connectedPathSingle?: string;
   onFilter?: (filter: string) => void;
   showAdd?: boolean;
   showBackArrow?: boolean;
@@ -31,7 +34,7 @@ interface Props extends ThemeProps {
   text?: React.ReactNode;
 }
 
-function Header ({ children, className = '', onFilter, showAdd, showBackArrow, showConnectedAccounts, showSearch, showSettings, smallMargin = false, text }: Props): React.ReactElement<Props> {
+function Header ({ addMenuItems, children, className = '', connectedPathMulti, connectedPathSingle, onFilter, showAdd, showBackArrow, showConnectedAccounts, showSearch, showSettings, smallMargin = false, text }: Props): React.ReactElement<Props> {
   const [isAddOpen, setShowAdd] = useState(false);
   const [isSettingsOpen, setShowSettings] = useState(false);
   const [isSearchOpen, setShowSearch] = useState(false);
@@ -97,6 +100,11 @@ function Header ({ children, className = '', onFilter, showAdd, showBackArrow, s
     () => onAction('../index.js')
     , [onAction]);
 
+  const connectedSingleBase = connectedPathSingle || '/url/manage';
+  const connectedMultiPath = connectedPathMulti || '/auth-list';
+  const showConnectionBadge = showConnectedAccounts && !!isConnected && !isSearchOpen;
+  const showSearchContainer = !!showSearch || !!showConnectedAccounts;
+
   return (
     <div className={`${className} ${smallMargin ? 'smallMargin' : ''}`}>
       <div className='container'>
@@ -116,21 +124,21 @@ function Header ({ children, className = '', onFilter, showAdd, showBackArrow, s
               />
             )
           }
-          <span className='logoText'>{text || 'polkadot{.js}'}</span>
+          <span className='logoText'>{text || 'qsb-extension'}</span>
         </div>
-        {showSearch && (
+        {showSearchContainer && (
           <div className={`searchBarWrapper ${isSearchOpen ? 'selected' : ''}`}>
-            {showConnectedAccounts && !!isConnected && !isSearchOpen && (
+            {showConnectionBadge && (
               <div className='connectedAccountsWrapper'>
                 <Link
                   className='connectedAccounts'
-                  to={connectedTabsUrl.length === 1 ? `/url/manage/${connectedTabsUrl[0]}` : '/auth-list'}
+                  to={connectedTabsUrl.length === 1 ? `${connectedSingleBase}/${connectedTabsUrl[0]}` : connectedMultiPath}
                 >
                   <span className='greenDot'>•</span>Connected
                 </Link>
               </div>
             )}
-            {isSearchOpen && (
+            {showSearch && isSearchOpen && (
               <InputFilter
                 className='inputFilter'
                 onChange={_onChangeFilter}
@@ -139,12 +147,14 @@ function Header ({ children, className = '', onFilter, showAdd, showBackArrow, s
                 withReset
               />
             )}
-            <FontAwesomeIcon
-              className={`searchIcon ${isSearchOpen ? 'selected' : ''}`}
-              icon={faSearch}
-              onClick={_toggleSearch}
-              size='lg'
-            />
+            {showSearch && (
+              <FontAwesomeIcon
+                className={`searchIcon ${isSearchOpen ? 'selected' : ''}`}
+                icon={faSearch}
+                onClick={_toggleSearch}
+                size='lg'
+              />
+            )}
           </div>
         )}
         <div className='popupMenus'>
@@ -177,7 +187,18 @@ function Header ({ children, className = '', onFilter, showAdd, showBackArrow, s
           )}
         </div>
         {isAddOpen && (
-          <MenuAdd reference={addMenuRef} />
+          addMenuItems
+            ? (
+              <Menu
+                className='customAddMenu'
+                reference={addMenuRef}
+              >
+                {addMenuItems}
+              </Menu>
+            )
+            : (
+              <MenuAdd reference={addMenuRef} />
+            )
         )}
         {isSettingsOpen && (
           <MenuSettings reference={setMenuRef} />
@@ -211,6 +232,7 @@ export default React.memo(styled(Header)(({ theme }: Props) => `
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 10px;
       color: ${theme.labelColor};
       font-family: ${theme.fontFamily};
       text-align: center;
@@ -219,7 +241,8 @@ export default React.memo(styled(Header)(({ theme }: Props) => `
       .logo {
         height: 28px;
         width: 28px;
-        margin: 8px 12px 12px 0;
+        margin: 0;
+        display: block;
       }
 
       .logoText {
@@ -288,6 +311,32 @@ export default React.memo(styled(Header)(({ theme }: Props) => `
 
     .popupToggle+.popupToggle {
       margin-left: 8px;
+    }
+
+    .customAddMenu {
+      margin-top: 50px;
+      right: 50px;
+      min-width: 200px;
+      user-select: none;
+    }
+
+    .customAddMenu .menuItem {
+      span:first-child {
+        height: 20px;
+        margin-right: 8px;
+        opacity: 0.5;
+        width: 20px;
+      }
+
+      span {
+        vertical-align: middle;
+      }
+
+      .svg-inline--fa {
+        color: ${theme.iconNeutralColor};
+        margin-right: 0.3rem;
+        width: 0.875em;
+      }
     }
   }
 

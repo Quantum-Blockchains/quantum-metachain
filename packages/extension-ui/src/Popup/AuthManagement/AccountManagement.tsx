@@ -3,7 +3,7 @@
 
 import type { ThemeProps } from '../../types.js';
 
-import React, { useCallback, useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { AccountContext, ActionContext, Button } from '../../components/index.js';
@@ -21,6 +21,7 @@ function AccountManagement ({ className }: Props): React.ReactElement<Props> {
   const { selectedAccounts = [], setSelectedAccounts } = useContext(AccountContext);
   const { t } = useTranslation();
   const onAction = useContext(ActionContext);
+  const [authorizedDids, setAuthorizedDids] = useState<string[] | undefined>(undefined);
 
   useEffect(() => {
     getAuthList()
@@ -30,17 +31,18 @@ function AccountManagement ({ className }: Props): React.ReactElement<Props> {
         }
 
         setSelectedAccounts && setSelectedAccounts(list[url].authorizedAccounts);
+        setAuthorizedDids(list[url].authorizedDids);
       })
       .catch(console.error);
   }, [setSelectedAccounts, url]);
 
   const _onApprove = useCallback(
     (): void => {
-      updateAuthorization(selectedAccounts, url)
+      updateAuthorization(selectedAccounts, url, authorizedDids)
         .then(() => onAction('../index.js'))
         .catch(console.error);
     },
-    [onAction, selectedAccounts, url]
+    [authorizedDids, onAction, selectedAccounts, url]
   );
 
   return (

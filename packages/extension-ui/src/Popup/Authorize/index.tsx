@@ -45,7 +45,7 @@ export default styled(Authorize)`
   overflow-y: auto;
 
   &.lastRequest {
-    overflow: hidden;
+    overflow-y: auto;
   }
 
   && {
@@ -53,6 +53,6 @@ export default styled(Authorize)`
   }
 
   .request {
-    padding: 0 24px;
+    padding: 0 24px 16px;
   }
 `;

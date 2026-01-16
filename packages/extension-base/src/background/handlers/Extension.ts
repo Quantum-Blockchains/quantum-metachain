@@ -8,7 +8,7 @@ import type { KeyringPair, KeyringPair$Json, KeyringPair$Meta } from '@polkadot/
 import type { Registry, SignerPayloadJSON, SignerPayloadRaw } from '@polkadot/types/types';
 import type { SubjectInfo } from '@polkadot/ui-keyring/observable/types';
 import type { KeypairType } from '@polkadot/util-crypto/types';
-import type { AccountJson, AllowedPath, AuthorizeRequest, DidRecord, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestActiveTabsUrlUpdate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestDidCreate, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types.js';
+import type { AccountJson, AllowedPath, AuthorizeRequest, DidRecord, DidSigningRequest, MessageTypes, MetadataRequest, RequestAccountBatchExport, RequestAccountChangePassword, RequestAccountCreateExternal, RequestAccountCreateHardware, RequestAccountCreateSuri, RequestAccountEdit, RequestAccountExport, RequestAccountForget, RequestAccountShow, RequestAccountTie, RequestAccountValidate, RequestActiveTabsUrlUpdate, RequestAuthorizeApprove, RequestBatchRestore, RequestDeriveCreate, RequestDeriveValidate, RequestDidCreate, RequestDidDeactivate, RequestDidExport, RequestDidRemove, RequestDidSignApprove, RequestDidSignCancel, RequestJsonRestore, RequestMetadataApprove, RequestMetadataReject, RequestSeedCreate, RequestSeedValidate, RequestSigningApprovePassword, RequestSigningApproveSignature, RequestSigningCancel, RequestSigningIsLocked, RequestTypes, RequestUpdateAuthorizedAccounts, ResponseAccountExport, ResponseAccountsExport, ResponseAuthorizeList, ResponseDeriveValidate, ResponseDidExport, ResponseJsonGetAccountInfo, ResponseSeedCreate, ResponseSeedValidate, ResponseSigningIsLocked, ResponseType, SigningRequest } from '../types.js';
 import type { AuthorizedAccountsDiff } from './State.js';
 import type State from './State.js';
 
@@ -20,7 +20,7 @@ import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
 import { assert, isHex, stringToU8a, u8aConcat, u8aToHex } from '@polkadot/util';
-import { base58Encode, blake2AsU8a, cryptoWaitReady, keyExtractSuri, mldsa44PairFromSeed, mnemonicGenerate, mnemonicValidate, randomAsU8a } from '@polkadot/util-crypto';
+import { base58Decode, base58Encode, blake2AsU8a, cryptoWaitReady, keyExtractSuri, mldsa44PairFromSeed, mnemonicGenerate, mnemonicValidate, randomAsU8a } from '@polkadot/util-crypto';
 
 import { withErrorLog } from './helpers.js';
 import { createSubscription, unsubscribe } from './subscriptions.js';
@@ -206,20 +206,20 @@ export default class Extension {
     return true;
   }
 
-  private authorizeApprove ({ authorizedAccounts, id }: RequestAuthorizeApprove): boolean {
+  private authorizeApprove ({ authorizedAccounts, authorizedDids, id }: RequestAuthorizeApprove): boolean {
     const queued = this.#state.getAuthRequest(id);
 
     assert(queued, 'Unable to find request');
 
     const { resolve } = queued;
 
-    resolve({ authorizedAccounts, result: true });
+    resolve({ authorizedAccounts, authorizedDids, result: true });
 
     return true;
   }
 
-  private authorizeUpdate ({ authorizedAccounts, url }: RequestUpdateAuthorizedAccounts): void {
-    return this.#state.updateAuthorizedAccounts([[url, authorizedAccounts]]);
+  private authorizeUpdate ({ authorizedAccounts, authorizedDids, url }: RequestUpdateAuthorizedAccounts): void {
+    return this.#state.updateAuthorizedAccounts([[url, authorizedAccounts, authorizedDids]]);
   }
 
   private getAuthList (): ResponseAuthorizeList {
@@ -352,7 +352,7 @@ export default class Extension {
 
     assert(queued, 'Unable to find request');
 
-    const { reject, request, resolve } = queued;
+    const { reject, resolve, request } = queued;
     const pair = keyring.getPair(queued.account.address);
 
     if (!pair) {
@@ -472,6 +472,71 @@ export default class Extension {
     return true;
   }
 
+  private async didsSignApprove ({ id, password }: RequestDidSignApprove): Promise<boolean> {
+    const queued = this.#state.getDidSignRequest(id);
+
+    assert(queued, 'Unable to find DID signing request');
+
+    const { reject, resolve } = queued;
+    const didJson = await new Promise<KeyringPair$Json>((resolve, reject): void => {
+      this.#didsStore.get(`did:${queued.did}`, (json): void => {
+        if (!json) {
+          reject(new Error('DID not found'));
+        } else {
+          resolve(json);
+        }
+      });
+    });
+
+    const didKeyring = new Keyring({ type: 'mldsa44' });
+    const didPair = didKeyring.addFromJson(didJson);
+
+    try {
+      didPair.decodePkcs8(password);
+    } catch {
+      reject(new Error('Wrong DID password'));
+
+      return false;
+    }
+
+    try {
+      resolve({
+        id,
+        signature: '0x'
+      });
+    } finally {
+      didPair.lock();
+    }
+
+    return true;
+  }
+
+  private didsSignCancel ({ id }: RequestDidSignCancel): boolean {
+    const queued = this.#state.getDidSignRequest(id);
+
+    assert(queued, 'Unable to find DID signing request');
+
+    const { reject } = queued;
+
+    reject(new Error('Cancelled'));
+
+    return true;
+  }
+
+  private didsSignSubscribe (id: string, port: chrome.runtime.Port): boolean {
+    const cb = createSubscription<'pri(dids.sign.requests)'>(id, port);
+    const subscription = this.#state.didSignSubject.subscribe((requests: DidSigningRequest[]): void =>
+      cb(requests)
+    );
+
+    port.onDisconnect.addListener((): void => {
+      unsubscribe(id);
+      subscription.unsubscribe();
+    });
+
+    return true;
+  }
+
   private windowOpen (path: AllowedPath): boolean {
     const url = `${chrome.extension.getURL('index.html')}#${path}`;
 
@@ -540,7 +605,7 @@ export default class Extension {
     return this.#state.getConnectedTabsUrl();
   }
 
-  private async didsCreate ({ accountAddress, name, password }: RequestDidCreate): Promise<DidRecord> {
+  private async didsCreate ({ accountAddress, name, accountPassword, didPassword }: RequestDidCreate): Promise<DidRecord> {
     await cryptoWaitReady();
 
     const signerPair = keyring.getPair(accountAddress);
@@ -549,12 +614,12 @@ export default class Extension {
     assert(!signerPair.meta.isExternal && !signerPair.meta.isHardware, 'Account cannot sign transactions');
 
     if (signerPair.isLocked) {
-      if (!password) {
+      if (!accountPassword) {
         throw new Error('Password needed to unlock the account');
       }
 
       try {
-        signerPair.decodePkcs8(password);
+        signerPair.decodePkcs8(accountPassword);
       } catch {
         throw new Error('Wrong password');
       }
@@ -637,7 +702,7 @@ export default class Extension {
       },
       'mldsa44'
     );
-    const json = didKeypair.toJson(password);
+    const json = didKeypair.toJson(didPassword);
 
     this.#didsStore.set(`did:${did}`, json);
 
@@ -650,8 +715,125 @@ export default class Extension {
     };
   }
 
+  private async didsDeactivate ({ accountAddress, accountPassword, did, didPassword }: RequestDidDeactivate): Promise<boolean> {
+    const didJson = await new Promise<KeyringPair$Json>((resolve, reject) => {
+      this.#didsStore.get(`did:${did}`, (json) => {
+        if (!json) {
+          reject(new Error('DID not found'));
+        } else {
+          resolve(json);
+        }
+      });
+    });
+    const didKeyring = new Keyring({ type: 'mldsa44' });
+    const didPair = didKeyring.addFromJson(didJson);
+
+    try {
+      didPair.decodePkcs8(didPassword);
+    } catch {
+      throw new Error('Wrong DID password');
+    } finally {
+      didPair.lock();
+    }
+
+    const signerPair = keyring.getPair(accountAddress);
+
+    assert(signerPair, 'Unable to find signing account');
+    assert(!signerPair.meta.isExternal && !signerPair.meta.isHardware, 'Account cannot sign transactions');
+
+    if (signerPair.isLocked) {
+      if (!accountPassword) {
+        throw new Error('Password needed to unlock the account');
+      }
+
+      try {
+        signerPair.decodePkcs8(accountPassword);
+      } catch {
+        throw new Error('Wrong password');
+      }
+    }
+
+    const provider = new WsProvider(QSB_POSEIDON_ENDPOINT);
+    const api = await ApiPromise.create({ provider });
+
+    try {
+      await new Promise<void>(async (resolve, reject) => {
+        let unsub: (() => void) | undefined;
+
+        try {
+          unsub = await api.tx['did']
+            ['deactivateDid'](did)
+            .signAndSend(signerPair, (result): void => {
+              if (result.dispatchError) {
+                if (unsub) {
+                  unsub();
+                }
+
+                if (result.dispatchError.isModule) {
+                  const decoded = api.registry.findMetaError(result.dispatchError.asModule);
+                  const message = decoded.section && decoded.name
+                    ? `${decoded.section}.${decoded.name}`
+                    : decoded.name;
+
+                  reject(new Error(message));
+                } else {
+                  reject(new Error(result.dispatchError.toString()));
+                }
+
+                return;
+              }
+
+              if (result.status.isInBlock || result.status.isFinalized) {
+                if (unsub) {
+                  unsub();
+                }
+
+                resolve();
+              }
+            });
+        } catch (error) {
+          if (unsub) {
+            unsub();
+          }
+
+          reject(error as Error);
+        }
+      });
+    } finally {
+      signerPair.lock();
+      await api.disconnect();
+    }
+
+    return true;
+  }
+
+  private async didsExport ({ did, password }: RequestDidExport): Promise<ResponseDidExport> {
+    const didJson = await new Promise<KeyringPair$Json>((resolve, reject) => {
+      this.#didsStore.get(`did:${did}`, (json) => {
+        if (!json) {
+          reject(new Error('DID not found'));
+        } else {
+          resolve(json);
+        }
+      });
+    });
+
+    const didKeyring = new Keyring({ type: 'mldsa44' });
+    const pair = didKeyring.addFromJson(didJson);
+
+    try {
+      pair.decodePkcs8(password);
+    } catch {
+      throw new Error('Wrong password');
+    } finally {
+      pair.lock();
+    }
+
+    return { exportedJson: didJson };
+  }
+
   private async didsList (): Promise<DidRecord[]> {
-    return new Promise((resolve) => {
+    const records = await new Promise<DidRecord[]>((resolve) => {
       this.#didsStore.allMap((map) => {
         const records = Object.values(map)
           .map(({ meta }) => meta as unknown as Partial<DidRecord> | undefined)
@@ -668,6 +850,66 @@ export default class Extension {
 
         resolve(records);
       });
+    });
+
+    if (!records.length) {
+      return records;
+    }
+
+    const didIds = records.map(({ did }) => {
+      const normalized = did.startsWith('did:qsb:') ? did.slice(8) : did;
+
+      try {
+        return base58Decode(normalized);
+      } catch {
+        return null;
+      }
+    });
+
+    const queries = didIds.map((id) => id && id.length === 32 ? id : null);
+    const validIds = queries.filter((id): id is Uint8Array => !!id);
+
+    if (!validIds.length) {
+      return records;
+    }
+
+    try {
+      const provider = new WsProvider(QSB_POSEIDON_ENDPOINT);
+      const api = await ApiPromise.create({ provider });
+      const results = await api.query['did']['didRecords'].multi(validIds);
+      let index = 0;
+
+      const withStatus = records.map((record, recordIndex) => {
+        const didId = queries[recordIndex];
+
+        if (!didId) {
+          return record;
+        }
+
+        const result = results[index++] as unknown as { isNone?: boolean; unwrap?: () => { deactivated: { isTrue: boolean } } };
+
+        if (!result || result.isNone) {
+          return record;
+        }
+
+        return {
+          ...record,
+          deactivated: result.unwrap ? result.unwrap().deactivated.isTrue : undefined
+        };
+      });
+
+      await api.disconnect();
+
+      return withStatus;
+    } catch (error) {
+      console.error(error);
+      return records;
+    }
+  }
+
+  private async didsRemove ({ did }: RequestDidRemove): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.#didsStore.remove(`did:${did}`, () => resolve(true));
     });
   }
 
@@ -758,6 +1000,24 @@ export default class Extension {
 
       case 'pri(dids.create)':
         return this.didsCreate(request as RequestDidCreate);
+
+      case 'pri(dids.deactivate)':
+        return this.didsDeactivate(request as RequestDidDeactivate);
+
+      case 'pri(dids.export)':
+        return this.didsExport(request as RequestDidExport);
+
+      case 'pri(dids.sign.approve)':
+        return this.didsSignApprove(request as RequestDidSignApprove);
+
+      case 'pri(dids.sign.cancel)':
+        return this.didsSignCancel(request as RequestDidSignCancel);
+
+      case 'pri(dids.sign.requests)':
+        return port && this.didsSignSubscribe(id, port);
+
+      case 'pri(dids.remove)':
+        return this.didsRemove(request as RequestDidRemove);
 
       case 'pri(dids.list)':
         return this.didsList();

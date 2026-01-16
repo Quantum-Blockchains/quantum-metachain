@@ -2,16 +2,25 @@
   "author": "polkadot.{js}",
   "description": "Manage your Polkadot accounts outside of dapps. Injects the accounts and allows signing transactions for a specific account.",
   "homepage_url": "https://github.com/polkadot-js/extension",
-  "name": "polkadot{.js} extension",
-  "short_name": "polkadot{.js}",
+  "name": "qsb-extension",
+  "short_name": "qsb-extension",
   "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "qbs-extension@local",
+      "data_collection_permissions": {
+        "required": ["none"],
+        "optional": []
+      }
+    }
+  },
   "permissions": ["storage", "tabs"],
   "background": {
     "scripts": ["background.js"],
     "persistent": true
   },
   "browser_action": {
-    "default_title": "polkadot{.js}",
+    "default_title": "qsb-extension",
     "default_popup": "index.html"
   },
   "content_scripts": [{
@@ -27,5 +36,6 @@
     "128": "images/icon-128.png"
   },
   "web_accessible_resources": ["page.js"],
-  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'",
+  "version": "0.46.7"
 }

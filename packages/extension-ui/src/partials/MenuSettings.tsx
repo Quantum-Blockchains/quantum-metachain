@@ -16,11 +16,6 @@ import { setNotification, windowOpen } from '../messaging.js';
 import { styled } from '../styled.js';
 import getLanguageOptions from '../util/getLanguageOptions.js';
 
-interface Option {
-  text: string;
-  value: string;
-}
-
 interface Props extends ThemeProps {
   className?: string;
   reference: React.MutableRefObject<null>;
@@ -29,14 +24,9 @@ interface Props extends ThemeProps {
 const notificationOptions = ['Extension', 'PopUp', 'Window']
   .map((item) => ({ text: item, value: item.toLowerCase() }));
 
-const prefixOptions = settings.availablePrefixes
-  .filter(({ value }) => value !== -1)
-  .map(({ text, value }): Option => ({ text, value: `${value}` }));
-
 function MenuSettings ({ className, reference }: Props): React.ReactElement<Props> {
   const { t } = useTranslation();
   const [camera, setCamera] = useState(settings.camera === 'on');
-  const [prefix, setPrefix] = useState(`${settings.prefix === -1 ? 42 : settings.prefix}`);
   const [notification, updateNotification] = useState(settings.notification);
   const themeContext = useContext(ThemeContext as React.Context<Theme>);
   const setTheme = useContext(ThemeSwitchContext);
@@ -47,13 +37,6 @@ function MenuSettings ({ className, reference }: Props): React.ReactElement<Prop
   useEffect(() => {
     settings.set({ camera: camera ? 'on' : 'off' });
   }, [camera]);
-
-  const _onChangePrefix = useCallback(
-    (value: string): void => {
-      setPrefix(value);
-      settings.set({ prefix: parseInt(value, 10) });
-    }, []
-  );
 
   const _onChangeNotification = useCallback(
     (value: string): void => {
@@ -101,18 +84,6 @@ function MenuSettings ({ className, reference }: Props): React.ReactElement<Prop
           checkedLabel={t<string>('Dark')}
           onChange={_onChangeTheme}
           uncheckedLabel={t<string>('Light')}
-        />
-      </MenuItem>
-      <MenuItem
-        className='setting'
-        title={t<string>('Display address format for')}
-      >
-        <Dropdown
-          className='dropdown'
-          label=''
-          onChange={_onChangePrefix}
-          options={prefixOptions}
-          value={`${prefix}`}
         />
       </MenuItem>
       <MenuItem

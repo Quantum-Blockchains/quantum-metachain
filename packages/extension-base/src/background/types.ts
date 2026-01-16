@@ -35,6 +35,7 @@ export interface AuthUrlInfo {
   origin: string;
   url: string;
   authorizedAccounts: string[];
+  authorizedDids?: string[];
 }
 
 export type SeedLengths = 12 | 24;
@@ -61,6 +62,7 @@ export interface DidRecord {
   genesisHash: HexString;
   name?: string;
   publicKey: HexString;
+  deactivated?: boolean;
 }
 
 export interface AuthorizeRequest {
@@ -78,6 +80,14 @@ export interface MetadataRequest {
 export interface SigningRequest {
   account: AccountJson;
   id: string;
+  request: RequestSign;
+  url: string;
+}
+
+export interface DidSigningRequest {
+  did: string;
+  id: string;
+  name?: string;
   request: RequestSign;
   url: string;
 }
@@ -101,6 +111,12 @@ export interface RequestSignatures {
   'pri(accounts.validate)': [RequestAccountValidate, boolean];
   'pri(accounts.changePassword)': [RequestAccountChangePassword, boolean];
   'pri(dids.create)': [RequestDidCreate, DidRecord];
+  'pri(dids.deactivate)': [RequestDidDeactivate, boolean];
+  'pri(dids.export)': [RequestDidExport, ResponseDidExport];
+  'pri(dids.sign.approve)': [RequestDidSignApprove, boolean];
+  'pri(dids.sign.cancel)': [RequestDidSignCancel, boolean];
+  'pri(dids.sign.requests)': [RequestDidSignSubscribe, boolean, DidSigningRequest[]];
+  'pri(dids.remove)': [RequestDidRemove, boolean];
   'pri(dids.list)': [null, DidRecord[]];
   'pri(authorize.approve)': [RequestAuthorizeApprove, boolean];
   'pri(authorize.list)': [null, ResponseAuthorizeList];
@@ -137,6 +153,7 @@ export interface RequestSignatures {
   'pub(authorize.tab)': [RequestAuthorizeTab, Promise<AuthResponse>];
   'pub(bytes.sign)': [SignerPayloadRaw, ResponseSigning];
   'pub(dids.list)': [null, DidRecord[]];
+  'pub(dids.sign)': [RequestDidSign, ResponseDidSign];
   'pub(extrinsic.sign)': [SignerPayloadJSON, ResponseSigning];
   'pub(metadata.list)': [null, InjectedMetadataKnown[]];
   'pub(metadata.provide)': [MetadataDef, boolean];
@@ -173,12 +190,14 @@ export interface RequestAuthorizeTab {
 
 export interface RequestAuthorizeApprove {
   id: string;
-  authorizedAccounts: string[]
+  authorizedAccounts: string[];
+  authorizedDids: string[];
 }
 
 export interface RequestUpdateAuthorizedAccounts {
   url: string;
-  authorizedAccounts: string[]
+  authorizedAccounts: string[];
+  authorizedDids?: string[];
 }
 
 export type RequestAuthorizeSubscribe = null;
@@ -225,8 +244,50 @@ export interface RequestAccountChangePassword {
 export interface RequestDidCreate {
   accountAddress: string;
   name: string;
+  accountPassword: string;
+  didPassword: string;
+}
+
+export interface RequestDidDeactivate {
+  accountAddress: string;
+  accountPassword: string;
+  did: string;
+  didPassword: string;
+}
+
+export interface RequestDidExport {
+  did: string;
   password: string;
 }
+
+export interface ResponseDidExport {
+  exportedJson: KeyringPair$Json;
+}
+
+export interface RequestDidRemove {
+  did: string;
+}
+
+export interface RequestDidSign {
+  did: string;
+  payload: SignerPayloadJSON;
+}
+
+export interface ResponseDidSign {
+  id: string;
+  signature: HexString;
+}
+
+export interface RequestDidSignApprove {
+  id: string;
+  password: string;
+}
+
+export interface RequestDidSignCancel {
+  id: string;
+}
+
+export type RequestDidSignSubscribe = null;
 
 export interface RequestAccountEdit {
   address: string;
