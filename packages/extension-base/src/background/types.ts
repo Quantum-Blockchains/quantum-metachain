@@ -270,7 +270,7 @@ export interface RequestDidRemove {
 
 export interface RequestDidSign {
   did: string;
-  payload: SignerPayloadJSON;
+  payload: SignerPayloadJSON | SignerPayloadRaw | HexString;
 }
 
 export interface ResponseDidSign {

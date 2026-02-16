@@ -19,8 +19,8 @@ import { Keyring } from '@polkadot/keyring';
 import { TypeRegistry } from '@polkadot/types';
 import keyring from '@polkadot/ui-keyring';
 import { accounts as accountsObservable } from '@polkadot/ui-keyring/observable/accounts';
-import { assert, isHex, stringToU8a, u8aConcat, u8aToHex } from '@polkadot/util';
-import { base58Decode, base58Encode, blake2AsU8a, cryptoWaitReady, keyExtractSuri, mldsa44PairFromSeed, mnemonicGenerate, mnemonicValidate, randomAsU8a } from '@polkadot/util-crypto';
+import { assert, compactAddLength, isHex, stringToU8a, u8aConcat, u8aToHex } from '@polkadot/util';
+import { base58Decode, base58Encode, blake2AsU8a, cryptoWaitReady, keyExtractSuri, mldsa44PairFromSeed, mldsa44Sign, mldsa44Verify, mnemonicGenerate, mnemonicValidate, randomAsU8a } from '@polkadot/util-crypto';
 
 import { withErrorLog } from './helpers.js';
 import { createSubscription, unsubscribe } from './subscriptions.js';
@@ -31,7 +31,10 @@ type CachedUnlocks = Record<string, number>;
 const SEED_DEFAULT_LENGTH = 12;
 const SEED_LENGTHS = [12, 15, 18, 21, 24];
 const ETH_DERIVE_DEFAULT = "/m/44'/60'/0'/0/0";
-const QSB_POSEIDON_ENDPOINT = 'wss://qsb.qbck.io:9945';
+const DID_CREATE_PREFIX = 'QSB_DID_CREATE';
+const DID_DEACTIVATE_PREFIX = 'QSB_DID_DEACTIVATE';
+// const QSB_POSEIDON_ENDPOINT = 'wss://qsb.qbck.io:9945';
+const QSB_POSEIDON_ENDPOINT = 'ws://127.0.0.1:9933';
 
 function getSuri (seed: string, type?: KeypairType): string {
   return type === 'ethereum'
@@ -477,13 +480,13 @@ export default class Extension {
 
     assert(queued, 'Unable to find DID signing request');
 
-    const { reject, resolve } = queued;
-    const didJson = await new Promise<KeyringPair$Json>((resolve, reject): void => {
+    const { reject, request, resolve } = queued;
+    const didJson = await new Promise<KeyringPair$Json>((resolveDid, rejectDid): void => {
       this.#didsStore.get(`did:${queued.did}`, (json): void => {
         if (!json) {
-          reject(new Error('DID not found'));
+          rejectDid(new Error('DID not found'));
         } else {
-          resolve(json);
+          resolveDid(json);
         }
       });
     });
@@ -500,9 +503,11 @@ export default class Extension {
     }
 
     try {
+      const result = request.sign(new TypeRegistry(), didPair);
+
       resolve({
         id,
-        signature: '0x'
+        ...result
       });
     } finally {
       didPair.lock();
@@ -641,6 +646,14 @@ export default class Extension {
     const did = `did:qsb:${base58Encode(didId)}`;
     const publicKeyHex = u8aToHex(didPair.publicKey);
     const genesisHashHex = api.genesisHash.toHex();
+    const payload = u8aConcat(
+      stringToU8a(DID_CREATE_PREFIX),
+      compactAddLength(didPair.publicKey)
+    );
+    const didSignatureHex = u8aToHex(mldsa44Sign(payload, didPair));
+    const didSignatureValid = mldsa44Verify(payload, didSignatureHex, didPair.publicKey);
+
+    assert(didSignatureValid, 'Invalid DID signature generated locally');
 
     try {
       await new Promise<void>(async (resolve, reject) => {
@@ -648,7 +661,7 @@ export default class Extension {
 
         try {
           unsub = await api.tx['did']
-            ['createDid'](publicKeyHex, u8aToHex(new Uint8Array()))
+            ['createDid'](publicKeyHex, didSignatureHex)
             .signAndSend(signerPair, (result): void => {
               if (result.dispatchError) {
                 if (unsub) {
@@ -732,9 +745,22 @@ export default class Extension {
       didPair.decodePkcs8(didPassword);
     } catch {
       throw new Error('Wrong DID password');
-    } finally {
-      didPair.lock();
     }
+
+    const didIdBytes = stringToU8a(did);
+    const payload = u8aConcat(
+      stringToU8a(DID_DEACTIVATE_PREFIX),
+      compactAddLength(didIdBytes)
+    );
+    const didSignature = didPair.sign(payload);
+    const didSignatureRaw = didSignature.length === 2421
+      ? didSignature.subarray(1)
+      : didSignature;
+    const didSignatureHex = u8aToHex(didSignatureRaw);
+    const didSignatureValid = mldsa44Verify(payload, didSignatureRaw, didPair.publicKey);
+
+    assert(didSignatureValid, 'Invalid DID deactivation signature generated locally');
+    didPair.lock();
 
     const signerPair = keyring.getPair(accountAddress);
 
@@ -762,7 +788,7 @@ export default class Extension {
 
         try {
           unsub = await api.tx['did']
-            ['deactivateDid'](did)
+            ['deactivateDid'](u8aToHex(didIdBytes), didSignatureHex)
             .signAndSend(signerPair, (result): void => {
               if (result.dispatchError) {
                 if (unsub) {

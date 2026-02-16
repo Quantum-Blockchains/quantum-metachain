@@ -22,6 +22,7 @@ import { PHISHING_PAGE_REDIRECT } from '../../defaults.js';
 import { DidsStore } from '../../stores/index.js';
 import { canDerive } from '../../utils/index.js';
 import RequestBytesSign from '../RequestBytesSign.js';
+import RequestDidPayloadSign from '../RequestDidPayloadSign.js';
 import RequestExtrinsicSign from '../RequestExtrinsicSign.js';
 import { withErrorLog } from './helpers.js';
 import { createSubscription, unsubscribe } from './subscriptions.js';
@@ -162,7 +163,7 @@ export default class Tabs {
       });
     });
 
-    return this.#state.didSign(url, new RequestExtrinsicSign(request.payload), request.did, name);
+    return this.#state.didSign(url, new RequestDidPayloadSign(request.payload), request.did, name);
   }
 
   private metadataProvide (url: string, request: MetadataDef): Promise<boolean> {
